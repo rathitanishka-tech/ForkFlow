@@ -25,6 +25,7 @@ model Business {
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
   memberships BusinessMembership[]
+  restaurants Restaurant[]
 }
 
 model BusinessMembership {
@@ -42,10 +43,167 @@ model BusinessMembership {
   @@index([businessId])
 }
 
+model Restaurant {
+  id               String          @id @default(uuid())
+  businessId       String
+  name             String
+  slug             String
+  description      String?
+  phone            String?
+  email            String?
+  address          String?
+  propertyType     PropertyType
+  timezone         String
+  currency         String
+  parkingAvailable Boolean
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  business         Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  floors           Floor[]
+  reservations     Reservation[]
+  diningSessions   DiningSession[]
+
+  @@unique([businessId, slug])
+  @@index([businessId])
+}
+
+model Floor {
+  id           String     @id @default(uuid())
+  restaurantId String
+  name         String
+  level        Int
+  width        Float
+  height       Float
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  tables       Table[]
+
+  @@index([restaurantId])
+}
+
+model Table {
+  id             String          @id @default(uuid())
+  floorId        String
+  number         String
+  capacity       Int
+  shape          TableShape
+  status         TableStatus     @default(AVAILABLE)
+  xPosition      Float
+  yPosition      Float
+  rotation       Float           @default(0)
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  floor          Floor           @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  reservations   Reservation[]
+  diningSessions DiningSession[]
+
+  @@unique([floorId, number])
+  @@index([floorId])
+}
+
+model Guest {
+  id             String          @id @default(uuid())
+  name           String
+  phone          String          @unique
+  email          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  reservations   Reservation[]
+  diningSessions DiningSession[]
+}
+
+model Reservation {
+  id                String            @id @default(uuid())
+  restaurantId      String
+  tableId           String
+  guestId           String
+  reservationTime   DateTime
+  partySize         Int
+  occasion          String?
+  seatingPreference String?
+  noisePreference   String?
+  status            ReservationStatus @default(PENDING)
+  notes             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  restaurant        Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  table             Table             @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  guest             Guest             @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  diningSession     DiningSession?
+
+  @@unique([tableId, reservationTime])
+  @@index([restaurantId])
+  @@index([tableId])
+  @@index([guestId])
+  @@index([restaurantId, reservationTime])
+}
+
+model DiningSession {
+  id            String              @id @default(uuid())
+  restaurantId  String
+  tableId       String
+  reservationId String?             @unique
+  guestId       String
+  startedAt     DateTime
+  endedAt       DateTime?
+  status        DiningSessionStatus @default(ACTIVE)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  restaurant    Restaurant          @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  table         Table               @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  reservation   Reservation?        @relation(fields: [reservationId], references: [id], onDelete: SetNull)
+  guest         Guest               @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId])
+  @@index([tableId])
+  @@index([reservationId])
+  @@index([guestId])
+}
+
 enum BusinessRole {
   OWNER
   ADMIN
   MANAGER
   STAFF
   KITCHEN
+}
+
+enum PropertyType {
+  OWNED
+  LEASED
+  RENTED
+}
+
+enum TableShape {
+  ROUND
+  SQUARE
+  RECTANGLE
+  SOFA
+  BAR
+  OUTDOOR
+}
+
+enum TableStatus {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+  MAINTENANCE
+  UNAVAILABLE
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  SEATED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum DiningSessionStatus {
+  ACTIVE
+  CLOSED
 }
