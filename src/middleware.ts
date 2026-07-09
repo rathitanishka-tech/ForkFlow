@@ -9,6 +9,7 @@ const isPublicRoute = createRouteMatcher([
   // Public APIs during development
   "/api/restaurants(.*)",
   "/api/reservations(.*)",
+  "/api/floors(.*)",
   "/api/public(.*)",
 ]);
 
