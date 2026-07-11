@@ -1,9 +1,9 @@
-import { InsightCard } from "@/components/dashboard/insight-card";
-import { KitchenTimeline } from "@/components/dashboard/kitchen-timeline";
-import { LiveTableGrid } from "@/components/dashboard/live-table-grid";
-import { QuickActionCard } from "@/components/dashboard/quick-action-card";
-import { ReservationTable } from "@/components/dashboard/reservation-table";
-import { StatCard } from "@/components/dashboard/stat-card";
+import { InsightCard } from "@/app/dashboard/insight-card";
+import { KitchenTimeline } from "@/app/dashboard/kitchen-timeline";
+import { LiveTableGrid } from "@/app/dashboard/live-table-grid";
+import { QuickActionCard } from "@/app/dashboard/quick-action-card";
+import { ReservationTable } from "@/app/dashboard/reservation-table";
+import { StatCard } from "@/app/dashboard/stat-card";
 import {
   CalendarCheck,
   ChefHat,
