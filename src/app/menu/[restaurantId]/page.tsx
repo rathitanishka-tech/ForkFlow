@@ -5,6 +5,7 @@ import { MenuCard, MenuItemData } from "@/components/customer/MenuCard";
 import { CategoryTabs } from "@/components/customer/CategoryTabs";
 import { CartDrawer, CartItem } from "@/components/customer/CartDrawer";
 import { ShoppingBag, Loader, AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function MenuPage({
   params,
@@ -12,6 +13,7 @@ export default function MenuPage({
   params: Promise<{ restaurantId: string }>;
 }) {
   const { restaurantId } = React.use(params);
+  const router = useRouter();
   const [menuItems, setMenuItems] = React.useState<MenuItemData[]>([]);
   const [categories, setCategories] = React.useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = React.useState<string>("");
@@ -147,10 +149,9 @@ export default function MenuPage({
         throw new Error(data.message || "Failed to place order");
       }
 
-      alert("🎉 Order placed!");
-
       setCartItems([]);
       setIsCartOpen(false);
+      router.push(`/order/${data.id}`);
     } catch (error: any) {
       alert(error.message);
     }
