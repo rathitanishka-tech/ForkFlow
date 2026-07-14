@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 import type { ReservationResponse } from "./reservation.types";
 import type { CreateReservationInput } from "./reservation.validator";
@@ -54,12 +54,11 @@ export class ReservationService {
           select: { id: true },
         });
 
-        const existingReservation = await tx.reservation.findUnique({
+        const existingReservation = await tx.reservation.findFirst({
           where: {
-            tableId_reservationTime: {
-              tableId: input.tableId,
-              reservationTime: input.reservationTime,
-            },
+            tableId: input.tableId,
+            reservationDate: input.reservationDate,
+            status: { notIn: ["CANCELLED"] },
           },
           select: { id: true },
         });
@@ -68,36 +67,44 @@ export class ReservationService {
           throw new Error("Table already reserved");
         }
 
-        return tx.reservation.create({
+        const createdReservation = await tx.reservation.create({
           data: {
             restaurantId: input.restaurantId,
             tableId: input.tableId,
             guestId: guest.id,
-            reservationTime: input.reservationTime,
-            partySize: input.partySize,
+            customerName: input.name,
+            phone: input.phone,
+            guests: input.guests,
+            reservationDate: input.reservationDate,
             occasion: input.occasion,
-            seatingPreference: input.seatingPreference,
-            noisePreference: input.noisePreference,
-            notes: input.notes,
+            status: "PENDING",
           },
         });
+
+        return {
+          id: createdReservation.id,
+          restaurantId: createdReservation.restaurantId,
+          tableId: createdReservation.tableId,
+          guestId: createdReservation.guestId,
+          customerName: createdReservation.customerName,
+          phone: createdReservation.phone,
+          reservationDate: createdReservation.reservationDate,
+          guests: createdReservation.guests,
+          occasion: createdReservation.occasion,
+          status: createdReservation.status as ReservationResponse["status"],
+          createdAt: createdReservation.createdAt,
+          updatedAt: createdReservation.updatedAt,
+        };
       });
     } catch (error) {
-      if (this.isReservationConflict(error)) {
-        throw new Error("Table already reserved");
+      if (
+        error instanceof Error &&
+        error.message === "Table already reserved"
+      ) {
+        throw error;
       }
 
       throw error;
     }
-  }
-
-  private isReservationConflict(error: unknown): boolean {
-    return (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002" &&
-      Array.isArray(error.meta?.target) &&
-      error.meta.target.includes("tableId") &&
-      error.meta.target.includes("reservationTime")
-    );
   }
 }

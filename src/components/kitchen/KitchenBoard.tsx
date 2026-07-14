@@ -35,16 +35,18 @@ const columnConfig = [
 
 export function KitchenBoard({ board, onStatusChange }: KitchenBoardProps) {
   return (
-    <div className="grid h-full w-full grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-      {columnConfig.map((col) => (
-        <KitchenColumn
-          key={col.status}
-          title={col.title}
-          color={col.color}
-          orders={board[col.status]}
-          onStatusChange={onStatusChange}
-        />
-      ))}
+    <div className="h-full min-h-0 overflow-x-auto">
+      <div className="grid h-full min-w-[1280px] grid-cols-4 gap-4">
+        {columnConfig.map((col) => (
+          <KitchenColumn
+            key={col.status}
+            title={col.title}
+            color={col.color}
+            orders={board[col.status]}
+            onStatusChange={onStatusChange}
+          />
+        ))}
+      </div>
     </div>
   );
 }

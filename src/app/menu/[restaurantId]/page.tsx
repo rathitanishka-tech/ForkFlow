@@ -1,19 +1,22 @@
 "use client";
 
 import * as React from "react";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { MenuCard, MenuItemData } from "@/components/customer/MenuCard";
 import { CategoryTabs } from "@/components/customer/CategoryTabs";
 import { CartDrawer, CartItem } from "@/components/customer/CartDrawer";
 import { ShoppingBag, Loader, AlertTriangle } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function MenuPage({
-  params,
-}: {
-  params: Promise<{ restaurantId: string }>;
-}) {
-  const { restaurantId } = React.use(params);
+export default function MenuPage() {
+  // Hooks for routing and parameters
   const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const restaurantId = params.restaurantId as string;
+  const tableId = searchParams.get("tableId");
+
+  // State management
   const [menuItems, setMenuItems] = React.useState<MenuItemData[]>([]);
   const [categories, setCategories] = React.useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = React.useState<string>("");
@@ -22,36 +25,62 @@ export default function MenuPage({
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
+  // Effect to fetch menu data when the restaurantId changes
   React.useEffect(() => {
+    if (!restaurantId) return;
+
     const fetchMenu = async () => {
+      setIsLoading(true);
+      setError(null);
+
       try {
-        setIsLoading(true);
         const response = await fetch(`/api/menu?restaurantId=${restaurantId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch menu data.");
         }
-        const result = await response.json();
-        const data: MenuItemData[] = result.data;
 
-        const menu = result.data.map((item: any) => ({
-          ...item,
-          imageUrl: item.image,
+        const result = (await response.json()) as {
+          data: Array<
+            Partial<Omit<MenuItemData, "imageUrl">> & {
+              image?: string | null;
+              category?: string | null;
+            }
+          >;
+        };
+
+        const mappedMenu: MenuItemData[] = result.data.map((item) => ({
+          id: item.id ?? "",
+          name: item.name ?? "",
+          description: item.description ?? "",
+          price: item.price ?? 0,
+          spiceLevel: item.spiceLevel ?? "NONE",
+          category: item.category ?? "Uncategorized",
+          isAvailable: item.isAvailable ?? false,
+          isVeg: item.isVeg ?? false,
+          imageUrl: item.image ?? "",
         }));
 
-        // Assuming the API returns items with a 'category' property
+        setMenuItems(mappedMenu);
         const uniqueCategories = [
           "All",
-          ...Array.from(new Set(menu.map((item) => item.category))),
+          ...Array.from(
+            new Set(
+              mappedMenu
+                .map((menuItem) => menuItem.category)
+                .filter(
+                  (category): category is string =>
+                    typeof category === "string" && category.length > 0,
+                ),
+            ),
+          ),
         ];
-
-        setMenuItems(menu);
         setCategories(uniqueCategories);
         setSelectedCategory("All");
-        setError(null);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred.",
-        );
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred.";
+        setError(errorMessage);
+        console.error("Failed to fetch menu:", err);
       } finally {
         setIsLoading(false);
       }
@@ -60,6 +89,7 @@ export default function MenuPage({
     fetchMenu();
   }, [restaurantId]);
 
+  // Cart management functions
   const handleAddToCart = (itemToAdd: MenuItemData) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === itemToAdd.id);
@@ -93,49 +123,28 @@ export default function MenuPage({
 
   const handleDecreaseQuantity = (itemId: string) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === itemId);
-      if (existingItem && existingItem.quantity > 1) {
-        return prevItems.map((item) =>
-          item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item,
-        );
+      const itemToRemove = prevItems.find((item) => item.id === itemId);
+      if (itemToRemove?.quantity === 1) {
+        return prevItems.filter((item) => item.id !== itemId);
       }
-      // Remove item if quantity is 1 or less
-      return prevItems.filter((item) => item.id !== itemId);
+      return prevItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item,
+      );
     });
   };
 
-  const filteredMenuItems = React.useMemo(() => {
-    if (selectedCategory === "All") {
-      return menuItems;
-    }
-    return menuItems.filter((item) => item.category === selectedCategory);
-  }, [menuItems, selectedCategory]);
-
-  const cartTotal = React.useMemo(() => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
-    );
-  }, [cartItems]);
-
-  const totalCartItemCount = React.useMemo(
-    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
-    [cartItems],
-  );
-
   const handleCheckout = async () => {
+    if (!tableId) {
+      alert("Table information is missing. Please scan a QR code.");
+      return;
+    }
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          restaurantId: restaurantId,
-
-          // Temporary table for demo
-          tableId: "b5171f41-8782-4f81-aa15-10454fd1efdd",
-
+          restaurantId,
+          tableId,
           items: cartItems.map((item) => ({
             menuItemId: item.id,
             quantity: item.quantity,
@@ -144,23 +153,41 @@ export default function MenuPage({
       });
 
       const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || "Failed to place order");
+        throw new Error(data.message || "Failed to place order.");
       }
 
+      // Clear cart and redirect to the order status page
       setCartItems([]);
       setIsCartOpen(false);
       router.push(`/order/${data.id}`);
     } catch (error: any) {
-      alert(error.message);
+      alert(`Checkout failed: ${error.message}`);
     }
   };
 
+  // Memoized calculations for performance
+  const filteredMenuItems = React.useMemo(() => {
+    if (selectedCategory === "All") return menuItems;
+    return menuItems.filter((item) => item.category === selectedCategory);
+  }, [menuItems, selectedCategory]);
+
+  const cartTotal = React.useMemo(
+    () =>
+      cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+    [cartItems],
+  );
+
+  const totalCartItemCount = React.useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
+
+  // Conditional rendering for different UI states
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex flex-1 flex-col items-center justify-center text-slate-500">
+        <div className="flex flex-1 flex-col items-center justify-center pt-20 text-slate-500">
           <Loader className="h-12 w-12 animate-spin text-cyan-400" />
           <p className="mt-4 text-lg">Loading Menu...</p>
         </div>
@@ -169,7 +196,7 @@ export default function MenuPage({
 
     if (error) {
       return (
-        <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-red-900/50 bg-red-900/10 p-8 text-red-400">
+        <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-red-900/50 bg-red-900/10 p-8 pt-20 text-red-400">
           <AlertTriangle className="h-12 w-12" />
           <p className="mt-4 text-lg font-semibold">
             Oops! Something went wrong.
@@ -202,7 +229,6 @@ export default function MenuPage({
 
       <main className="container mx-auto p-4 sm:p-6">{renderContent()}</main>
 
-      {/* Floating Cart Button */}
       {totalCartItemCount > 0 && (
         <div className="fixed bottom-6 right-6 z-40">
           <button

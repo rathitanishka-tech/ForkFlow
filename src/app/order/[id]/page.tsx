@@ -1,23 +1,26 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   OrderStatusCard,
   CustomerOrder,
 } from "@/components/customer/OrderStatusCard";
-import { AlertTriangle, Loader } from "lucide-react";
+import { AlertTriangle, Loader, ArrowLeft } from "lucide-react";
 
-export default function OrderStatusPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = React.use(params);
+export default function OrderStatusPage() {
+  const params = useParams();
+  const id = params?.id;
   const [order, setOrder] = React.useState<CustomerOrder | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    if (!id) return;
+
+    let mounted = true;
+
     const fetchOrder = async () => {
       try {
         const response = await fetch(`/api/orders/${id}`);
@@ -26,25 +29,29 @@ export default function OrderStatusPage({
           throw new Error(errorData.message || "Failed to fetch order status.");
         }
         const data: CustomerOrder = await response.json();
-        setOrder(data);
-        setError(null);
+        if (mounted) {
+          setOrder(data);
+          setError(null);
+        }
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred.",
-        );
+        if (mounted) {
+          setError(
+            err instanceof Error ? err.message : "An unknown error occurred.",
+          );
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    // Initial fetch
     fetchOrder();
-
-    // Set up polling every 2 seconds
     const interval = setInterval(fetchOrder, 2000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, [id]);
 
   const renderContent = () => {
@@ -68,20 +75,33 @@ export default function OrderStatusPage({
       return <OrderStatusCard order={order} />;
     }
 
-    return null;
+    return (
+      <div className="rounded-lg border border-neutral-800 bg-slate-900 p-8 text-slate-400">
+        <p className="text-center">Order data is unavailable.</p>
+      </div>
+    );
   };
 
   return (
     <div className="min-h-screen w-full bg-slate-950 text-white">
       <main className="container mx-auto flex flex-col items-center p-4 pt-10 sm:p-6 sm:pt-16">
         <div className="w-full max-w-2xl">
-          <header className="mb-6 text-center">
-            <h1 className="text-3xl font-bold text-slate-100">
-              Your Order Status
-            </h1>
-            <p className="text-md text-slate-400">
-              We'll keep this page updated in real-time.
-            </p>
+          <header className="mb-6 flex flex-col gap-4">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-sm font-medium text-cyan-400 hover:text-cyan-300"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Back to Home
+            </Link>
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-slate-100">
+                Your Order Status
+              </h1>
+              <p className="text-md text-slate-400">
+                We'll keep this page updated in real-time.
+              </p>
+            </div>
           </header>
           {renderContent()}
         </div>

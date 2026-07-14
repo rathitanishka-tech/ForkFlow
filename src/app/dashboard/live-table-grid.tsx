@@ -7,7 +7,7 @@ function Card({
 }>) {
   return (
     <section
-      className={`rounded-xl border border-neutral-200 bg-white shadow-sm ${className}`}
+      className={`rounded-[1.5rem] border border-[#29443C] bg-[#10231E] ${className}`}
     >
       {children}
     </section>
@@ -22,29 +22,27 @@ function SectionHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-neutral-200 px-5 py-4">
+    <div className="flex items-start justify-between gap-4 border-b border-[#29443C] px-5 py-4">
       <div>
-        <h2 className="text-sm font-semibold text-neutral-950">{title}</h2>
-        {subtitle && (
-          <p className="mt-1 text-sm text-neutral-500">{subtitle}</p>
-        )}
+        <h2 className="text-sm font-semibold text-[#f8f5ef]">{title}</h2>
+        {subtitle && <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>}
       </div>
     </div>
   );
 }
 
 const statusStyles: Record<string, string> = {
-  Available: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  Reserved: "border-amber-200 bg-amber-50 text-amber-700",
-  Occupied: "border-red-200 bg-red-50 text-red-700",
-  Maintenance: "border-neutral-200 bg-neutral-100 text-neutral-600",
+  Available: "border-emerald-400/20 bg-emerald-500/10 text-emerald-300",
+  Reserved: "border-amber-400/20 bg-amber-500/10 text-amber-300",
+  Occupied: "border-rose-400/20 bg-rose-500/10 text-rose-300",
+  Maintenance: "border-slate-500/20 bg-slate-500/10 text-slate-400",
 };
 
 const statusDots: Record<string, string> = {
-  Available: "bg-emerald-500",
-  Reserved: "bg-amber-500",
-  Occupied: "bg-red-500",
-  Maintenance: "bg-neutral-400",
+  Available: "bg-emerald-400",
+  Reserved: "bg-amber-400",
+  Occupied: "bg-rose-400",
+  Maintenance: "bg-slate-400",
 };
 
 export function LiveTableGrid({ tableStatuses }: { tableStatuses: string[] }) {
@@ -59,7 +57,7 @@ export function LiveTableGrid({ tableStatuses }: { tableStatuses: string[] }) {
           {Object.keys(statusDots).map((status) => (
             <div
               key={status}
-              className="flex items-center gap-2 text-xs font-medium text-neutral-600"
+              className="flex items-center gap-2 text-xs font-medium text-slate-400"
             >
               <span
                 className={`h-2.5 w-2.5 rounded-full ${statusDots[status]}`}

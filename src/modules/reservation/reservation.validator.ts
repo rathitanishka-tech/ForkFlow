@@ -9,8 +9,8 @@ export const createReservationSchema = z.object({
     .trim()
     .regex(/^\+?[1-9]\d{9,14}$/, "Invalid phone number"),
   email: z.string().email().optional(),
-  reservationTime: z.coerce.date(),
-  partySize: z.number().int().min(1),
+  reservationDate: z.coerce.date(),
+  guests: z.number().int().min(1),
   occasion: z.string().trim().optional(),
   seatingPreference: z.string().trim().optional(),
   noisePreference: z.string().trim().optional(),

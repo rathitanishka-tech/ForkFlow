@@ -22,8 +22,8 @@ CREATE TABLE "public"."Reservation" (
     "restaurantId" TEXT NOT NULL,
     "tableId" TEXT NOT NULL,
     "guestId" TEXT NOT NULL,
-    "reservationTime" TIMESTAMP(3) NOT NULL,
-    "partySize" INTEGER NOT NULL,
+    "reservationDate" TIMESTAMP(3) NOT NULL,
+    "guests" INTEGER NOT NULL,
     "occasion" TEXT,
     "seatingPreference" TEXT,
     "noisePreference" TEXT,
@@ -64,10 +64,10 @@ CREATE INDEX "Reservation_tableId_idx" ON "public"."Reservation"("tableId");
 CREATE INDEX "Reservation_guestId_idx" ON "public"."Reservation"("guestId");
 
 -- CreateIndex
-CREATE INDEX "Reservation_restaurantId_reservationTime_idx" ON "public"."Reservation"("restaurantId", "reservationTime");
+CREATE INDEX "Reservation_restaurantId_reservationDate_idx" ON "public"."Reservation"("restaurantId", "reservationDate");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Reservation_tableId_reservationTime_key" ON "public"."Reservation"("tableId", "reservationTime");
+CREATE UNIQUE INDEX "Reservation_tableId_reservationDate_key" ON "public"."Reservation"("tableId", "reservationDate");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "DiningSession_reservationId_key" ON "public"."DiningSession"("reservationId");

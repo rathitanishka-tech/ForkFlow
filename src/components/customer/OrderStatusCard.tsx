@@ -53,15 +53,15 @@ const statusConfig: Record<
 > = {
   PENDING: {
     badgeClass: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
-    progress: 12.5,
+    progress: 25,
   },
   PREPARING: {
     badgeClass: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    progress: 37.5,
+    progress: 50,
   },
   READY: {
     badgeClass: "bg-green-500/20 text-green-300 border-green-500/30",
-    progress: 62.5,
+    progress: 75,
   },
   SERVED: {
     badgeClass: "bg-slate-500/20 text-slate-400 border-slate-500/30",

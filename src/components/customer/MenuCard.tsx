@@ -12,10 +12,10 @@ export interface MenuItemData {
   description: string;
   price: number;
   imageUrl: string;
-  dietaryType: DietaryType;
   spiceLevel: SpiceLevel;
   category: string;
   isAvailable: boolean;
+  isVeg: boolean;
 }
 
 interface MenuCardProps {
@@ -112,6 +112,7 @@ const AvailabilityBadge = ({
 
 export function MenuCard({ menuItem, onAdd }: MenuCardProps) {
   const isAvailable = menuItem.isAvailable;
+  const dietaryType: DietaryType = menuItem.isVeg ? "VEG" : "NON_VEG";
 
   return (
     <div
@@ -136,7 +137,7 @@ export function MenuCard({ menuItem, onAdd }: MenuCardProps) {
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-lg font-bold text-white">{menuItem.name}</h3>
           <div className="flex flex-shrink-0 items-center gap-2">
-            <DietaryBadge type={menuItem.dietaryType} />
+            <DietaryBadge type={dietaryType} />
             <SpiceLevelBadge level={menuItem.spiceLevel} />
           </div>
         </div>

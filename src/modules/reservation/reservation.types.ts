@@ -8,17 +8,27 @@ export type ReservationStatus =
 
 export interface ReservationResponse {
   id: string;
+
   restaurantId: string;
+
   tableId: string;
+
   guestId: string;
-  reservationTime: Date;
-  partySize: number;
+
+  customerName: string;
+
+  phone: string;
+
+  reservationDate: Date;
+
+  guests: number;
+
   occasion?: string | null;
-  seatingPreference?: string | null;
-  noisePreference?: string | null;
+
   status: ReservationStatus;
-  notes?: string | null;
+
   createdAt: Date;
+
   updatedAt: Date;
 }
 

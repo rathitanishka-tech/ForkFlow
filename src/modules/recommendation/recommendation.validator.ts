@@ -1,17 +1,13 @@
-import { z } from "zod";
-
-export const recommendTableSchema = z.object({
-  restaurantId: z.string().uuid("Invalid restaurant ID"),
-  partySize: z
-    .number()
-    .int()
-    .min(1, "Party size must be at least 1")
-    .max(20, "Party size cannot exceed 20"),
-  occasion: z
-    .enum(["Birthday", "Anniversary", "Business", "Family", "Date", "Friends"])
-    .optional(),
-  seatingPreference: z.enum(["WINDOW", "INDOOR", "OUTDOOR", "BAR"]).optional(),
-  noisePreference: z.enum(["QUIET", "NORMAL", "LIVELY"]).optional(),
-});
-
-export type RecommendTableInput = z.infer<typeof recommendTableSchema>;
+export class RecommendationValidator {
+  /**
+   * Validates the menu item ID from the request.
+   * @param menuItemId The ID to validate.
+   * @throws {Error} if the menuItemId is missing or invalid.
+   */
+  public validateMenuItemId(menuItemId: string | null): void {
+    if (!menuItemId || typeof menuItemId !== "string") {
+      throw new Error("A valid 'menuItemId' query parameter is required.");
+    }
+    // In a real-world scenario, you might add more checks, e.g., CUID/UUID format.
+  }
+}

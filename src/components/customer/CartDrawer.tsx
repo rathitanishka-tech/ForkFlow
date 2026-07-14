@@ -1,5 +1,5 @@
 import * as React from "react";
-import { X, Plus, Minus, ShoppingCart } from "lucide-react";
+import { X, Plus, Minus, ShoppingCart, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CartItem {
@@ -18,6 +18,7 @@ interface CartDrawerProps {
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
   onCheckout: () => void;
+  checkoutLoading?: boolean;
 }
 
 const formatCurrency = (amount: number) =>
@@ -90,6 +91,7 @@ export function CartDrawer({
   onIncrease,
   onDecrease,
   onCheckout,
+  checkoutLoading = false,
 }: CartDrawerProps) {
   const totalItemCount = React.useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
@@ -180,10 +182,17 @@ export function CartDrawer({
             </div>
             <button
               onClick={onCheckout}
-              className="w-full rounded-lg bg-cyan-500 py-3 text-lg font-bold text-white transition-colors hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:bg-slate-700"
-              disabled={items.length === 0}
+              className="flex w-full items-center justify-center rounded-lg bg-cyan-500 py-3 text-lg font-bold text-white transition-colors hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:bg-slate-700"
+              disabled={items.length === 0 || checkoutLoading}
             >
-              Proceed to Checkout
+              {checkoutLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Proceed to Checkout"
+              )}
             </button>
           </div>
         )}

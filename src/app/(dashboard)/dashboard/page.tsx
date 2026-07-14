@@ -4,22 +4,27 @@ import { LiveTableGrid } from "@/app/dashboard/live-table-grid";
 import { QuickActionCard } from "@/app/dashboard/quick-action-card";
 import { ReservationTable } from "@/app/dashboard/reservation-table";
 import { StatCard } from "@/app/dashboard/stat-card";
+import { analyticsController } from "@/modules/analytics/analytics.controller";
 import {
   CalendarCheck,
   ChefHat,
   Clock3,
+  QrCode,
+  BarChart3,
+  ArrowRight,
   IndianRupee,
-  Package,
   Plus,
   Store,
   Table2,
 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 const quickActions = [
-  { label: "New Reservation", icon: Plus },
-  { label: "Manage Tables", icon: Table2 },
-  { label: "Kitchen Display", icon: ChefHat },
-  { label: "Inventory", icon: Package },
+  { label: "Reservations", icon: Plus, href: "/dashboard/reservations" },
+  { label: "Generate QR", icon: QrCode, href: "/dashboard/qr" },
+  { label: "Open Kitchen", icon: ChefHat, href: "/dashboard/kitchen" },
+  { label: "View Analytics", icon: BarChart3, href: "/dashboard/analytics" },
 ];
 
 const tableStatuses = [
@@ -55,30 +60,9 @@ const tableStatuses = [
   "Available",
 ];
 
-const insights = [
-  { label: "Most booked table", value: "T12", detail: "6 reservations today" },
-  { label: "Peak hour", value: "8:00 PM", detail: "Highest booking density" },
-  {
-    label: "Average dining time",
-    value: "74 min",
-    detail: "Across seated guests",
-  },
-  { label: "Cancellation rate", value: "3.2%", detail: "Lower than last week" },
-];
-
 async function getDashboardData() {
   try {
-    // In a real app, this URL would come from environment variables
-    const res = await fetch("http://localhost:3000/api/dashboard", {
-      cache: "no-store", // Ensure fresh data on every request
-    });
-
-    if (!res.ok) {
-      console.error("Failed to fetch dashboard data:", res.statusText);
-      return null;
-    }
-
-    return res.json();
+    return await analyticsController.getDashboardAnalytics();
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
     return null;
@@ -98,46 +82,102 @@ export default async function DashboardPage() {
   const kpis = [
     {
       label: "Restaurants",
-      value: data?.kpis?.restaurants?.value ?? "0",
-      subtitle: data?.kpis?.restaurants?.subtitle ?? "N/A",
+      value: data?.restaurantsCount?.toString() ?? "0",
+      subtitle: "Active locations",
       icon: Store,
     },
     {
       label: "Today's Reservations",
-      value: data?.kpis?.reservations?.value ?? "0",
-      subtitle: data?.kpis?.reservations?.subtitle ?? "N/A",
+      value: data?.reservationsTodayCount?.toString() ?? "0",
+      subtitle: "Upcoming bookings",
       icon: CalendarCheck,
     },
     {
       label: "Occupied Tables",
-      value: data?.kpis?.occupiedTables?.value ?? "0 / 0",
-      subtitle: data?.kpis?.occupiedTables?.subtitle ?? "N/A",
+      value: data?.occupiedTablesCount?.toString() ?? "0",
+      subtitle: "Currently occupied",
       icon: Table2,
     },
     {
       label: "Revenue",
-      value: data?.kpis?.revenue?.value ?? "₹0",
-      subtitle: data?.kpis?.revenue?.subtitle ?? "N/A",
+      value: new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(data?.todaysRevenue ?? 0),
+      subtitle: "Today's settled sales",
       icon: IndianRupee,
     },
   ];
 
   const reservations = data?.recentReservations ?? [];
-  const kitchenActivity = data?.kitchenActivity ?? [];
+  const kitchenActivity = data?.kitchenWorkload
+    ? [
+        {
+          status: "Pending",
+          table: `${data.kitchenWorkload.pending} orders`,
+          detail: "Awaiting kitchen acknowledgement",
+          tone: "bg-amber-500",
+        },
+        {
+          status: "Preparing",
+          table: `${data.kitchenWorkload.preparing} orders`,
+          detail: "Currently being prepared",
+          tone: "bg-sky-500",
+        },
+        {
+          status: "Ready",
+          table: `${data.kitchenWorkload.ready} orders`,
+          detail: "Ready for pickup and delivery",
+          tone: "bg-emerald-500",
+        },
+      ]
+    : [];
+
+  const insights = [
+    {
+      label: "Best selling item",
+      value: data?.bestSellingItem?.name ?? "No recent sales",
+      detail: data?.bestSellingItem
+        ? `${data.bestSellingItem.count} orders`
+        : "No sales data available",
+    },
+    {
+      label: "Order completion",
+      value: data?.orderCompletionRate
+        ? `${Math.round(data.orderCompletionRate)}%`
+        : "N/A",
+      detail: "Completed orders compared to today's openings",
+    },
+    {
+      label: "Average order value",
+      value: data
+        ? new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+          }).format(data.averageOrderValue)
+        : "N/A",
+      detail: "Based on today's orders",
+    },
+    {
+      label: "Restaurant capacity",
+      value: data?.restaurantsCount?.toString() ?? "0",
+      detail: "Active locations available",
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-[#29443C] bg-[#10231E] px-5 py-5 shadow-[0_18px_50px_rgba(3,15,11,0.22)] sm:flex-row sm:items-end sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-neutral-950">
+          <h1 className="text-3xl font-semibold tracking-normal text-[#f8f5ef]">
             Good Morning 👋
           </h1>
-          <p className="mt-2 text-sm text-neutral-500">
+          <p className="mt-2 text-sm text-[#8ea79d]">
             Here's what's happening across your restaurants today.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-600 shadow-sm">
-          <Clock3 className="h-4 w-4 text-neutral-400" aria-hidden="true" />
+        <div className="flex items-center gap-2 rounded-full border border-[#29443C] bg-[#081E19] px-4 py-2.5 text-sm font-medium text-[#d6b48c] shadow-sm">
+          <Clock3 className="h-4 w-4 text-[#d6b48c]" aria-hidden="true" />
           {currentDate}
         </div>
       </div>
@@ -173,10 +213,10 @@ export default async function DashboardPage() {
 
         <aside className="space-y-4">
           <div>
-            <h2 className="text-sm font-semibold text-neutral-950">
+            <h2 className="text-sm font-semibold text-[#f8f5ef]">
               Today's Insights
             </h2>
-            <p className="mt-1 text-sm text-neutral-500">
+            <p className="mt-1 text-sm text-[#8ea79d]">
               Signals from the current service window.
             </p>
           </div>

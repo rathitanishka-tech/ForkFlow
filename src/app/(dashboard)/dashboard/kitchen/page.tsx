@@ -6,19 +6,26 @@ import {
   KitchenBoard as KitchenBoardType,
   KitchenOrderStatus,
 } from "@/modules/kitchen/kitchen.types";
-
-// In a real app, this would come from session, context, or URL params.
-const RESTAURANT_ID = "acdb8f60-6b1b-4a0f-99a6-3f078a0c4f41";
+import { useCurrentRestaurant } from "@/lib/useCurrentRestaurant";
 
 export default function KitchenPage() {
+  const {
+    restaurant,
+    isLoading: restaurantLoading,
+    error: restaurantError,
+  } = useCurrentRestaurant();
   const [board, setBoard] = React.useState<KitchenBoardType | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   const fetchBoard = React.useCallback(async () => {
+    if (!restaurant?.id) {
+      return;
+    }
+
     try {
       const response = await fetch(
-        `/api/kitchen?restaurantId=${RESTAURANT_ID}`,
+        `/api/kitchen?restaurantId=${restaurant.id}`,
       );
       if (!response.ok) {
         const errorData = await response.json();
@@ -31,21 +38,23 @@ export default function KitchenPage() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [restaurant?.id]);
 
   React.useEffect(() => {
+    if (!restaurant?.id) {
+      return;
+    }
+
     fetchBoard();
-    // Optional: Set up polling to refresh the board periodically
     const interval = setInterval(fetchBoard, 30000); // Refresh every 30 seconds
     return () => clearInterval(interval);
-  }, [fetchBoard]);
+  }, [fetchBoard, restaurant?.id]);
 
   const handleStatusChange = async (
     orderId: string,
     status: KitchenOrderStatus,
   ) => {
     try {
-      // Optimistic UI update can be added here for a smoother experience
       const response = await fetch(`/api/kitchen/${orderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -56,15 +65,31 @@ export default function KitchenPage() {
         throw new Error("Failed to update order status.");
       }
 
-      // Refetch the board to get the latest state
       await fetchBoard();
     } catch (err: any) {
       console.error("Update failed:", err.message);
-      // Optionally revert optimistic update and show an error toast
     }
   };
 
   const renderContent = () => {
+    if (restaurantLoading) {
+      return (
+        <div className="flex h-full items-center justify-center">
+          <p className="text-slate-400 text-lg">Loading kitchen dashboard...</p>
+        </div>
+      );
+    }
+
+    if (restaurantError || !restaurant) {
+      return (
+        <div className="flex h-full items-center justify-center text-red-400">
+          <p>
+            {restaurantError ?? "No restaurant is configured for the kitchen."}
+          </p>
+        </div>
+      );
+    }
+
     if (isLoading && !board) {
       return (
         <div className="flex h-full items-center justify-center">
@@ -89,12 +114,24 @@ export default function KitchenPage() {
   };
 
   return (
-    <main className="h-screen w-full bg-slate-900 p-4 text-white md:p-6">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-100">Kitchen Dashboard</h1>
-        <p className="text-md text-slate-400">Live Orders</p>
+    <main className="flex min-h-0 w-full flex-col overflow-hidden rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-4 text-[#f8f5ef] shadow-[0_16px_45px_rgba(3,15,11,0.14)] md:p-6">
+      <header className="mb-6 shrink-0">
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#0f5b4c]">
+          Kitchen
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold text-[#0b2f24]">
+          Kitchen Dashboard
+        </h1>
+        <p className="mt-2 text-sm text-[#4b5d53]">
+          Live orders for
+          <span className="font-semibold text-[#f8f5ef]">
+            {restaurant?.name ?? "your restaurant"}
+          </span>
+        </p>
       </header>
-      <div className="h-[calc(100vh-120px)]">{renderContent()}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto rounded-[1.25rem] border border-[#29443C] bg-[#081E19] p-3 text-[#f8f5ef] shadow-inner md:p-4">
+        {renderContent()}
+      </div>
     </main>
   );
 }

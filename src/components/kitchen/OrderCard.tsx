@@ -84,12 +84,12 @@ export function OrderCard({ order, onStatusChange }: OrderCardProps) {
   };
 
   return (
-    <Card className="flex h-full flex-col rounded-2xl border-slate-800 bg-slate-900/80 text-slate-100 shadow-lg transition-all hover:shadow-cyan-500/10 hover:ring-1 hover:ring-slate-700">
+    <Card className="flex flex-col rounded-[1.15rem] border-[#29443C] bg-[#16342D] text-[#f8f5ef] shadow-[0_12px_35px_rgba(3,15,11,0.14)] transition-all hover:border-[#0f5b4c]/40">
       <CardHeader className="flex-row items-center justify-between p-4">
-        <CardTitle className="text-xl font-bold">
+        <CardTitle className="text-xl font-semibold">
           Table {order.tableNumber}
         </CardTitle>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-[#c7b89f]">
           {timeSince(order.createdAt)}
         </span>
       </CardHeader>
@@ -100,20 +100,20 @@ export function OrderCard({ order, onStatusChange }: OrderCardProps) {
             key={`${item.menuItemName}-${index}`}
             className="flex items-center justify-between"
           >
-            <p className="font-medium text-slate-300">{item.menuItemName}</p>
-            <p className="text-sm font-semibold text-slate-400">
+            <p className="font-medium text-[#e8dfcf]">{item.menuItemName}</p>
+            <p className="text-sm font-semibold text-[#c7b89f]">
               x{item.quantity}
             </p>
           </div>
         ))}
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between rounded-b-2xl bg-slate-950/50 p-4">
+      <CardFooter className="flex items-center justify-between rounded-b-[1.15rem] border-t border-[#29443C] bg-[#10231E]/80 p-4">
         <div className="flex flex-col">
           <Badge className={cn("select-none", config.badgeClass)}>
             {order.status}
           </Badge>
-          <p className="mt-1 text-lg font-bold text-white">
+          <p className="mt-1 text-lg font-semibold text-[#f8f5ef]">
             ₹{order.totalAmount.toFixed(2)}
           </p>
         </div>
@@ -121,7 +121,7 @@ export function OrderCard({ order, onStatusChange }: OrderCardProps) {
           <Button
             onClick={handleActionClick}
             className={cn(
-              "bg-cyan-600 text-white hover:bg-cyan-500",
+              "bg-[#0f5b4c] text-[#f8f5ef] hover:bg-[#144433]",
               "transition-transform active:scale-95",
             )}
           >

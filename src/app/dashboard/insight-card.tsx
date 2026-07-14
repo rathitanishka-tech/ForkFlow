@@ -7,7 +7,7 @@ function Card({
 }>) {
   return (
     <section
-      className={`rounded-xl border border-neutral-200 bg-white shadow-sm ${className}`}
+      className={`rounded-[1.25rem] border border-[#29443C] bg-[#10231E] ${className}`}
     >
       {children}
     </section>
@@ -22,12 +22,12 @@ interface InsightCardProps {
 
 export function InsightCard({ title, value, description }: InsightCardProps) {
   return (
-    <Card className="p-5">
-      <p className="text-sm font-medium text-neutral-500">{title}</p>
-      <p className="mt-3 text-2xl font-semibold tracking-normal text-neutral-950">
+    <Card className="p-5 shadow-[0_15px_40px_rgba(2,8,23,0.2)]">
+      <p className="text-sm font-medium text-[#8ea79d]">{title}</p>
+      <p className="mt-3 text-2xl font-semibold tracking-normal text-[#f8f5ef]">
         {value}
       </p>
-      <p className="mt-1 text-sm text-neutral-500">{description}</p>
+      <p className="mt-1 text-sm text-[#7f948b]">{description}</p>
     </Card>
   );
 }

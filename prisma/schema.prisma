@@ -18,43 +18,25 @@ model User {
 }
 
 model MenuItem {
-  id           String @id @default(uuid())
-  restaurantId String
-
-  name        String
-  category    String
-  description String?
-
-  price Float
-
+  id              String      @id @default(uuid())
+  restaurantId    String
+  name            String
+  description     String?
+  price           Float
   preparationTime Int
-
-  image String?
-
-  isAvailable Boolean @default(true)
-
-  isVeg Boolean
-
-  spiceLevel SpiceLevel
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-
-  orderItems OrderItem[]
+  image           String?
+  isAvailable     Boolean     @default(true)
+  isVeg           Boolean
+  spiceLevel      SpiceLevel
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  category        String
+  restaurant      Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
 
   @@unique([restaurantId, name])
   @@index([restaurantId])
   @@index([category])
-}
-
-enum SpiceLevel {
-  NONE
-  MILD
-  MEDIUM
-  HOT
-  VERY_HOT
 }
 
 model Business {
@@ -75,8 +57,8 @@ model BusinessMembership {
   role       BusinessRole
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   business   Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, businessId])
   @@index([userId])
@@ -99,33 +81,29 @@ model Restaurant {
   isActive         Boolean         @default(true)
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  business         Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  floors           Floor[]
-  reservations     Reservation[]
   diningSessions   DiningSession[]
-
-  orders    Order[]
-  menuItems MenuItem[]
+  floors           Floor[]
+  menuItems        MenuItem[]
+  orders           Order[]
+  reservations     Reservation[]
+  business         Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   @@unique([businessId, slug])
   @@index([businessId])
 }
 
 model Floor {
-  id           String @id @default(uuid())
+  id           String     @id @default(uuid())
   restaurantId String
   name         String
   level        Int
   width        Float
   height       Float
-
-  isActive Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  tables     Table[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  isActive     Boolean    @default(true)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  tables       Table[]
 
   @@unique([restaurantId, level])
   @@index([restaurantId])
@@ -144,10 +122,10 @@ model Table {
   isActive       Boolean         @default(true)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  floor          Floor           @relation(fields: [floorId], references: [id], onDelete: Cascade)
-  reservations   Reservation[]
   diningSessions DiningSession[]
   orders         Order[]
+  reservations   Reservation[]
+  floor          Floor           @relation(fields: [floorId], references: [id], onDelete: Cascade)
 
   @@unique([floorId, number])
   @@index([floorId])
@@ -160,64 +138,46 @@ model Guest {
   email          String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  reservations   Reservation[]
   diningSessions DiningSession[]
+  reservations   Reservation[]
 }
 
 model Order {
-  id           String @id @default(uuid())
+  id           String      @id @default(uuid())
   restaurantId String
   tableId      String
-
-  status OrderStatus @default(PENDING)
-
-  totalAmount Float
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  table      Table      @relation(fields: [tableId], references: [id], onDelete: Cascade)
-
-  items OrderItem[]
+  status       OrderStatus @default(PENDING)
+  totalAmount  Float
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  table        Table       @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  items        OrderItem[]
 
   @@index([restaurantId])
   @@index([tableId])
 }
 
 model OrderItem {
-  id String @id @default(uuid())
-
+  id         String   @id @default(uuid())
   orderId    String
   menuItemId String
-
-  quantity Int
-
-  price Float
-
-  createdAt DateTime @default(now())
-
-  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  quantity   Int
+  price      Float
+  createdAt  DateTime @default(now())
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
 }
 
-enum OrderStatus {
-  PENDING
-  PREPARING
-  READY
-  SERVED
-  CANCELLED
-}
-
 model Reservation {
-  id                String            @id @default(uuid())
+  id                String            @id @default(cuid())
   restaurantId      String
   tableId           String
   guestId           String
-  reservationTime   DateTime
-  partySize         Int
+  reservationDate   DateTime
+  guests         Int
   occasion          String?
   seatingPreference String?
   noisePreference   String?
@@ -225,16 +185,16 @@ model Reservation {
   notes             String?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
+  diningSessions    DiningSession?
+  guest             Guest             @relation(fields: [guestId], references: [id], onDelete: Cascade)
   restaurant        Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   table             Table             @relation(fields: [tableId], references: [id], onDelete: Cascade)
-  guest             Guest             @relation(fields: [guestId], references: [id], onDelete: Cascade)
-  diningSession     DiningSession?
 
-  @@unique([tableId, reservationTime])
+  @@unique([tableId, reservationDate])
   @@index([restaurantId])
   @@index([tableId])
   @@index([guestId])
-  @@index([restaurantId, reservationTime])
+  @@index([restaurantId, reservationDate])
 }
 
 model DiningSession {
@@ -248,15 +208,31 @@ model DiningSession {
   status        DiningSessionStatus @default(ACTIVE)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
+  guest         Guest               @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  reservation   Reservation?        @relation(fields: [reservationId], references: [id])
   restaurant    Restaurant          @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   table         Table               @relation(fields: [tableId], references: [id], onDelete: Cascade)
-  reservation   Reservation?        @relation(fields: [reservationId], references: [id], onDelete: SetNull)
-  guest         Guest               @relation(fields: [guestId], references: [id], onDelete: Cascade)
 
   @@index([restaurantId])
   @@index([tableId])
   @@index([reservationId])
   @@index([guestId])
+}
+
+enum SpiceLevel {
+  NONE
+  MILD
+  MEDIUM
+  HOT
+  VERY_HOT
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  SERVED
+  CANCELLED
 }
 
 enum BusinessRole {

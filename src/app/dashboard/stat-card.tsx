@@ -9,7 +9,7 @@ function Card({
 }>) {
   return (
     <section
-      className={`rounded-xl border border-neutral-200 bg-white shadow-sm ${className}`}
+      className={`rounded-[1.25rem] border border-[#29443C] bg-[#10231E] ${className}`}
     >
       {children}
     </section>
@@ -30,16 +30,16 @@ export function StatCard({
   subtitle,
 }: StatCardProps) {
   return (
-    <Card className="p-5">
+    <Card className="p-5 shadow-[0_15px_40px_rgba(2,8,23,0.25)]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-neutral-500">{title}</p>
-          <p className="mt-3 text-3xl font-semibold tracking-normal text-neutral-950">
+          <p className="text-sm font-medium text-[#8ea79d]">{title}</p>
+          <p className="mt-3 text-3xl font-semibold tracking-normal text-[#f8f5ef]">
             {value}
           </p>
-          <p className="mt-1 text-sm text-neutral-500">{subtitle}</p>
+          <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-700">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0f5b4c] text-[#f8f5ef]">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
       </div>
