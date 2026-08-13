@@ -1,3 +1,5 @@
+import { LiveTableStatus } from "@/modules/analytics/analytics.types";
+
 function Card({
   children,
   className = "",
@@ -32,29 +34,40 @@ function SectionHeader({
 }
 
 const statusStyles: Record<string, string> = {
-  Available: "border-emerald-400/20 bg-emerald-500/10 text-emerald-300",
-  Reserved: "border-amber-400/20 bg-amber-500/10 text-amber-300",
-  Occupied: "border-rose-400/20 bg-rose-500/10 text-rose-300",
-  Maintenance: "border-slate-500/20 bg-slate-500/10 text-slate-400",
+  AVAILABLE: "border-emerald-400/20 bg-emerald-500/10 text-emerald-300",
+  RESERVED: "border-amber-400/20 bg-amber-500/10 text-amber-300",
+  OCCUPIED: "border-rose-400/20 bg-rose-500/10 text-rose-300",
+  MAINTENANCE: "border-slate-500/20 bg-slate-500/10 text-slate-400",
 };
 
 const statusDots: Record<string, string> = {
-  Available: "bg-emerald-400",
-  Reserved: "bg-amber-400",
-  Occupied: "bg-rose-400",
-  Maintenance: "bg-slate-400",
+  AVAILABLE: "bg-emerald-400",
+  RESERVED: "bg-amber-400",
+  OCCUPIED: "bg-rose-400",
+  MAINTENANCE: "bg-slate-400",
 };
 
-export function LiveTableGrid({ tableStatuses }: { tableStatuses: string[] }) {
+const statusLabels: Record<string, string> = {
+  AVAILABLE: "Available",
+  RESERVED: "Reserved",
+  OCCUPIED: "Occupied",
+  MAINTENANCE: "Maintenance",
+};
+
+export function LiveTableGrid({
+  tableStatuses,
+}: {
+  tableStatuses: LiveTableStatus[];
+}) {
   return (
     <Card>
       <SectionHeader
         title="Live Table Status"
-        subtitle="30 table overview across the floor"
+        subtitle={`${tableStatuses.length} table overview across the floor`}
       />
       <div className="p-5">
         <div className="mb-5 flex flex-wrap gap-x-5 gap-y-2">
-          {Object.keys(statusDots).map((status) => (
+          {Object.keys(statusLabels).map((status) => (
             <div
               key={status}
               className="flex items-center gap-2 text-xs font-medium text-slate-400"
@@ -62,17 +75,17 @@ export function LiveTableGrid({ tableStatuses }: { tableStatuses: string[] }) {
               <span
                 className={`h-2.5 w-2.5 rounded-full ${statusDots[status]}`}
               />
-              {status}
+              {statusLabels[status]}
             </div>
           ))}
         </div>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6 2xl:grid-cols-10">
-          {tableStatuses.map((status, index) => (
+          {tableStatuses.map((table) => (
             <div
-              key={`${status}-${index}`}
-              className={`flex h-14 items-center justify-center rounded-full border text-sm font-semibold ${statusStyles[status]}`}
+              key={table.id}
+              className={`flex h-14 items-center justify-center rounded-full border text-sm font-semibold ${statusStyles[table.status]}`}
             >
-              T{String(index + 1).padStart(2, "0")}
+              T{String(table.number).padStart(2, "0")}
             </div>
           ))}
         </div>

@@ -1,6 +1,6 @@
 import { prisma as db } from "@/lib/prisma";
 import { OrderStatus, TableStatus } from "@prisma/client";
-import type { DashboardAnalytics, RecentOrder } from "./analytics.types";
+import type { DashboardAnalytics } from "./analytics.types";
 
 function formatReservationStatus(status: string): string {
   switch (status) {
@@ -25,7 +25,9 @@ class AnalyticsService {
    * Fetches and computes all data required for the restaurant's analytics dashboard.
    * @returns {Promise<DashboardAnalytics>} The aggregated dashboard analytics data.
    */
-  public async getDashboardAnalytics(): Promise<DashboardAnalytics> {
+  public async getDashboardAnalytics(
+    restaurantId: string,
+  ): Promise<DashboardAnalytics> {
     const today = new Date();
     const startOfToday = new Date(
       today.getFullYear(),
@@ -36,7 +38,6 @@ class AnalyticsService {
     const sevenDaysAgo = new Date(startOfToday);
     sevenDaysAgo.setDate(startOfToday.getDate() - 6);
 
-    // Batch Prisma queries to run in parallel
     const [
       todaysRevenueResult,
       todaysOrdersCount,
@@ -50,41 +51,58 @@ class AnalyticsService {
       recentOrders,
       todaysReservationsCount,
       restaurantsCount,
+      tables,
       recentReservations,
     ] = await db.$transaction([
-      // 1. Today's Revenue
       db.order.aggregate({
         _sum: { totalAmount: true },
         where: {
+          restaurantId,
           status: OrderStatus.SERVED,
-          createdAt: { gte: startOfToday },
+          createdAt: {
+            gte: startOfToday,
+          },
         },
       }),
-      // 2. Today's Orders Count
-      db.order.count({
-        where: { createdAt: { gte: startOfToday } },
-      }),
-      // 3. Pending Orders Count
-      db.order.count({
-        where: { status: OrderStatus.PENDING },
-      }),
-      // 4. Occupied Tables Count
-      db.table.count({
-        where: { status: TableStatus.OCCUPIED },
-      }),
-      // 5. Today's Completed Orders Count (for completion rate)
       db.order.count({
         where: {
+          restaurantId,
+          createdAt: {
+            gte: startOfToday,
+          },
+        },
+      }),
+      db.order.count({
+        where: {
+          restaurantId,
+          status: OrderStatus.PENDING,
+        },
+      }),
+      db.table.count({
+        where: {
+          floor: {
+            restaurantId,
+          },
+          status: TableStatus.OCCUPIED,
+        },
+      }),
+      db.order.count({
+        where: {
+          restaurantId,
           status: OrderStatus.SERVED,
           createdAt: { gte: startOfToday },
         },
       }),
-      // 6. Preparing Orders Count (for kitchen workload)
-      db.order.count({ where: { status: OrderStatus.PREPARING } }),
-      // 7. Ready Orders Count (for kitchen workload)
-      db.order.count({ where: { status: OrderStatus.READY } }),
-      // 5. Best Selling Item
+      db.order.count({
+        where: { restaurantId, status: OrderStatus.PREPARING },
+      }),
+      db.order.count({ where: { restaurantId, status: OrderStatus.READY } }),
       db.orderItem.findMany({
+        where: {
+          order: {
+            restaurantId,
+          },
+        },
         select: {
           quantity: true,
           menuItem: {
@@ -94,16 +112,18 @@ class AnalyticsService {
           },
         },
       }),
-      // 6. Last 7 Days Revenue
       db.order.findMany({
         where: {
+          restaurantId,
           status: OrderStatus.SERVED,
           createdAt: { gte: sevenDaysAgo },
         },
         select: { totalAmount: true, createdAt: true },
       }),
-      // 7. Recent Orders
       db.order.findMany({
+        where: {
+          restaurantId,
+        },
         orderBy: { createdAt: "desc" },
         take: 5,
         select: {
@@ -115,33 +135,49 @@ class AnalyticsService {
           table: { select: { number: true } },
         },
       }),
-      // 8. Today's reservations count
       db.reservation.count({
         where: {
-          reservationDate: {
+          restaurantId,
+          reservationTime: {
             gte: startOfToday,
             lt: new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000),
           },
         },
       }),
 
-      // 9. Restaurant count
-      db.restaurant.count(),
-      // 10. Recent reservations
-      db.reservation.findMany({
-        orderBy: { reservationDate: "desc" },
-        take: 5,
+      db.restaurant.count({
+        where: {
+          id: restaurantId,
+        },
+      }),
+      db.table.findMany({
+        where: {
+          floor: { restaurantId },
+        },
         select: {
-          customerName: true,
-          reservationDate: true,
-          guests: true,
+          id: true,
+          number: true,
           status: true,
+        },
+        orderBy: {
+          number: "asc",
+        },
+      }),
+      db.reservation.findMany({
+        where: {
+          restaurantId,
+        },
+        orderBy: {
+          reservationTime: "desc",
+        },
+        take: 5,
+        include: {
+          guest: true,
           table: true,
         },
       }),
     ]);
 
-    // Process best selling item from all order items
     let bestSellingItem: { name: string; count: number } | null = null;
     if (orderItems.length > 0) {
       const itemCounts = new Map<string, number>();
@@ -170,7 +206,6 @@ class AnalyticsService {
       }
     }
 
-    // Process last 7 days revenue
     const revenueByDay = new Map<string, number>();
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfToday);
@@ -190,7 +225,6 @@ class AnalyticsService {
       .map(([date, revenue]) => ({ date, revenue }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    // Process new metrics
     const todaysRevenue = todaysRevenueResult._sum?.totalAmount ?? 0;
     const averageOrderValue =
       todaysOrdersCount > 0 ? todaysRevenue / todaysOrdersCount : 0;
@@ -226,16 +260,22 @@ class AnalyticsService {
         },
       })),
       recentReservations: recentReservations.map((reservation) => ({
-        guest: reservation.customerName || "Guest",
-        table: reservation.table?.number ?? "Pending",
-        time: new Date(reservation.reservationDate).toLocaleString("en-US", {
+        id: reservation.id,
+        guest: reservation.guest?.name ?? "Guest",
+        table: reservation.table.number,
+        time: new Date(reservation.reservationTime).toLocaleString("en-US", {
           month: "short",
           day: "numeric",
           hour: "numeric",
           minute: "2-digit",
         }),
-        guests: reservation.guests ?? 0,
-        status: formatReservationStatus(String(reservation.status)),
+        guests: reservation.partySize,
+        status: formatReservationStatus(reservation.status),
+      })),
+      tableStatuses: tables.map((table) => ({
+        id: table.id,
+        number: table.number,
+        status: table.status,
       })),
     };
   }

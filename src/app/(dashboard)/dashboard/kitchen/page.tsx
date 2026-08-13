@@ -8,6 +8,16 @@ import {
 } from "@/modules/kitchen/kitchen.types";
 import { useCurrentRestaurant } from "@/lib/useCurrentRestaurant";
 
+async function fetchKitchenBoard(restaurantId: string): Promise<KitchenBoardType> {
+  const response = await fetch(`/api/kitchen?restaurantId=${restaurantId}`);
+  if (!response.ok) {
+    const errorData: { message?: string } = await response.json();
+    throw new Error(errorData.message || "Failed to fetch kitchen board.");
+  }
+
+  return response.json();
+}
+
 export default function KitchenPage() {
   const {
     restaurant,
@@ -18,37 +28,44 @@ export default function KitchenPage() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  const fetchBoard = React.useCallback(async () => {
-    if (!restaurant?.id) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `/api/kitchen?restaurantId=${restaurant.id}`,
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch kitchen board.");
-      }
-      const data: KitchenBoardType = await response.json();
-      setBoard(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [restaurant?.id]);
-
   React.useEffect(() => {
     if (!restaurant?.id) {
       return;
     }
 
-    fetchBoard();
-    const interval = setInterval(fetchBoard, 30000); // Refresh every 30 seconds
-    return () => clearInterval(interval);
-  }, [fetchBoard, restaurant?.id]);
+    let isMounted = true;
+    const restaurantId = restaurant.id;
+
+    const loadBoard = async () => {
+      try {
+        setError(null);
+        const data = await fetchKitchenBoard(restaurantId);
+        if (isMounted) {
+          setBoard(data);
+        }
+      } catch (err: unknown) {
+        if (isMounted) {
+          setError(
+            err instanceof Error ? err.message : "An unknown error occurred.",
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadBoard();
+    const interval = window.setInterval(() => {
+      void loadBoard();
+    }, 5000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(interval);
+    };
+  }, [restaurant?.id]);
 
   const handleStatusChange = async (
     orderId: string,
@@ -65,9 +82,16 @@ export default function KitchenPage() {
         throw new Error("Failed to update order status.");
       }
 
-      await fetchBoard();
-    } catch (err: any) {
-      console.error("Update failed:", err.message);
+      if (!restaurant?.id) {
+        throw new Error("No restaurant is configured for the kitchen.");
+      }
+
+      const data = await fetchKitchenBoard(restaurant.id);
+      setBoard(data);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An unknown error occurred.";
+      console.error("Update failed:", message);
     }
   };
 

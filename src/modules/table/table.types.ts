@@ -56,6 +56,7 @@ export interface TableSummary {
  * Defines the available filters for querying a list of tables.
  */
 export interface TableFilters {
+  restaurantId?: string;
   floorId?: string;
   status?: TableStatus;
   shape?: TableShape;

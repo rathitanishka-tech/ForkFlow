@@ -1,121 +1,41 @@
-# TableTop Features
+# Features
 
-## Authentication
+## Staff Dashboard
 
-- Owner login
-- Manager login
-- Staff login
-- Kitchen login
-- QR Guest session
-- Anonymous reservation
+The dashboard summarizes revenue, order volume, pending work, average order value, completion rate, kitchen workload, table occupancy, reservations, recent orders, and recent reservations.
 
----
+## Restaurant Operations
 
-## Business
+Authenticated staff work against the active restaurant resolved from their Clerk session and business membership.
 
-- Multi-tenant
-- Restaurant chains
-- Multiple restaurant properties
+## Menu Management
 
----
+Staff can list, create, update, delete, and toggle menu items. Customer-facing menu data is filtered to available items through the public menu endpoint.
 
-## Restaurant
+## Floors And Tables
 
-- Restaurant profile
-- Operating hours
-- Property type
-- Parking availability
-
----
-
-## Floor Management
-
-- Multiple floors
-- Custom layouts
-- Table positioning
-
----
-
-## Tables
-
-- Table status
-- Capacity
-- Category
-- Live availability
-
----
+The floor view displays restaurant floors and tables with shape, capacity, position, status, and selection details.
 
 ## Reservations
 
-- AI table recommendation
-- Walk-in reservation
-- Online reservation
-- Modify reservation
-- Cancel reservation
-
----
-
-## Orders
-
-- Dine-in
-- Takeaway
-- Delivery
-- Kiosk
-- QR Ordering
-
----
+Staff can create reservations, review recent reservations, and apply actions such as confirm, seat, complete, cancel, and no-show.
 
 ## Kitchen
 
-- Kitchen queue
-- Order stages
-- Live updates
+The kitchen board groups orders by status and allows staff to advance order preparation flow.
 
----
+## Orders
 
-## Menu
-
-- Categories
-- Variants
-- Add-ons
-- Availability
-
----
-
-## Inventory
-
-- Stock
-- Alerts
-- Consumption
-
----
-
-## Staff
-
-- Roles
-- Shift assignment
-
----
-
-## Billing
-
-- Invoice
-- Split bill
-- Payment
-
----
+Orders support staff and public creation flows, item quantities, captured prices, table association, and status updates.
 
 ## Analytics
 
-- Revenue
-- Peak hours
-- Popular dishes
-- Table utilization
+Analytics includes revenue series, order metrics, workload metrics, table statuses, recent reservations, and best-selling item calculation.
 
----
+## QR Ordering
 
-## AI
+The QR dashboard generates table-specific customer menu links using the configured app base URL.
 
-- Table recommendation
-- Menu recommendation
-- Demand prediction
+## Customer Menu And Tracking
+
+Guests can browse a restaurant menu, add items to a cart, submit an order, and track the order by ID.

@@ -28,7 +28,6 @@ export function Header() {
           setRestaurantName(restaurants[0].name);
         }
       } catch {
-        // Keep default label if restaurant could not be loaded.
       }
     };
 

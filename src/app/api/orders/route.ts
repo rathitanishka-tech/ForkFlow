@@ -4,21 +4,23 @@ import { prisma } from "@/lib/prisma";
 import { OrderController } from "@/modules/order/order.controller";
 import { OrderService } from "@/modules/order/order.service";
 import { OrderStatus } from "@/modules/order/order.types";
+import { getCurrentRestaurant } from "@/lib/server-restaurant";
 
-// Instantiate dependencies
 const orderService = new OrderService(prisma);
 const orderController = new OrderController(orderService);
 
 /**
  * Handles GET requests to retrieve a list of orders.
- * Supports filtering and pagination via query parameters.
+ *
+ * The restaurant is resolved server-side from the Clerk session.
+ * The client must NOT supply a restaurantId query parameter.
  */
 export async function GET(req: NextRequest) {
   try {
+    const restaurant = await getCurrentRestaurant();
+
     const { searchParams } = new URL(req.url);
 
-    // Safely parse query parameters
-    const restaurantId = searchParams.get("restaurantId") || undefined;
     const tableId = searchParams.get("tableId") || undefined;
     const status = (searchParams.get("status") as OrderStatus) || undefined;
 
@@ -26,7 +28,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
     const result = await orderController.list({
-      restaurantId,
+      restaurantId: restaurant.id,
       tableId,
       status,
       page,
@@ -45,13 +47,19 @@ export async function GET(req: NextRequest) {
 
 /**
  * Handles POST requests to create a new order.
+ *
+ * The restaurantId is resolved server-side and injected into the input.
+ * The client must NOT supply a restaurantId in the body.
  */
 export async function POST(req: NextRequest) {
   try {
+    const restaurant = await getCurrentRestaurant();
+
     const body = await req.json();
-    const newOrder = await orderController.create(body);
+
+    const newOrder = await orderController.create(body, restaurant.id);
     return NextResponse.json(newOrder, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { message: "Validation failed", errors: error.issues },
@@ -59,20 +67,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Handle specific service-layer errors for 404
     if (
-      error.message.includes("not found") ||
-      error.message.includes("are invalid or not available")
+      error instanceof Error &&
+      (error.message.includes("not found") ||
+        error.message.includes("are invalid or not available"))
     ) {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
-    // Example for a potential conflict, though less common for order creation
-    if (error.message.includes("already exists")) {
+    if (error instanceof Error && error.message.includes("already exists")) {
       return NextResponse.json({ message: error.message }, { status: 409 });
     }
 
-    // Generic server error
     console.error("Error creating order:", error);
     return NextResponse.json(
       { message: "An unexpected error occurred." },

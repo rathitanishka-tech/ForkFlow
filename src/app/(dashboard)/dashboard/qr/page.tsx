@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { TableQRCode } from "@/components/qr/TableQRCode";
-import { Loader, AlertTriangle } from "lucide-react";
+import { Loader, AlertTriangle, QrCode } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCurrentRestaurant } from "@/lib/useCurrentRestaurant";
 
 interface TableData {
@@ -10,18 +11,13 @@ interface TableData {
   number: string;
 }
 
-export default function QrCodePage() {
-  const {
-    restaurant,
-    isLoading: restaurantLoading,
-    error: restaurantError,
-  } = useCurrentRestaurant();
+function useTables(restaurantId?: string) {
   const [tables, setTables] = React.useState<TableData[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (!restaurant?.id) {
+    if (!restaurantId) {
       return;
     }
 
@@ -31,7 +27,7 @@ export default function QrCodePage() {
         setError(null);
 
         const response = await fetch(
-          `/api/tables?restaurantId=${restaurant.id}`,
+          `/api/tables?restaurantId=${restaurantId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to load tables.");
@@ -48,82 +44,164 @@ export default function QrCodePage() {
     };
 
     fetchTables();
-  }, [restaurant?.id]);
+  }, [restaurantId]);
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex flex-col items-center justify-center text-slate-500">
-          <Loader className="h-10 w-10 animate-spin text-cyan-400" />
-          <p className="mt-4 text-lg">Loading QR Codes...</p>
-        </div>
-      );
-    }
+  return { tables, isLoading, error, setTables };
+}
 
-    if (error) {
-      return (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-red-900/50 bg-red-900/10 p-8 text-red-400">
-          <AlertTriangle className="h-10 w-10" />
-          <p className="mt-4 text-lg font-semibold">{error}</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-        {tables.map((table) => (
-          <TableQRCode
-            key={table.id}
-            restaurantName={restaurant!.name}
-            restaurantId={restaurant!.id}
-            tableId={table.id}
-            tableNumber={table.number}
-          />
-        ))}
-      </div>
-    );
-  };
+export default function QrCodePage() {
+  const {
+    restaurant,
+    isLoading: restaurantLoading,
+    error: restaurantError,
+  } = useCurrentRestaurant();
+  const { tables, isLoading, error } = useTables(restaurant?.id);
+  const [selectedTable, setSelectedTable] = React.useState<TableData | null>(
+    null,
+  );
+  const resolvedSelectedTable = selectedTable ?? tables[0] ?? null;
 
   if (restaurantLoading) {
     return (
-      <main className="min-h-screen w-full bg-slate-900 p-4 text-white md:p-6">
-        <div className="flex h-[calc(100vh-120px)] items-center justify-center">
-          <Loader className="h-10 w-10 animate-spin text-cyan-400" />
-        </div>
-      </main>
+      <div className="flex h-full items-center justify-center">
+        <Loader className="h-8 w-8 animate-spin text-[#8EA79D]" />
+      </div>
     );
   }
 
   if (restaurantError || !restaurant) {
     return (
-      <main className="min-h-screen w-full bg-slate-900 p-4 text-white md:p-6">
-        <div className="flex h-[calc(100vh-120px)] items-center justify-center">
-          <div className="rounded-2xl border border-red-800 bg-red-900/10 p-8 text-center">
-            <AlertTriangle className="mx-auto h-12 w-12 text-red-400" />
-            <h1 className="mt-4 text-2xl font-bold text-white">Unable to load restaurant</h1>
-            <p className="mt-2 text-sm text-slate-400">
-              {restaurantError ?? "No active restaurant is configured."}
-            </p>
-          </div>
+      <div className="flex h-full items-center justify-center">
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-8 text-center">
+          <AlertTriangle className="mx-auto h-12 w-12 text-rose-400" />
+          <h1 className="mt-4 text-2xl font-bold text-[#F8F5EF]">
+            Unable to load restaurant
+          </h1>
+          <p className="mt-2 text-sm text-[#8EA79D]">
+            {restaurantError ?? "No active restaurant is configured."}
+          </p>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen w-full bg-slate-900 p-4 text-white md:p-6">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-100">QR Code Generator</h1>
-        <p className="text-md mt-1 text-slate-400">
-          Generate and download QR codes for each restaurant table.
-        </p>
-        <p className="mt-4 text-sm text-slate-400">
-          Restaurant: <span className="font-medium text-white">{restaurant.name}</span>
-        </p>
-      </header>
-      <div className="flex justify-center">
-        <div className="w-full">{renderContent()}</div>
+    <div className="space-y-6">
+      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-[#29443C] bg-[#10231E] px-5 py-5 shadow-[0_18px_50px_rgba(3,15,11,0.22)] sm:flex-row sm:items-end sm:px-6">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-normal text-[#f8f5ef]">
+            QR Code Manager
+          </h1>
+          <p className="mt-2 text-sm text-[#8ea79d]">
+            Generate, preview, and download QR codes for your tables.
+          </p>
+        </div>
+        <div className="text-right text-sm">
+          <p className="text-[#8EA79D]">Restaurant</p>
+          <p className="font-semibold text-[#F8F5EF]">{restaurant.name}</p>
+        </div>
       </div>
-    </main>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="flex h-[600px] flex-col rounded-[1.5rem] border border-[#29443C] bg-[#10231E] lg:col-span-1">
+          <div className="border-b border-[#29443C] p-4">
+            <h2 className="font-semibold text-[#F8F5EF]">
+              Tables ({tables.length})
+            </h2>
+          </div>
+          <div className="grow overflow-y-auto">
+            {isLoading ? (
+              <div className="flex h-full items-center justify-center">
+                <Loader className="h-6 w-6 animate-spin text-[#8EA79D]" />
+              </div>
+            ) : error ? (
+              <div className="p-4 text-center text-sm text-rose-400">
+                {error}
+              </div>
+            ) : tables.length === 0 ? (
+              <div className="p-4 text-center text-sm text-[#8EA79D]">
+                No tables found.
+              </div>
+            ) : (
+              <ul className="divide-y divide-[#29443C]">
+                {tables.map((table) => (
+                  <li key={table.id}>
+                    <button
+                      onClick={() => setSelectedTable(table)}
+                      className={`w-full p-4 text-left transition-colors duration-200 ${
+                        resolvedSelectedTable?.id === table.id
+                          ? "bg-[#D6B48C]/10"
+                          : "hover:bg-white/5"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-[#F8F5EF]">
+                          Table {table.number}
+                        </span>
+                        {resolvedSelectedTable?.id === table.id && (
+                          <div className="h-2 w-2 rounded-full bg-[#D6B48C]"></div>
+                        )}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <div className="relative h-[600px] rounded-[1.5rem] border border-[#29443C] bg-gradient-to-br from-[#16352D] via-[#10231E] to-[#10231E] p-6 lg:col-span-2">
+          <AnimatePresence mode="wait">
+            {resolvedSelectedTable && !isLoading ? (
+              <motion.div
+                key={resolvedSelectedTable.id}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="flex h-full flex-col items-center justify-center"
+              >
+                <TableQRCode
+                  restaurantName={restaurant.name}
+                  restaurantId={restaurant.id}
+                  tableId={resolvedSelectedTable.id}
+                  tableNumber={resolvedSelectedTable.number}
+                  qrOptions={{
+                    color: {
+                      dark: "#F8F5EF", // QR code dots
+                      light: "#10231E", // QR code background
+                    },
+                  }}
+                  showUrl={false}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="placeholder"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex h-full flex-col items-center justify-center text-center"
+              >
+                {isLoading ? (
+                  <Loader className="h-8 w-8 animate-spin text-[#8EA79D]" />
+                ) : (
+                  <>
+                    <QrCode className="h-16 w-16 text-[#8EA79D]/50" />
+                    <h3 className="mt-6 text-xl font-semibold text-[#F8F5EF]">
+                      {error ? "Error Loading Tables" : "No Table Selected"}
+                    </h3>
+                    <p className="mt-2 text-sm text-[#8EA79D]">
+                      {error
+                        ? error
+                        : "Select a table from the list to view its QR code."}
+                    </p>
+                  </>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
   );
 }

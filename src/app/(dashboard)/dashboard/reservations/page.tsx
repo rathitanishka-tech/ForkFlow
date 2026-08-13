@@ -1,16 +1,28 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import {
-  CalendarCheck,
-  Loader,
-  AlertTriangle,
-  CheckCircle2,
-} from "lucide-react";
-import { ReservationTable } from "@/app/dashboard/reservation-table";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
 import { useCurrentRestaurant } from "@/lib/useCurrentRestaurant";
-import type { DashboardAnalytics } from "@/modules/analytics/analytics.types";
+import type {
+  DashboardAnalytics,
+  ReservationSummary,
+} from "@/modules/analytics/analytics.types";
 
 interface TableOption {
   id: string;
@@ -43,14 +55,16 @@ const initialFormState: ReservationFormState = {
   notes: "",
 };
 
+type ReservationAction = "confirm" | "seat" | "complete" | "cancel" | "no-show";
+
 export default function ReservationsPage() {
-  const {
-    restaurant,
-    isLoading: restaurantLoading,
-    error: restaurantError,
-  } = useCurrentRestaurant();
+  const { restaurant } = useCurrentRestaurant();
+  const router = useRouter();
   const [analytics, setAnalytics] = React.useState<DashboardAnalytics | null>(
     null,
+  );
+  const [reservations, setReservations] = React.useState<ReservationSummary[]>(
+    [],
   );
   const [tables, setTables] = React.useState<TableOption[]>([]);
   const [form, setForm] =
@@ -60,23 +74,36 @@ export default function ReservationsPage() {
   const [successMessage, setSuccessMessage] = React.useState<string | null>(
     null,
   );
+  const [actionState, setActionState] = React.useState<{
+    isLoading: boolean;
+    dialogOpen: boolean;
+    currentAction: ReservationAction | null;
+    reservationId: string | null;
+  }>({
+    isLoading: false,
+    dialogOpen: false,
+    currentAction: null,
+    reservationId: null,
+  });
 
   React.useEffect(() => {
     const fetchAnalytics = async () => {
       try {
         const response = await fetch("/api/dashboard/analytics");
+
         if (!response.ok) {
           throw new Error("Failed to load reservation metrics.");
         }
         const data: DashboardAnalytics = await response.json();
         setAnalytics(data);
+        setReservations(data.recentReservations);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchAnalytics();
-  }, []);
+  }, [successMessage]);
 
   React.useEffect(() => {
     if (!restaurant?.id) {
@@ -94,10 +121,12 @@ export default function ReservationsPage() {
 
         const result = await response.json();
         const tableOptions: TableOption[] = Array.isArray(result.data)
-          ? result.data.map((table: any) => ({
-              id: table.id,
-              number: table.number,
-            }))
+          ? (result.data as Array<{ id: string; number: string }>).map(
+              (table) => ({
+                id: table.id,
+                number: table.number,
+              }),
+            )
           : [];
 
         setTables(tableOptions);
@@ -123,6 +152,83 @@ export default function ReservationsPage() {
       ...current,
       [name]: name === "guests" ? Number(value) : value,
     }));
+  };
+
+  const handleReservationAction = async (
+    action: ReservationAction,
+    reservationId: string,
+  ) => {
+    setActionState((prev) => ({ ...prev, isLoading: true, reservationId }));
+    try {
+      const response = await fetch(`/api/reservations/${reservationId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || `Failed to ${action} reservation.`,
+        );
+      }
+
+      toast.success(`Reservation action '${action}' was successful.`);
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "An unknown error occurred.",
+      );
+    } finally {
+      setActionState({
+        isLoading: false,
+        dialogOpen: false,
+        currentAction: null,
+        reservationId: null,
+      });
+    }
+  };
+
+  const openConfirmationDialog = (
+    action: ReservationAction,
+    reservationId: string,
+  ) => {
+    setActionState({
+      isLoading: false,
+      dialogOpen: true,
+      currentAction: action,
+      reservationId,
+    });
+  };
+
+  const dialogConfig = {
+    complete: {
+      title: "Complete Dining?",
+      description:
+        "This will mark the dining session as completed and set the table to available.",
+    },
+    cancel: {
+      title: "Cancel Reservation?",
+      description: "This will cancel the reservation and release the table.",
+    },
+    "no-show": {
+      title: "Mark as No-Show?",
+      description:
+        "This will mark the guest as a no-show and release the table.",
+    },
+  };
+
+  const currentDialog = actionState.currentAction
+    ? dialogConfig[actionState.currentAction as keyof typeof dialogConfig]
+    : null;
+
+  const statusConfig = {
+    PENDING: { label: "Pending", className: "bg-amber-500 text-white" },
+    CONFIRMED: { label: "Confirmed", className: "bg-blue-500 text-white" },
+    SEATED: { label: "Seated", className: "bg-emerald-500 text-white" },
+    COMPLETED: { label: "Completed", className: "bg-gray-500 text-white" },
+    CANCELLED: { label: "Cancelled", className: "bg-red-500 text-white" },
+    NO_SHOW: { label: "No Show", className: "bg-neutral-400 text-white" },
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -153,8 +259,8 @@ export default function ReservationsPage() {
           name: form.name,
           phone: form.phone,
           email: form.email || undefined,
-          reservationDate: new Date(form.reservationDate).toISOString(),
-          guests: form.guests,
+          reservationTime: new Date(form.reservationDate).toISOString(),
+          partySize: form.guests,
           occasion: form.occasion || undefined,
           seatingPreference: form.seatingPreference || undefined,
           noisePreference: form.noisePreference || undefined,
@@ -164,7 +270,14 @@ export default function ReservationsPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Unable to create reservation.");
+        
+        // Zod validation errors return an array of issues
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          const firstError = errorData.errors[0];
+          throw new Error(firstError.message || "Validation failed.");
+        }
+        
+        throw new Error(errorData.message || errorData.error || "Unable to create reservation.");
       }
 
       setSuccessMessage("Reservation created successfully.");
@@ -172,12 +285,7 @@ export default function ReservationsPage() {
       if (tables.length > 0) {
         setForm((current) => ({ ...current, tableId: tables[0].id }));
       }
-      const analyticsResponse = await fetch("/api/dashboard/analytics");
-      if (analyticsResponse.ok) {
-        const analyticsData: DashboardAnalytics =
-          await analyticsResponse.json();
-        setAnalytics(analyticsData);
-      }
+      router.refresh();
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -188,8 +296,6 @@ export default function ReservationsPage() {
       setIsSaving(false);
     }
   };
-
-  const reservationRecords = analytics?.recentReservations ?? [];
 
   return (
     <main className="min-h-screen w-full bg-[#081E19] p-4 text-[#f8f5ef] md:p-6">
@@ -215,7 +321,7 @@ export default function ReservationsPage() {
           </Link>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="grid gap-6">
           <section className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6 shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -375,39 +481,132 @@ export default function ReservationsPage() {
             </form>
           </section>
 
-          <section className="hidden space-y-6 xl:block">
-            <div className="rounded-3xl border border-[#29443C] bg-[#10231E] p-6 shadow-lg">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm text-[#4b5d53]">Today's Reservations</p>
-                  <p className="mt-2 text-3xl font-semibold text-[#f8f5ef]">
-                    {analytics?.reservationsTodayCount ?? 0}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[#10291f] px-4 py-3 text-sm text-[#f8f5ef]">
-                  {restaurant?.name ?? "No restaurant selected"}
-                </div>
-              </div>
-            </div>
+          <section className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6 shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
+            <h2 className="text-lg font-semibold text-[#f8f5ef]">
+              Recent Reservations
+            </h2>
+            <p className="mt-1 text-sm text-[#8ea79d]">
+              A list of the most recent bookings.
+            </p>
+            <div className="mt-6 space-y-4">
+              {reservations.length > 0 ? (
+                reservations.map((reservation) => {
+                  const statusKey = reservation.status
+                    .toUpperCase()
+                    .replace(" ", "_") as keyof typeof statusConfig;
+                  const config = statusConfig[statusKey];
 
-            <div className="rounded-3xl border border-[#29443C] bg-[#10231E] p-6 shadow-lg">
-              <div className="mb-4 flex items-center gap-3">
-                <CalendarCheck className="h-5 w-5 text-[#0f5b4c]" />
-                <h2 className="text-lg font-semibold text-[#f8f5ef]">
-                  Recent reservations
-                </h2>
-              </div>
-              {reservationRecords.length > 0 ? (
-                <ReservationTable reservations={reservationRecords} />
+                  const renderActionButton = () => {
+                    switch (statusKey) {
+                      case "PENDING":
+                        return (
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              handleReservationAction("confirm", reservation.id)
+                            }
+                          >
+                            Confirm
+                          </Button>
+                        );
+                      case "CONFIRMED":
+                        return (
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              handleReservationAction("seat", reservation.id)
+                            }
+                          >
+                            Seat Guest
+                          </Button>
+                        );
+                      case "SEATED":
+                        return (
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              openConfirmationDialog("complete", reservation.id)
+                            }
+                          >
+                            Complete Dining
+                          </Button>
+                        );
+                      default:
+                        return null;
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={reservation.id}
+                      className="flex items-center justify-between rounded-2xl border border-[#29443C] bg-[#081E19] p-4"
+                    >
+                      <div>
+                        <p className="font-semibold text-white">
+                          {reservation.guest}
+                        </p>
+                        <p className="text-sm text-slate-400">
+                          Table {reservation.table} &bull; {reservation.guests}{" "}
+                          guests &bull; {reservation.time}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        {config && (
+                          <Badge className={config.className}>
+                            {config.label}
+                          </Badge>
+                        )}
+                        {renderActionButton()}
+                      </div>
+                    </div>
+                  );
+                })
               ) : (
-                <div className="rounded-2xl border border-dashed border-[#29443C] bg-[#081E19] p-8 text-center text-[#8ea79d]">
-                  No recent reservations are available yet.
-                </div>
+                <p className="text-center text-slate-400">
+                  No recent reservations.
+                </p>
               )}
             </div>
           </section>
         </div>
       </div>
+
+      <AlertDialog
+        open={actionState.dialogOpen}
+        onOpenChange={(open) =>
+          setActionState((prev) => ({
+            ...prev,
+            dialogOpen: open,
+          }))
+        }
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{currentDialog?.title}</AlertDialogTitle>
+
+            <AlertDialogDescription>
+              {currentDialog?.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+            <AlertDialogAction
+              onClick={() => {
+                if (actionState.currentAction && actionState.reservationId) {
+                  handleReservationAction(
+                    actionState.currentAction,
+                    actionState.reservationId,
+                  );
+                }
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

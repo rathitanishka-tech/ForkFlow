@@ -1,8 +1,14 @@
-import type { Order, OrderItem, MenuItem } from "@prisma/client";
-
+import type { Order } from "@prisma/client";
+import { TableStatus } from "@prisma/client";
 /**
  * Represents a simplified recent order for display on the dashboard.
  */
+
+export interface LiveTableStatus {
+  id: string;
+  number: string;
+  status: TableStatus;
+}
 export type RecentOrder = Pick<
   Order,
   "id" | "status" | "totalAmount" | "createdAt"
@@ -16,6 +22,7 @@ export type RecentOrder = Pick<
  * The main data structure for the analytics dashboard.
  */
 export interface ReservationSummary {
+  id: string;
   guest: string;
   table: string;
   time: string;
@@ -41,4 +48,5 @@ export interface DashboardAnalytics {
   last7DaysRevenue: { date: string; revenue: number }[];
   recentOrders: RecentOrder[];
   recentReservations: ReservationSummary[];
+  tableStatuses: LiveTableStatus[];
 }

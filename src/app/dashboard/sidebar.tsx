@@ -63,7 +63,7 @@ export function Sidebar() {
               className={cx(
                 "flex h-11 items-center gap-3 rounded-2xl px-3 text-sm font-medium transition",
                 isActive
-                  ? "bg-[#0f5b4c] text-[#f8f5ef] shadow-[0_10px_25px_rgba(15,91,76,0.2)]" // : "text-[#9fb4ab] hover:bg-[#10251e] hover:text-[#f8f5ef",
+                  ? "bg-[#0f5b4c] text-[#f8f5ef] shadow-[0_10px_25px_rgba(15,91,76,0.2)]"
                   : "text-[#9fb4ab] hover:bg-[#10231E] hover:text-[#f8f5ef",
               )}
             >

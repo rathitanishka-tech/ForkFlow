@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ForkFlow
 
-## Getting Started
+ForkFlow is a restaurant operations platform for staff dashboards, floor and table management, menu operations, reservations, kitchen order flow, analytics, QR ordering, customer menus, and customer order tracking.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Staff dashboard with revenue, order, reservation, kitchen, and table metrics
+- Restaurant-scoped operations resolved from Clerk authentication
+- Menu item management with categories, pricing, images, availability, vegetarian flags, and spice levels
+- Floor and table views with seating status and layout data
+- Reservation creation and status actions
+- Kitchen board for order preparation workflow
+- Public QR menu links for table ordering
+- Customer menu, cart, order submission, and order tracking
+- Prisma-backed PostgreSQL data model
+
+## Architecture
+
+ForkFlow uses Next.js App Router pages and route handlers, domain modules for controllers/services/validators, Prisma for persistence, Clerk for auth, and Tailwind-based UI components.
+
+```text
+src/app              Pages, layouts, route handlers, and dashboard shell
+src/components       Reusable UI, customer, floor, kitchen, QR, and reservation components
+src/hooks            Customer-facing data hooks
+src/lib              Prisma client, restaurant resolution, base URL, and utilities
+src/modules          Domain controllers, services, validators, and types
+prisma               Schema, migrations, and seed script
+docs                 Current implementation documentation
+public/menu_items    Local customer menu images
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 16
+- React 19
+- TypeScript
+- Prisma 6
+- PostgreSQL
+- Clerk
+- Tailwind CSS
+- Base UI primitives
+- Recharts
+- Framer Motion
+- Zod
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation
 
-## Learn More
+```bash
+pnpm install
+cp .env.example .env.local
+pnpm prisma generate
+pnpm prisma migrate dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/forkflow?schema=public
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Running Locally
 
-## Deploy on Vercel
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open `http://localhost:3000`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Production Build
+
+```bash
+pnpm lint
+pnpm build
+```
+
+For production database migrations:
+
+```bash
+pnpm prisma migrate deploy
+```
+
+## Deployment
+
+Deploy the Next.js app to a Node-compatible platform such as Vercel. Configure the environment variables above, connect a PostgreSQL database, and run Prisma migrations during release.
+
+## API Overview
+
+The API is documented in `docs/api.md`. Main groups include restaurants, current restaurant, floors, tables, menu, orders, kitchen, reservations, dashboard analytics, public menu, and public order tracking.
+
+## Screenshots
+
+Add screenshots for:
+
+- Dashboard
+- Floor view
+- Reservations
+- Kitchen board
+- QR ordering
+- Customer menu
+- Order tracking
+
+## Future Improvements
+
+- Automated service and route-handler tests
+- Role-specific authorization policies
+- Richer analytics exports
+- More advanced table-layout editing
+- Production observability
+
+## License
+
+Private project. Add a license before distributing publicly.

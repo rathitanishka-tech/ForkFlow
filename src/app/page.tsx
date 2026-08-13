@@ -11,7 +11,6 @@ import {
   Lightbulb,
   QrCode,
   Sparkles,
-  Table,
   UtensilsCrossed,
 } from "lucide-react";
 
@@ -39,18 +38,6 @@ const featureList = [
     description:
       "Gain clarity into sales, popular items and revenue trends to make confident decisions.",
     Icon: BarChart,
-  },
-  {
-    title: "AI Menu Recommendations",
-    description:
-      "Increase sales by suggesting items that are frequently ordered together, powered by your own data.",
-    Icon: Lightbulb,
-  },
-  {
-    title: "AI Table Recommendations",
-    description:
-      "Optimize seating for every party with suggestions that feel thoughtful and precise.",
-    Icon: Table,
   },
 ];
 
@@ -267,7 +254,7 @@ export default function HomePage() {
         </section>
 
         <section
-          id="how-it-works" // bg-[#0f5b4c]
+          id="how-it-works"
           className="bg-[#0f5b4c] px-4 py-20 text-[#f8f5ef] sm:px-6 lg:px-8"
         >
           <div className="mx-auto max-w-7xl">

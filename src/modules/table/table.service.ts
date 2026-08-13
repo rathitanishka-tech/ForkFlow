@@ -13,15 +13,21 @@ export class TableService {
 
   /**
    * Creates a new table on a given floor.
-   * It ensures the parent floor exists and the table number is unique on that floor.
+   * It ensures the parent floor exists and belongs to the given restaurant,
+   * and that the table number is unique on that floor.
    * @param input - The data for the new table.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The newly created table.
-   * @throws Error if the floor is not found or if the table number is a duplicate.
+   * @throws Error if the floor is not found or doesn't belong to the restaurant,
+   *         or if the table number is a duplicate.
    */
-  async createTable(input: CreateTableInput): Promise<TableResponse> {
+  async createTable(
+    input: CreateTableInput,
+    restaurantId: string,
+  ): Promise<TableResponse> {
     return this.prisma.$transaction(async (tx) => {
-      const floor = await tx.floor.findUnique({
-        where: { id: input.floorId },
+      const floor = await tx.floor.findFirst({
+        where: { id: input.floorId, restaurantId },
         select: { id: true },
       });
 
@@ -36,7 +42,7 @@ export class TableService {
       } catch (error) {
         if (
           error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002" // Unique constraint violation
+          error.code === "P2002"
         ) {
           throw new Error(
             `A table with number "${input.number}" already exists on this floor.`,
@@ -51,16 +57,19 @@ export class TableService {
    * Creates multiple tables in a single atomic transaction.
    * If any table fails validation (e.g., duplicate number), the entire operation is rolled back.
    * @param input - An object containing an array of tables to create.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The number of tables created.
-   * @throws Error if any specified floor is not found or if any table number is a duplicate.
+   * @throws Error if any specified floor is not found or doesn't belong to the restaurant,
+   *         or if any table number is a duplicate.
    */
-  async bulkCreateTables(input: {
-    tables: CreateTableInput[];
-  }): Promise<{ count: number }> {
+  async bulkCreateTables(
+    input: { tables: CreateTableInput[] },
+    restaurantId: string,
+  ): Promise<{ count: number }> {
     return this.prisma.$transaction(async (tx) => {
       const floorIds = [...new Set(input.tables.map((t) => t.floorId))];
       const floors = await tx.floor.findMany({
-        where: { id: { in: floorIds } },
+        where: { id: { in: floorIds }, restaurantId },
         select: { id: true },
       });
 
@@ -94,6 +103,7 @@ export class TableService {
    */
   async getTables(filters: TableFilters = {}): Promise<TableListResponse> {
     const {
+      restaurantId,
       floorId,
       status,
       shape,
@@ -110,6 +120,7 @@ export class TableService {
       status,
       shape,
       isActive,
+      floor: restaurantId ? { restaurantId } : undefined,
     };
 
     if (search) {
@@ -136,26 +147,38 @@ export class TableService {
   }
 
   /**
-   * Finds a single table by its unique ID.
+   * Finds a single table by its unique ID, scoped to the given restaurant
+   * via its floor relationship.
    * @param id - The ID of the table to find.
-   * @returns The table if found, otherwise null.
+   * @param restaurantId - The server-resolved restaurant ID.
+   * @returns The table if found and owned by the restaurant, otherwise null.
    */
-  async getTableById(id: string): Promise<TableResponse | null> {
-    return this.prisma.table.findUnique({ where: { id } });
+  async getTableById(
+    id: string,
+    restaurantId: string,
+  ): Promise<TableResponse | null> {
+    return this.prisma.table.findFirst({
+      where: {
+        id,
+        floor: { restaurantId },
+      },
+    });
   }
 
   /**
-   * Updates an existing table's information.
+   * Updates an existing table's information, scoped to the given restaurant.
    * @param id - The ID of the table to update.
    * @param input - The data to update.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The updated table.
    * @throws Error if the table is not found or if the new number is a duplicate.
    */
   async updateTable(
     id: string,
     input: UpdateTableInput,
+    restaurantId: string,
   ): Promise<TableResponse> {
-    const table = await this.getTableById(id);
+    const table = await this.getTableById(id, restaurantId);
     if (!table) {
       throw new Error("Table not found");
     }
@@ -176,39 +199,54 @@ export class TableService {
   }
 
   /**
-   * Updates a table's position and rotation.
+   * Updates a table's position and rotation, scoped to the given restaurant.
    * @param id - The ID of the table to update.
    * @param input - The new position data.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The updated table.
    */
   async updateTablePosition(
     id: string,
     input: z.infer<typeof updateTablePositionSchema>,
+    restaurantId: string,
   ): Promise<TableResponse> {
+    const table = await this.getTableById(id, restaurantId);
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
     return this.prisma.table.update({ where: { id }, data: input });
   }
 
   /**
-   * Updates a table's status.
+   * Updates a table's status, scoped to the given restaurant.
    * @param id - The ID of the table to update.
    * @param input - The new status.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The updated table.
    */
   async updateTableStatus(
     id: string,
     input: z.infer<typeof updateTableStatusSchema>,
+    restaurantId: string,
   ): Promise<TableResponse> {
+    const table = await this.getTableById(id, restaurantId);
+    if (!table) {
+      throw new Error("Table not found");
+    }
+
     return this.prisma.table.update({ where: { id }, data: input });
   }
 
   /**
-   * Soft deletes a table by setting its `isActive` flag to false.
+   * Soft deletes a table by setting its `isActive` flag to false, scoped to the given restaurant.
    * @param id - The ID of the table to delete.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The updated table with `isActive: false`.
    * @throws Error if the table is not found.
    */
-  async deleteTable(id: string): Promise<TableResponse> {
-    const table = await this.getTableById(id);
+  async deleteTable(id: string, restaurantId: string): Promise<TableResponse> {
+    const table = await this.getTableById(id, restaurantId);
     if (!table) {
       throw new Error("Table not found");
     }

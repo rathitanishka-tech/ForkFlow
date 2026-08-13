@@ -1,0 +1,6 @@
+BEGIN;
+
+DELETE FROM "OrderItem";
+DELETE FROM "Order";
+
+COMMIT;

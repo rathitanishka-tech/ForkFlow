@@ -3,21 +3,28 @@ import { ZodError } from "zod";
 import { prisma } from "@/lib/prisma";
 import { MenuController } from "@/modules/menu/menu.controller";
 import { MenuService } from "@/modules/menu/menu.service";
+import {
+  getCurrentRestaurant,
+  handleRestaurantApiError,
+} from "@/lib/server-restaurant";
 
-// Instantiate dependencies
 const menuService = new MenuService(prisma);
 const menuController = new MenuController(menuService);
 
 /**
  * Handles GET requests to retrieve a single menu item by its ID.
+ *
+ * The restaurant is resolved server-side. The menu item must belong to the
+ * authenticated user's restaurant.
  */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    const menuItem = await menuController.getById(id);
+    const menuItem = await menuController.getById(id, restaurant.id);
 
     if (!menuItem) {
       return NextResponse.json(
@@ -28,6 +35,9 @@ export async function GET(
 
     return NextResponse.json(menuItem);
   } catch (error) {
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
+
     const id = await params.then((p) => p.id).catch(() => "unknown");
     console.error(`Error fetching menu item ${id}:`, error);
     return NextResponse.json(
@@ -39,17 +49,28 @@ export async function GET(
 
 /**
  * Handles PATCH requests to update an existing menu item.
+ *
+ * The restaurant is resolved server-side. The menu item must belong to the
+ * authenticated user's restaurant.
  */
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    const body = await req.json();
-    const updatedMenuItem = await menuController.update(id, body);
+    const body = (await req.json()) as Record<string, unknown>;
+    const updatedMenuItem = await menuController.update(
+      id,
+      body,
+      restaurant.id,
+    );
     return NextResponse.json(updatedMenuItem);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
+
     if (error instanceof ZodError) {
       return NextResponse.json(
         { message: "Validation failed", errors: error.issues },
@@ -57,11 +78,11 @@ export async function PATCH(
       );
     }
 
-    if (error.message === "Menu item not found") {
+    if (error instanceof Error && error.message === "Menu item not found") {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
-    if (error.message.includes("already exists")) {
+    if (error instanceof Error && error.message.includes("already exists")) {
       return NextResponse.json({ message: error.message }, { status: 409 });
     }
 
@@ -76,18 +97,24 @@ export async function PATCH(
 
 /**
  * Handles DELETE requests to soft-delete a menu item.
+ *
+ * The restaurant is resolved server-side. The menu item must belong to the
+ * authenticated user's restaurant.
  */
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    // This performs a soft delete as implemented in the service.
-    await menuController.delete(id);
+    await menuController.delete(id, restaurant.id);
     return new NextResponse(null, { status: 204 });
-  } catch (error: any) {
-    if (error.message === "Menu item not found") {
+  } catch (error: unknown) {
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
+
+    if (error instanceof Error && error.message === "Menu item not found") {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
@@ -102,18 +129,27 @@ export async function DELETE(
 
 /**
  * Handles POST requests to toggle the availability of a menu item.
- * This is a special-purpose endpoint.
+ *
+ * The restaurant is resolved server-side. The menu item must belong to the
+ * authenticated user's restaurant.
  */
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    const updatedMenuItem = await menuController.toggleAvailability(id);
+    const updatedMenuItem = await menuController.toggleAvailability(
+      id,
+      restaurant.id,
+    );
     return NextResponse.json(updatedMenuItem);
-  } catch (error: any) {
-    if (error.message === "Menu item not found") {
+  } catch (error: unknown) {
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
+
+    if (error instanceof Error && error.message === "Menu item not found") {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
@@ -125,10 +161,3 @@ export async function POST(
     );
   }
 }
-
-/**
- * Note: The prompt requested a POST to `/api/menu/:id/toggle`.
- * To achieve that specific route, a file at `src/app/api/menu/[id]/toggle/route.ts`
- * would be needed. The POST handler above is placed in `src/app/api/menu/[id]/route.ts`
- * to satisfy the "Create ONLY" constraint, making the toggle endpoint `POST /api/menu/[id]`.
- */

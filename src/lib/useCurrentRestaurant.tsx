@@ -7,42 +7,51 @@ export interface RestaurantSummary {
   name: string;
 }
 
+/**
+ * Client hook that resolves the current restaurant by calling the server
+ * endpoint /api/restaurant/current. The server resolves the restaurant
+ * from the Clerk session — NEVER from localStorage.
+ *
+ * localStorage is NOT used for restaurant identity. The client has zero
+ * control over which restaurant is accessed.
+ */
 export function useCurrentRestaurant() {
   const [restaurant, setRestaurant] = useState<RestaurantSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
 
     const fetchRestaurant = async () => {
       try {
-        const response = await fetch("/api/restaurants");
+        const response = await fetch("/api/restaurant/current");
+
         if (!response.ok) {
-          throw new Error("Failed to load restaurant information.");
+          if (response.status === 401) {
+            setError("You must be signed in.");
+          } else if (response.status === 404) {
+            setError("No restaurant is configured for your account.");
+          } else {
+            setError("Unable to load restaurant.");
+          }
+          return;
         }
 
-        const result = await response.json();
-        const restaurants = Array.isArray(result.restaurants)
-          ? result.restaurants
-          : [];
+        const data = await response.json();
 
-        if (isMounted && restaurants.length > 0) {
+        if (!cancelled) {
           setRestaurant({
-            id: restaurants[0].id,
-            name: restaurants[0].name,
+            id: data.id,
+            name: data.name,
           });
         }
-      } catch (err) {
-        if (isMounted) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Unable to load restaurant data.",
-          );
+      } catch {
+        if (!cancelled) {
+          setError("Unable to load restaurant.");
         }
       } finally {
-        if (isMounted) {
+        if (!cancelled) {
           setIsLoading(false);
         }
       }
@@ -51,9 +60,13 @@ export function useCurrentRestaurant() {
     fetchRestaurant();
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, []);
 
-  return { restaurant, isLoading, error };
+  return {
+    restaurant,
+    isLoading,
+    error,
+  };
 }

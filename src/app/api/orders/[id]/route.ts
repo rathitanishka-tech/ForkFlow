@@ -3,21 +3,25 @@ import { ZodError } from "zod";
 import { prisma } from "@/lib/prisma";
 import { OrderController } from "@/modules/order/order.controller";
 import { OrderService } from "@/modules/order/order.service";
+import { getCurrentRestaurant } from "@/lib/server-restaurant";
 
-// Instantiate dependencies
 const orderService = new OrderService(prisma);
 const orderController = new OrderController(orderService);
 
 /**
  * Handles GET requests to retrieve a single order by its ID.
+ *
+ * The restaurant is resolved server-side. The order must belong to the
+ * authenticated user's restaurant.
  */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    const order = await orderController.getById(id);
+    const order = await orderController.getById(id, restaurant.id);
 
     if (!order) {
       return NextResponse.json(
@@ -38,18 +42,22 @@ export async function GET(
 
 /**
  * Handles PATCH requests to update an order's status.
+ *
+ * The restaurant is resolved server-side. The order must belong to the
+ * authenticated user's restaurant.
  */
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
     const body = await req.json();
-    const updatedOrder = await orderController.update(id, body);
+    const updatedOrder = await orderController.update(id, body, restaurant.id);
 
     return NextResponse.json(updatedOrder);
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { message: "Validation failed", errors: error.issues },
@@ -57,12 +65,11 @@ export async function PATCH(
       );
     }
 
-    if (error.message.includes("not found")) {
+    if (error instanceof Error && error.message.includes("not found")) {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
-    // Example for a potential conflict
-    if (error.message.includes("conflict")) {
+    if (error instanceof Error && error.message.includes("conflict")) {
       return NextResponse.json({ message: error.message }, { status: 409 });
     }
 
@@ -76,20 +83,22 @@ export async function PATCH(
 
 /**
  * Handles DELETE requests to permanently delete an order.
+ *
+ * The restaurant is resolved server-side. The order must belong to the
+ * authenticated user's restaurant.
  */
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    await orderController.delete(id);
+    await orderController.delete(id, restaurant.id);
 
-    // Return a 204 No Content response for successful deletion
     return new NextResponse(null, { status: 204 });
-  } catch (error: any) {
-    // Prisma's delete throws an error if the record is not found
-    if (error.code === "P2025") {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message.includes("not found")) {
       const { id } = await params;
       return NextResponse.json(
         { message: `Order with ID ${id} not found.` },

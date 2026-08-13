@@ -8,13 +8,12 @@ export class FloorService {
   /**
    * Creates a new floor for a given restaurant.
    * It ensures the parent restaurant exists and the floor level is unique within that restaurant.
-   * @param input - The data for the new floor.
+   * @param input - The data for the new floor (restaurantId is server-resolved).
    * @returns The newly created floor.
    * @throws Error if the restaurant is not found or if the level is a duplicate.
    */
   async createFloor(input: CreateFloorInput): Promise<FloorResponse> {
     return this.prisma.$transaction(async (tx) => {
-      // 1. Ensure the parent restaurant exists.
       const restaurant = await tx.restaurant.findUnique({
         where: { id: input.restaurantId },
         select: { id: true },
@@ -24,8 +23,6 @@ export class FloorService {
         throw new Error("Restaurant not found");
       }
 
-      // 2. Create the floor. A unique constraint on (restaurantId, level) in the
-      // Prisma schema will handle the uniqueness check atomically at the database level.
       try {
         return await tx.floor.create({
           data: input,
@@ -33,13 +30,12 @@ export class FloorService {
       } catch (error) {
         if (
           error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === "P2002" // Unique constraint violation
+          error.code === "P2002"
         ) {
           throw new Error(
             "A floor with this level already exists for this restaurant.",
           );
         }
-        // Re-throw other errors
         throw error;
       }
     });
@@ -84,29 +80,34 @@ export class FloorService {
   }
 
   /**
-   * Finds a single floor by its unique ID.
+   * Finds a single floor by its unique ID, scoped to the given restaurant.
    * @param id - The ID of the floor to find.
-   * @returns The floor if found, otherwise null.
+   * @param restaurantId - The server-resolved restaurant ID.
+   * @returns The floor if found and owned by the restaurant, otherwise null.
    */
-  async getFloorById(id: string): Promise<FloorResponse | null> {
-    return this.prisma.floor.findUnique({
-      where: { id },
+  async getFloorById(
+    id: string,
+    restaurantId: string,
+  ): Promise<FloorResponse | null> {
+    return this.prisma.floor.findFirst({
+      where: { id, restaurantId },
     });
   }
 
   /**
-   * Updates an existing floor's information.
+   * Updates an existing floor's information, scoped to the given restaurant.
    * @param id - The ID of the floor to update.
    * @param input - The data to update.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The updated floor.
    * @throws Error if the floor is not found or if the new level is a duplicate.
    */
   async updateFloor(
     id: string,
     input: UpdateFloorInput,
+    restaurantId: string,
   ): Promise<FloorResponse> {
-    // Ensure the floor exists to provide a clear "not found" error.
-    const floor = await this.getFloorById(id);
+    const floor = await this.getFloorById(id, restaurantId);
     if (!floor) {
       throw new Error("Floor not found");
     }
@@ -130,13 +131,14 @@ export class FloorService {
   }
 
   /**
-   * Soft deletes a floor by setting its `isActive` flag to false.
+   * Soft deletes a floor by setting its `isActive` flag to false, scoped to the given restaurant.
    * @param id - The ID of the floor to delete.
+   * @param restaurantId - The server-resolved restaurant ID.
    * @returns The updated floor with `isActive: false`.
    * @throws Error if the floor is not found.
    */
-  async deleteFloor(id: string): Promise<FloorResponse> {
-    const floor = await this.getFloorById(id);
+  async deleteFloor(id: string, restaurantId: string): Promise<FloorResponse> {
+    const floor = await this.getFloorById(id, restaurantId);
     if (!floor) {
       throw new Error("Floor not found");
     }

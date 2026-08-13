@@ -11,12 +11,12 @@ import {
   Clock3,
   QrCode,
   BarChart3,
-  ArrowRight,
   IndianRupee,
   Plus,
   Store,
   Table2,
 } from "lucide-react";
+import { getCurrentRestaurant } from "@/lib/server-restaurant";
 
 export const dynamic = "force-dynamic";
 
@@ -27,42 +27,11 @@ const quickActions = [
   { label: "View Analytics", icon: BarChart3, href: "/dashboard/analytics" },
 ];
 
-const tableStatuses = [
-  "Available",
-  "Reserved",
-  "Occupied",
-  "Available",
-  "Occupied",
-  "Maintenance",
-  "Reserved",
-  "Available",
-  "Occupied",
-  "Available",
-  "Reserved",
-  "Occupied",
-  "Available",
-  "Occupied",
-  "Available",
-  "Reserved",
-  "Occupied",
-  "Maintenance",
-  "Available",
-  "Occupied",
-  "Reserved",
-  "Available",
-  "Occupied",
-  "Available",
-  "Reserved",
-  "Occupied",
-  "Available",
-  "Maintenance",
-  "Occupied",
-  "Available",
-];
-
 async function getDashboardData() {
   try {
-    return await analyticsController.getDashboardAnalytics();
+    const restaurant = await getCurrentRestaurant();
+
+    return await analyticsController.getDashboardAnalytics(restaurant.id);
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
     return null;
@@ -78,6 +47,7 @@ export default async function DashboardPage() {
   }).format(new Date());
 
   const data = await getDashboardData();
+  const tableStatuses = data?.tableStatuses ?? [];
 
   const kpis = [
     {
@@ -173,7 +143,7 @@ export default async function DashboardPage() {
             Good Morning 👋
           </h1>
           <p className="mt-2 text-sm text-[#8ea79d]">
-            Here's what's happening across your restaurants today.
+            Here&apos;s what&apos;s happening across your restaurants today.
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-[#29443C] bg-[#081E19] px-4 py-2.5 text-sm font-medium text-[#d6b48c] shadow-sm">
@@ -200,6 +170,7 @@ export default async function DashboardPage() {
             key={action.label}
             title={action.label}
             icon={action.icon}
+            href={action.href}
           />
         ))}
       </div>
@@ -214,7 +185,7 @@ export default async function DashboardPage() {
         <aside className="space-y-4">
           <div>
             <h2 className="text-sm font-semibold text-[#f8f5ef]">
-              Today's Insights
+              Today&apos;s Insights
             </h2>
             <p className="mt-1 text-sm text-[#8ea79d]">
               Signals from the current service window.

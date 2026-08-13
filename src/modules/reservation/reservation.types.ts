@@ -1,3 +1,5 @@
+import type { Guest } from "@prisma/client";
+
 export type ReservationStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -15,15 +17,11 @@ export interface ReservationResponse {
 
   guestId: string;
 
-  customerName: string;
+  reservationTime: Date;
 
-  phone: string;
+  partySize: number;
 
-  reservationDate: Date;
-
-  guests: number;
-
-  occasion?: string | null;
+  occasion: string | null;
 
   status: ReservationStatus;
 
@@ -31,6 +29,8 @@ export interface ReservationResponse {
 
   updatedAt: Date;
 }
+
+export type ReservationWithGuest = ReservationResponse & { guest: Guest };
 
 export type CreateReservationResult = ReservationResponse;
 

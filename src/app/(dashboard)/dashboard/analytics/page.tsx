@@ -92,7 +92,7 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-[#8EA79D]">
-              We couldn't load the analytics data. Please try refreshing the
+              We could not load the analytics data. Please try refreshing the
               page.
             </p>
             <p className="mt-2 text-sm text-[#7F948B]">{error}</p>
@@ -164,11 +164,7 @@ export default function AnalyticsPage() {
                       borderColor: "#29443C",
                     }}
                   />
-                  <Bar
-                    dataKey="revenue" // cyan-500
-                    fill="#0f5b4c"
-                    radius={[4, 4, 0, 0]}
-                  />
+                  <Bar dataKey="revenue" fill="#0f5b4c" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

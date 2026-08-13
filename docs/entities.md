@@ -1,40 +1,29 @@
-# Entity Order
+# Entities
 
-## Phase 1
+## User
 
-- User
-- Business
-- BusinessMembership
-- Restaurant
+Internal user record linked to Clerk by `clerkUserId`. A user can belong to one or more businesses through memberships.
 
-## Phase 2
+## Business And Membership
 
-- Floor
-- Table
+`Business` owns restaurants. `BusinessMembership` assigns users to businesses with roles such as owner, admin, manager, staff, or kitchen.
 
-## Phase 3
+## Restaurant
 
-- Reservation
-- DiningSession
+The main tenant and operations boundary. Restaurants own floors, menu items, reservations, orders, and dining sessions.
 
-## Phase 4
+## Floor And Table
 
-- MenuCategory
-- MenuItem
+Floors group tables for a restaurant. Tables store number, capacity, shape, status, layout coordinates, rotation, and active state.
 
-## Phase 5
+## Guest, Reservation, DiningSession
 
-- Order
-- OrderItem
-- KitchenTicket
+Guests can have reservations and dining sessions. Reservations bind guests to restaurant tables at scheduled times. Dining sessions track active or closed service visits.
 
-## Phase 6
+## MenuItem
 
-- InventoryItem
-- StaffShift
+Menu items store name, description, price, preparation time, image, category, availability, vegetarian flag, and spice level.
 
-## Phase 7
+## Order And OrderItem
 
-- Invoice
-- Payment
-- Notification
+Orders belong to a restaurant and table. Order items point to menu items, store quantity, and preserve the line-item price at order time.

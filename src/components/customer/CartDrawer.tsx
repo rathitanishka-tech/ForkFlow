@@ -42,30 +42,30 @@ const CartItemCard = ({
       alt={item.name}
       className="h-16 w-16 rounded-lg object-cover"
     />
-    <div className="flex-grow">
-      <p className="font-semibold text-slate-100">{item.name}</p>
-      <p className="text-sm text-slate-400">{formatCurrency(item.price)}</p>
+    <div className="grow">
+      <p className="font-semibold text-slate-800">{item.name}</p>
+      <p className="text-sm text-slate-500">{formatCurrency(item.price)}</p>
       <div className="mt-2 flex items-center gap-3">
         <button
           onClick={() => onDecrease(item.id)}
-          className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600 text-slate-400 transition hover:bg-slate-700 hover:text-white"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
           aria-label={`Decrease quantity of ${item.name}`}
         >
           <Minus className="h-4 w-4" />
         </button>
-        <span className="w-4 text-center font-medium text-slate-200">
+        <span className="w-4 text-center font-medium text-slate-700">
           {item.quantity}
         </span>
         <button
           onClick={() => onIncrease(item.id)}
-          className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600 text-slate-400 transition hover:bg-slate-700 hover:text-white"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
           aria-label={`Increase quantity of ${item.name}`}
         >
           <Plus className="h-4 w-4" />
         </button>
       </div>
     </div>
-    <p className="font-semibold text-slate-200">
+    <p className="font-semibold text-slate-800">
       {formatCurrency(item.price * item.quantity)}
     </p>
   </div>
@@ -73,8 +73,8 @@ const CartItemCard = ({
 
 const EmptyCart = () => (
   <div className="flex flex-1 flex-col items-center justify-center text-center">
-    <ShoppingCart className="h-16 w-16 text-slate-600" />
-    <h3 className="mt-4 text-xl font-semibold text-slate-300">
+    <ShoppingCart className="h-16 w-16 text-slate-400" />
+    <h3 className="mt-4 text-xl font-semibold text-slate-700">
       Your cart is empty
     </h3>
     <p className="mt-1 text-slate-500">
@@ -118,7 +118,6 @@ export function CartDrawer({
       aria-modal="true"
       aria-labelledby="cart-heading"
     >
-      {/* Backdrop */}
       <div
         onClick={onClose}
         className={cn(
@@ -127,36 +126,33 @@ export function CartDrawer({
         )}
       />
 
-      {/* Drawer */}
       <div
         className={cn(
-          "fixed right-0 top-0 flex h-full w-full max-w-md flex-col bg-slate-900 shadow-2xl shadow-black/50 transition-transform duration-300 ease-in-out",
+          "fixed right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 p-4">
-          <h2 id="cart-heading" className="text-xl font-bold text-white">
+        <div className="flex items-center justify-between border-b border-slate-200 p-4">
+          <h2 id="cart-heading" className="text-xl font-bold text-slate-900">
             Your Cart{" "}
             {totalItemCount > 0 && (
-              <span className="ml-2 text-lg font-medium text-slate-400">
+              <span className="ml-2 text-lg font-medium text-slate-500">
                 ({totalItemCount})
               </span>
             )}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
             aria-label="Close cart"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Items List */}
         <div className="flex-1 overflow-y-auto px-4">
           {items.length > 0 ? (
-            <div className="divide-y divide-slate-800">
+            <div className="divide-y divide-slate-200">
               {items.map((item) => (
                 <CartItemCard
                   key={item.id}
@@ -171,18 +167,17 @@ export function CartDrawer({
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-slate-800 bg-slate-900 p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.2)]">
+          <div className="border-t border-slate-200 bg-white p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
             <div className="mb-4 flex justify-between text-lg">
-              <span className="font-medium text-slate-300">Grand Total</span>
-              <span className="font-bold text-white">
+              <span className="font-medium text-slate-600">Grand Total</span>
+              <span className="font-bold text-slate-900">
                 {formatCurrency(total)}
               </span>
             </div>
             <button
               onClick={onCheckout}
-              className="flex w-full items-center justify-center rounded-lg bg-cyan-500 py-3 text-lg font-bold text-white transition-colors hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:bg-slate-700"
+              className="flex w-full items-center justify-center rounded-lg bg-[#0f5b4c] py-3 text-lg font-bold text-white transition-colors hover:bg-[#0b4a3d] focus:outline-none focus:ring-2 focus:ring-[#0f5b4c] focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:bg-slate-200"
               disabled={items.length === 0 || checkoutLoading}
             >
               {checkoutLoading ? (

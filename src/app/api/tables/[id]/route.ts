@@ -1,32 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
+import {
+  getCurrentRestaurant,
+  handleRestaurantApiError,
+} from "@/lib/server-restaurant";
 import { prisma } from "@/lib/prisma";
 import { TableController } from "@/modules/table/table.controller";
 import { TableService } from "@/modules/table/table.service";
 
-// Instantiate dependencies
 const tableService = new TableService(prisma);
 const tableController = new TableController(tableService);
 
 /**
  * Handles GET requests to retrieve a single table by its ID.
+ *
+ * The restaurant is resolved server-side to ensure the table belongs to it.
  */
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    const table = await tableController.getById(id);
+
+    const table = await tableController.getById(id, restaurant.id);
 
     if (!table) {
       return NextResponse.json({ message: "Table not found" }, { status: 404 });
     }
 
-    return NextResponse.json(table, { status: 200 });
+    return NextResponse.json(table);
   } catch (error) {
-    const id = await params.then((p) => p.id).catch(() => "unknown");
-    console.error(`Error fetching table ${id}:`, error);
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
+
+    console.error(error);
+
     return NextResponse.json(
       { message: "An unexpected error occurred." },
       { status: 500 },
@@ -35,35 +45,26 @@ export async function GET(
 }
 
 /**
- * Handles PATCH requests to update an existing table.
- * Supports different actions based on the 'action' query parameter.
+ * Handles PUT requests to update a table.
+ *
+ * The restaurantId is resolved server-side and used to verify floor ownership.
  */
-export async function PATCH(
+export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await params;
-    const { searchParams } = new URL(req.url);
-    const action = searchParams.get("action");
+    const restaurant = await getCurrentRestaurant();
     const body = await req.json();
+    const { id } = await params;
 
-    let updatedTable;
+    const updatedTable = await tableController.update(id, body, restaurant.id);
 
-    switch (action) {
-      case "position":
-        updatedTable = await tableController.updatePosition(id, body);
-        break;
-      case "status":
-        updatedTable = await tableController.updateStatus(id, body);
-        break;
-      default:
-        updatedTable = await tableController.update(id, body);
-        break;
-    }
+    return NextResponse.json(updatedTable);
+  } catch (error: unknown) {
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
 
-    return NextResponse.json(updatedTable, { status: 200 });
-  } catch (error: any) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { message: "Validation failed", errors: error.issues },
@@ -71,16 +72,20 @@ export async function PATCH(
       );
     }
 
-    if (error.message === "Table not found") {
+    if (
+      error instanceof Error &&
+      (error.message === "Table not found" ||
+        error.message === "Floor not found")
+    ) {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
-    if (error.message.includes("already exists")) {
+    if (error instanceof Error && error.message.includes("already exists")) {
       return NextResponse.json({ message: error.message }, { status: 409 });
     }
 
-    const id = await params.then((p) => p.id).catch(() => "unknown");
-    console.error(`Error updating table ${id}:`, error);
+    console.error(error);
+
     return NextResponse.json(
       { message: "An unexpected error occurred." },
       { status: 500 },
@@ -89,24 +94,27 @@ export async function PATCH(
 }
 
 /**
- * Handles DELETE requests to soft-delete a table.
+ * Handles DELETE requests to delete a table.
+ *
+ * The restaurantId is resolved server-side to ensure ownership.
  */
 export async function DELETE(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const restaurant = await getCurrentRestaurant();
     const { id } = await params;
-    // This performs a soft delete as implemented in the service.
-    await tableController.delete(id);
-    return new NextResponse(null, { status: 204 });
-  } catch (error: any) {
-    if (error.message === "Table not found") {
-      return NextResponse.json({ message: error.message }, { status: 404 });
-    }
 
-    const id = await params.then((p) => p.id).catch(() => "unknown");
-    console.error(`Error deleting table ${id}:`, error);
+    await tableController.delete(id, restaurant.id);
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    const authResponse = handleRestaurantApiError(error);
+    if (authResponse) return authResponse;
+
+    console.error(error);
+
     return NextResponse.json(
       { message: "An unexpected error occurred." },
       { status: 500 },

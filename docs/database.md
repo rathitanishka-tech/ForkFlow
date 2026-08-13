@@ -1,23 +1,29 @@
-User
+# Database
 
-Business
+The database is configured in `prisma/schema.prisma` and accessed through the shared Prisma client in `src/lib/prisma.ts`.
 
-Restaurant
+## Required Environment
 
-Floor
+`DATABASE_URL` must point to a PostgreSQL-compatible database.
 
-Table
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/forkflow?schema=public
+```
 
-Reservation
+## Prisma Workflow
 
-Order
+```bash
+pnpm prisma generate
+pnpm prisma migrate dev
+pnpm prisma db seed
+```
 
-OrderItem
+Production deployments should apply committed migrations with:
 
-KitchenTicket
+```bash
+pnpm prisma migrate deploy
+```
 
-Inventory
+## Current Models
 
-Invoice
-
-Payment
+The active Prisma models are `User`, `Business`, `BusinessMembership`, `Restaurant`, `Floor`, `Table`, `Guest`, `Reservation`, `DiningSession`, `MenuItem`, `Order`, and `OrderItem`.
