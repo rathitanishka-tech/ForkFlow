@@ -1,17 +1,31 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware(async (auth, request) => {
-  const pathname = request.nextUrl.pathname;
-  const isProtectedDashboardApi =
-    pathname === "/api/restaurant/current" || pathname.startsWith("/api/tables");
+export default clerkMiddleware(
+  async (auth, request) => {
+    const pathname = request.nextUrl.pathname;
 
-  if (pathname.startsWith("/dashboard") || isProtectedDashboardApi) {
-    await auth.protect();
-  }
-});
+    const isProtectedDashboardApi =
+      pathname === "/api/restaurant/current" ||
+      pathname.startsWith("/api/tables");
+
+    if (
+      pathname.startsWith("/dashboard") ||
+      isProtectedDashboardApi
+    ) {
+      await auth.protect();
+    }
+  },
+  {
+    frontendApiProxy: {
+      enabled: true,
+    },
+  },
+);
 
 export const config = {
   matcher: [
-    "/(.*)",
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
+    "/__clerk/(.*)",
   ],
 };
