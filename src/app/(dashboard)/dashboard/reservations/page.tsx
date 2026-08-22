@@ -325,8 +325,8 @@ export default function ReservationsPage() {
           <section className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6 shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-[#4b5d53]">Current restaurant</p>
-                <p className="text-lg font-semibold text-[#0b2f24]">
+                <p className="text-sm text-[#8ea79d]">Current restaurant</p>
+                <p className="text-lg font-semibold text-[#f8f5ef]">
                   {restaurant?.name ?? "ForkFlow"}
                 </p>
               </div>

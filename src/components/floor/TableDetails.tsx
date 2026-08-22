@@ -2,11 +2,8 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TableNodeData, TableStatus } from "./TableNode";
 import { cn } from "@/lib/utils";
-import {
   Users,
   Shapes,
-  Maximize,
-  RotateCw,
   MousePointerSquareDashed,
 } from "lucide-react";
 
@@ -123,18 +120,6 @@ export function TableDetails({ table }: TableDetailsProps) {
                 <span>{table.shape.toLowerCase().replace("_", " ")}</span>
               </span>
             }
-          />
-          <DetailRow
-            icon={Maximize}
-            label="Coordinates"
-            value={`X: ${table.xPosition.toFixed(0)}, Y: ${table.yPosition.toFixed(
-              0,
-            )}`}
-          />
-          <DetailRow
-            icon={RotateCw}
-            label="Rotation"
-            value={`${table.rotation.toFixed(0)}°`}
           />
         </div>
       </motion.div>

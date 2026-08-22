@@ -8,7 +8,7 @@ export function UserMenu() {
 
   return (
     <div className="flex h-10 items-center gap-2 rounded-full border border-[#29443C] bg-[#10231E] px-2.5 backdrop-blur">
-      <span className="hidden max-w-24 truncate text-sm font-medium text-[#0b2f24] sm:block">
+      <span className="hidden max-w-24 truncate text-sm font-medium text-[#f8f5ef] sm:block">
         {displayName}
       </span>
       <UserButton />

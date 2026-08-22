@@ -126,28 +126,26 @@ export default function KitchenPage() {
       return (
         <div className="flex h-full items-center justify-center text-red-400">
           <p>Error: {error}</p>
-        </div>
       );
     }
 
     if (board) {
       return <KitchenBoard board={board} onStatusChange={handleStatusChange} />;
     }
-
     return null;
   };
 
   return (
     <main className="flex min-h-0 w-full flex-col overflow-hidden rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-4 text-[#f8f5ef] shadow-[0_16px_45px_rgba(3,15,11,0.14)] md:p-6">
       <header className="mb-6 shrink-0">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#0f5b4c]">
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#8ea79d]">
           Kitchen
         </p>
-        <h1 className="mt-2 text-3xl font-semibold text-[#0b2f24]">
+        <h1 className="mt-2 text-3xl font-semibold text-[#f8f5ef]">
           Kitchen Dashboard
         </h1>
-        <p className="mt-2 text-sm text-[#4b5d53]">
-          Live orders for
+        <p className="mt-2 text-sm text-[#8ea79d]">
+          Live orders for{" "}
           <span className="font-semibold text-[#f8f5ef]">
             {restaurant?.name ?? "your restaurant"}
           </span>
