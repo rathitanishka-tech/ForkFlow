@@ -60,20 +60,12 @@ type ReservationAction = "confirm" | "seat" | "complete" | "cancel" | "no-show";
 export default function ReservationsPage() {
   const { restaurant } = useCurrentRestaurant();
   const router = useRouter();
-  const [analytics, setAnalytics] = React.useState<DashboardAnalytics | null>(
-    null,
-  );
-  const [reservations, setReservations] = React.useState<ReservationSummary[]>(
-    [],
-  );
+  const [reservations, setReservations] = React.useState<ReservationSummary[]>([]);
   const [tables, setTables] = React.useState<TableOption[]>([]);
-  const [form, setForm] =
-    React.useState<ReservationFormState>(initialFormState);
+  const [form, setForm] = React.useState<ReservationFormState>(initialFormState);
   const [isSaving, setIsSaving] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = React.useState<string | null>(
-    null,
-  );
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const [actionState, setActionState] = React.useState<{
     isLoading: boolean;
     dialogOpen: boolean;
@@ -85,24 +77,58 @@ export default function ReservationsPage() {
     currentAction: null,
     reservationId: null,
   });
+  const [reservationsTodayCount, setReservationsTodayCount] = React.useState(0);
 
   React.useEffect(() => {
-    const fetchAnalytics = async () => {
+    const fetchReservations = async () => {
       try {
-        const response = await fetch("/api/dashboard/analytics");
+        const response = await fetch("/api/reservations");
 
         if (!response.ok) {
-          throw new Error("Failed to load reservation metrics.");
+          throw new Error("Failed to load reservations.");
         }
-        const data: DashboardAnalytics = await response.json();
-        setAnalytics(data);
-        setReservations(data.recentReservations);
+        const result = await response.json();
+        const data = result.data || [];
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const startOfTomorrow = new Date(startOfToday);
+        startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+        let todayCount = 0;
+        const mappedReservations = data.map((reservation: any) => {
+          const resTime = new Date(reservation.reservationTime);
+          if (resTime >= startOfToday && resTime < startOfTomorrow) {
+            todayCount++;
+          }
+          
+          let formattedStatus = reservation.status;
+          if (formattedStatus === "NO_SHOW") formattedStatus = "No Show";
+          else formattedStatus = formattedStatus.charAt(0).toUpperCase() + formattedStatus.slice(1).toLowerCase();
+
+          return {
+            id: reservation.id,
+            guest: reservation.guest?.name ?? "Guest",
+            table: reservation.table?.number ?? "N/A",
+            time: resTime.toLocaleString("en-US", {
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+            }),
+            guests: reservation.partySize,
+            status: formattedStatus,
+          };
+        });
+
+        setReservationsTodayCount(todayCount);
+        setReservations(mappedReservations);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchAnalytics();
+    fetchReservations();
   }, [successMessage]);
 
   React.useEffect(() => {
@@ -331,7 +357,7 @@ export default function ReservationsPage() {
                 </p>
               </div>
               <div className="rounded-2xl bg-[#081E19] px-4 py-3 text-sm text-[#f8f5ef]">
-                {analytics?.reservationsTodayCount ?? 0} reservations today
+                {reservationsTodayCount} reservations today
               </div>
             </div>
 

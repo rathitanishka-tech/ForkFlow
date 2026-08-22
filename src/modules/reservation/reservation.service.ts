@@ -95,6 +95,7 @@ export class ReservationService {
       },
       include: {
         guest: true,
+        table: true,
       },
       orderBy: {
         reservationTime: "desc",
@@ -211,6 +212,7 @@ export class ReservationService {
           },
           include: {
             guest: true,
+            table: true,
           },
         });
       } catch (error) {
@@ -267,6 +269,7 @@ export class ReservationService {
         },
         include: {
           guest: true,
+          table: true,
         },
       });
     });
@@ -366,6 +369,7 @@ export class ReservationService {
         },
         include: {
           guest: true,
+          table: true,
         },
       });
     });
@@ -454,6 +458,7 @@ export class ReservationService {
         },
         include: {
           guest: true,
+          table: true,
         },
       });
     });
@@ -493,6 +498,7 @@ export class ReservationService {
         },
         include: {
           guest: true,
+          table: true,
         },
       });
 
@@ -542,7 +548,7 @@ export class ReservationService {
       const updatedReservation = await tx.reservation.update({
         where: { id },
         data: { status: ReservationStatus.NO_SHOW },
-        include: { guest: true },
+        include: { guest: true, table: true },
       });
 
       const table = await tx.table.findUnique({
@@ -684,7 +690,7 @@ export class ReservationService {
             partySize: partySizeToUse,
             occasion: input.occasion !== undefined ? input.occasion : reservation.occasion,
           },
-          include: { guest: true },
+          include: { guest: true, table: true },
         });
       } catch (error) {
         if (isUniqueConstraintViolation(error, "tableId")) {

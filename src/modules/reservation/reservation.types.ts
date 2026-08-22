@@ -1,4 +1,4 @@
-import type { Guest } from "@prisma/client";
+import type { Guest, Table } from "@prisma/client";
 
 export type ReservationStatus =
   | "PENDING"
@@ -30,7 +30,7 @@ export interface ReservationResponse {
   updatedAt: Date;
 }
 
-export type ReservationWithGuest = ReservationResponse & { guest: Guest };
+export type ReservationWithGuest = ReservationResponse & { guest: Guest; table: Table };
 
 export type CreateReservationResult = ReservationResponse;
 
