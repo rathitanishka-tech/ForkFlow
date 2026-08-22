@@ -7,7 +7,7 @@ function Card({
 }>) {
   return (
     <section
-      className={`rounded-[1.5rem] border border-[#29443C] bg-[#10231E] ${className}`}
+      className={`rounded-[1.5rem] border border-border bg-card ${className}`}
     >
       {children}
     </section>
@@ -22,9 +22,9 @@ function SectionHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[#29443C] px-5 py-4">
+    <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
       <div>
-        <h2 className="text-sm font-semibold text-[#f8f5ef]">{title}</h2>
+        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>}
       </div>
     </div>
@@ -53,17 +53,17 @@ export function KitchenTimeline({
         {kitchenActivity.map((activity) => (
           <div
             key={activity.status}
-            className="flex gap-4 rounded-[1.2rem] border border-[#29443C] bg-[#16342D] p-4"
+            className="flex gap-4 rounded-[1.2rem] border border-border bg-muted p-4"
           >
             <span
               className={`mt-1 h-3 w-3 shrink-0 rounded-full ${activity.tone}`}
             />
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-semibold text-[#f8f5ef]">
+                <p className="text-sm font-semibold text-foreground">
                   {activity.status}
                 </p>
-                <span className="rounded-full bg-[#081E19] px-2 py-0.5 text-xs font-medium text-[#8ea79d]">
+                <span className="rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">
                   {activity.table}
                 </span>
               </div>

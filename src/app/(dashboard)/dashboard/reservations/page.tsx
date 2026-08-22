@@ -327,7 +327,7 @@ export default function ReservationsPage() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-[#081E19] p-4 text-[#f8f5ef] md:p-6">
+    <main className="min-h-screen w-full bg-background p-4 text-foreground md:p-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-6">
         <div className="flex flex-col gap-4 rounded-[1.5rem] border border-[#d6b48c]/15 bg-[#fffdf9] p-5 shadow-[0_16px_45px_rgba(11,35,28,0.08)] sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -344,22 +344,22 @@ export default function ReservationsPage() {
           </div>
           <Link
             href="/dashboard"
-            className="inline-flex items-center rounded-xl border border-[#d6b48c]/20 bg-[#10291f] px-4 py-2 text-sm font-medium text-[#f8f5ef] transition hover:bg-[#153426]"
+            className="inline-flex items-center rounded-xl border border-[#d6b48c]/20 bg-[#10291f] px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
           >
             Back to Dashboard
           </Link>
         </div>
 
         <div className="grid gap-6">
-          <section className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6 shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
+          <section className="rounded-[1.5rem] border border-border bg-card p-6 shadow-lg">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-[#8ea79d]">Current restaurant</p>
-                <p className="text-lg font-semibold text-[#f8f5ef]">
+                <p className="text-sm text-muted-foreground">Current restaurant</p>
+                <p className="text-lg font-semibold text-foreground">
                   {restaurant?.name ?? "ForkFlow"}
                 </p>
               </div>
-              <div className="rounded-2xl bg-[#081E19] px-4 py-3 text-sm text-[#f8f5ef]">
+              <div className="rounded-2xl bg-background px-4 py-3 text-sm text-foreground">
                 {reservationsTodayCount} reservations today
               </div>
             </div>
@@ -367,24 +367,24 @@ export default function ReservationsPage() {
             <form onSubmit={handleSubmit} className="mt-8 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Guest name</span>
+                  <span className="text-muted-foreground">Guest name</span>
                   <input
                     name="name"
                     value={form.name}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     placeholder="Guest full name"
                     required
                   />
                 </label>
 
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Phone number</span>
+                  <span className="text-muted-foreground">Phone number</span>
                   <input
                     name="phone"
                     value={form.phone}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     placeholder="+919XXXXXXXXX"
                     required
                   />
@@ -393,26 +393,26 @@ export default function ReservationsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Email address</span>
+                  <span className="text-muted-foreground">Email address</span>
                   <input
                     name="email"
                     type="email"
                     value={form.email}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     placeholder="guest@example.com"
                   />
                 </label>
 
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Party size</span>
+                  <span className="text-muted-foreground">Party size</span>
                   <input
                     name="guests"
                     type="number"
                     min={1}
                     value={form.guests}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     required
                   />
                 </label>
@@ -420,24 +420,24 @@ export default function ReservationsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Reservation time</span>
+                  <span className="text-muted-foreground">Reservation time</span>
                   <input
                     name="reservationDate"
                     type="datetime-local"
                     value={form.reservationDate}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     required
                   />
                 </label>
 
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Table</span>
+                  <span className="text-muted-foreground">Table</span>
                   <select
                     name="tableId"
                     value={form.tableId}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     required
                   >
                     {tables.map((table) => (
@@ -451,36 +451,36 @@ export default function ReservationsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Occasion</span>
+                  <span className="text-muted-foreground">Occasion</span>
                   <input
                     name="occasion"
                     value={form.occasion}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     placeholder="Birthday, anniversary..."
                   />
                 </label>
 
                 <label className="block text-sm text-slate-300">
-                  <span className="text-[#8ea79d]">Seating preference</span>
+                  <span className="text-muted-foreground">Seating preference</span>
                   <input
                     name="seatingPreference"
                     value={form.seatingPreference}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                     placeholder="Window, quiet area"
                   />
                 </label>
               </div>
 
               <label className="block text-sm text-slate-300">
-                <span className="text-[#8ea79d]">Notes</span>
+                <span className="text-muted-foreground">Notes</span>
                 <textarea
                   name="notes"
                   value={form.notes}
                   onChange={handleInputChange}
                   rows={4}
-                  className="mt-2 w-full rounded-2xl border border-[#29443C] bg-[#081E19] px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                  className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
                   placeholder="Add any requests or preferences"
                 />
               </label>
@@ -503,18 +503,18 @@ export default function ReservationsPage() {
               <button
                 type="submit"
                 disabled={isSaving || !restaurant || tables.length === 0}
-                className="inline-flex items-center justify-center rounded-2xl bg-[#0f5b4c] px-6 py-3 text-sm font-semibold text-[#f8f5ef] transition hover:bg-[#144433] disabled:cursor-not-allowed disabled:bg-[#16342D] disabled:text-[#8ea79d]"
+                className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
               >
                 {isSaving ? "Saving reservation..." : "Create Reservation"}
               </button>
             </form>
           </section>
 
-          <section className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6 shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
-            <h2 className="text-lg font-semibold text-[#f8f5ef]">
+          <section className="rounded-[1.5rem] border border-border bg-card p-6 shadow-lg">
+            <h2 className="text-lg font-semibold text-foreground">
               Recent Reservations
             </h2>
-            <p className="mt-1 text-sm text-[#8ea79d]">
+            <p className="mt-1 text-sm text-muted-foreground">
               A list of the most recent bookings.
             </p>
             <div className="mt-6 space-y-4">
@@ -522,13 +522,13 @@ export default function ReservationsPage() {
                 Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="flex h-[76px] items-center justify-between rounded-2xl border border-[#29443C] bg-[#081E19]/50 p-4 animate-pulse"
+                    className="flex h-[76px] items-center justify-between rounded-2xl border border-border bg-background/50 p-4 animate-pulse"
                   >
                     <div className="space-y-3">
-                      <div className="h-4 w-32 rounded bg-[#153426]"></div>
-                      <div className="h-3 w-48 rounded bg-[#153426]"></div>
+                      <div className="h-4 w-32 rounded bg-muted"></div>
+                      <div className="h-3 w-48 rounded bg-muted"></div>
                     </div>
-                    <div className="h-6 w-24 rounded-full bg-[#153426]"></div>
+                    <div className="h-6 w-24 rounded-full bg-muted"></div>
                   </div>
                 ))
               ) : reservations.length > 0 ? (
@@ -581,7 +581,7 @@ export default function ReservationsPage() {
                   return (
                     <div
                       key={reservation.id}
-                      className="flex items-center justify-between rounded-2xl border border-[#29443C] bg-[#081E19] p-4"
+                      className="flex items-center justify-between rounded-2xl border border-border bg-background p-4"
                     >
                       <div>
                         <p className="font-semibold text-white">

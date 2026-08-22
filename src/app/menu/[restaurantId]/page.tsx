@@ -167,7 +167,7 @@ export default function MenuPage() {
         <div className="fixed bottom-6 right-6 z-40">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0f5b4c] text-[#f8f5ef] shadow-lg transition-transform hover:scale-105 hover:bg-[#0b4a3d]"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-foreground shadow-lg transition-transform hover:scale-105 hover:bg-[#0b4a3d]"
             aria-label={`Open cart with ${totalCartItemCount} items`}
           >
             <ShoppingBag className="h-8 w-8" />

@@ -14,7 +14,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#081E19] text-[#f8f5ef]">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="fixed inset-y-0 left-0 z-40 hidden w-70 lg:block">
         <Sidebar />
       </div>

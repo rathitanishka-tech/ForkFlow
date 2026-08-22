@@ -87,12 +87,12 @@ export default function QrCodePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-[#29443C] bg-[#10231E] px-5 py-5 shadow-[0_18px_50px_rgba(3,15,11,0.22)] sm:flex-row sm:items-end sm:px-6">
+      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-[#f8f5ef]">
+          <h1 className="text-3xl font-semibold tracking-normal text-foreground">
             QR Code Manager
           </h1>
-          <p className="mt-2 text-sm text-[#8ea79d]">
+          <p className="mt-2 text-sm text-muted-foreground">
             Generate, preview, and download QR codes for your tables.
           </p>
         </div>
@@ -103,8 +103,8 @@ export default function QrCodePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="flex h-[600px] flex-col rounded-[1.5rem] border border-[#29443C] bg-[#10231E] lg:col-span-1">
-          <div className="border-b border-[#29443C] p-4">
+        <div className="flex h-[600px] flex-col rounded-[1.5rem] border border-border bg-card lg:col-span-1">
+          <div className="border-b border-border p-4">
             <h2 className="font-semibold text-[#F8F5EF]">
               Tables ({tables.length})
             </h2>
@@ -150,7 +150,7 @@ export default function QrCodePage() {
           </div>
         </div>
 
-        <div className="relative h-[600px] rounded-[1.5rem] border border-[#29443C] bg-gradient-to-br from-[#16352D] via-[#10231E] to-[#10231E] p-6 lg:col-span-2">
+        <div className="relative h-[600px] rounded-[1.5rem] border border-border bg-gradient-to-br from-[#16352D] via-[#10231E] to-[#10231E] p-6 lg:col-span-2">
           <AnimatePresence mode="wait">
             {resolvedSelectedTable && !isLoading ? (
               <motion.div

@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <div className="flex h-[80vh] items-center justify-center p-4">
-        <Card className="w-full max-w-md rounded-[1.5rem] border-[#29443C] bg-[#10231E] shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
+        <Card className="w-full max-w-md rounded-[1.5rem] border-border bg-card shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-500">
               <AlertCircle />
@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-[#081E19] text-[#f8f5ef]">
+    <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <StatCard
@@ -128,9 +128,9 @@ export default function AnalyticsPage() {
           />
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          <Card className="rounded-[1.5rem] border-[#29443C] bg-[#10231E] shadow-[0_16px_45px_rgba(3,15,11,0.14)] xl:col-span-2">
+          <Card className="rounded-[1.5rem] border-border bg-card shadow-lg xl:col-span-2">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-[#f8f5ef]">
+              <CardTitle className="text-lg font-semibold text-foreground">
                 Revenue - Last 7 Days
               </CardTitle>
             </CardHeader>
@@ -180,27 +180,27 @@ export default function AnalyticsPage() {
               }
               icon={<Star className="h-5 w-5 text-slate-500" />}
             />
-            <Card className="rounded-[1.5rem] border-[#29443C] bg-[#10231E] shadow-[0_16px_45px_rgba(3,15,11,0.14)]">
+            <Card className="rounded-[1.5rem] border-border bg-card shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-[#f8f5ef]">
+                <CardTitle className="text-lg font-semibold text-foreground">
                   Recent Orders
                 </CardTitle>
-                <CardDescription className="text-sm text-[#8ea79d]">
+                <CardDescription className="text-sm text-muted-foreground">
                   The last 5 orders placed in the restaurant.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="overflow-hidden rounded-[1.2rem] border border-[#29443C]">
+                <div className="overflow-hidden rounded-[1.2rem] border border-border">
                   <table className="w-full text-sm">
-                    <thead className="bg-[#16342D]">
-                      <tr className="border-b border-[#29443C]">
-                        <th className="h-12 px-4 text-left align-middle font-medium text-[#8ea79d]">
+                    <thead className="bg-muted">
+                      <tr className="border-b border-border">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                           Table
                         </th>
-                        <th className="h-12 px-4 text-left align-middle font-medium text-[#8ea79d]">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                           Status
                         </th>
-                        <th className="h-12 px-4 text-right align-middle font-medium text-[#8ea79d]">
+                        <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">
                           Amount
                         </th>
                       </tr>
@@ -209,10 +209,10 @@ export default function AnalyticsPage() {
                       {data.recentOrders.map((order: RecentOrder) => (
                         <tr
                           key={order.id}
-                          className="border-b border-[#29443C] hover:bg-[#16342D] transition"
+                          className="border-b border-border hover:bg-muted transition"
                         >
                           <td className="p-4 align-middle">
-                            <div className="font-medium text-[#f8f5ef]">
+                            <div className="font-medium text-foreground">
                               Table {order.table.number}
                             </div>
                             <div className="text-xs text-[#7f948b]">
@@ -222,7 +222,7 @@ export default function AnalyticsPage() {
                           <td className="p-4 align-middle">
                             <Badge
                               variant="outline"
-                              className="border-[#29443C] text-[#8ea79d] bg-[#16342D]"
+                              className="border-border text-muted-foreground bg-muted"
                             >
                               {order.status}
                             </Badge>
@@ -258,15 +258,15 @@ const StatCard = ({
   icon: React.ReactNode;
   description?: string;
 }) => (
-  <Card className="rounded-[1.5rem] border-[#29443C] bg-[#10231E] shadow-[0_12px_35px_rgba(3,15,11,0.14)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0F5B4C]/40">
+  <Card className="rounded-[1.5rem] border-border bg-card shadow-[0_12px_35px_rgba(3,15,11,0.14)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0F5B4C]/40">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-[#8ea79d]">
+      <CardTitle className="text-sm font-medium text-muted-foreground">
         {title}
       </CardTitle>
-      <div className="text-[#d6b48c]">{icon}</div>
+      <div className="text-accent">{icon}</div>
     </CardHeader>
     <CardContent>
-      <div className="text-4xl font-extrabold text-[#f8f5ef]">{value}</div>
+      <div className="text-4xl font-extrabold text-foreground">{value}</div>
       {description && <p className="text-sm text-[#7f948b]">{description}</p>}
     </CardContent>
   </Card>
@@ -281,40 +281,40 @@ const AnalyticsSkeleton = () => (
       {[...Array(4)].map((_, i) => (
         <div
           key={i}
-          className="h-[138px] animate-pulse rounded-[1.5rem] border-[#29443C] bg-[#10231E] p-6"
+          className="h-[138px] animate-pulse rounded-[1.5rem] border-border bg-card p-6"
         >
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="h-4 w-3/5 rounded-md bg-[#16342D]" />
+            <div className="h-4 w-3/5 rounded-md bg-muted" />
           </div>
           <div>
-            <div className="mt-2 h-10 w-1/2 rounded-md bg-[#16342D]" />
+            <div className="mt-2 h-10 w-1/2 rounded-md bg-muted" />
           </div>
         </div>
       ))}
     </div>
     <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-      <div className="animate-pulse rounded-[1.5rem] border-[#29443C] bg-[#10231E] xl:col-span-2">
+      <div className="animate-pulse rounded-[1.5rem] border-border bg-card xl:col-span-2">
         <div className="p-6">
-          <div className="h-6 w-1/3 rounded-md bg-[#16342D]" />
+          <div className="h-6 w-1/3 rounded-md bg-muted" />
         </div>
         <div className="p-6 pt-0">
-          <div className="h-[350px] w-full rounded-xl bg-[#16342D]" />
+          <div className="h-[350px] w-full rounded-xl bg-muted" />
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <div className="h-[162px] animate-pulse rounded-[1.5rem] border-[#29443C] bg-[#10231E] p-6">
+        <div className="h-[162px] animate-pulse rounded-[1.5rem] border-border bg-card p-6">
           <div className="p-6 pb-2">
-            <div className="h-4 w-3/5 rounded-md bg-[#16342D]" />
+            <div className="h-4 w-3/5 rounded-md bg-muted" />
           </div>
           <div className="space-y-2">
-            <div className="h-10 w-4/5 rounded-md bg-[#16342D]" />
-            <div className="h-4 w-2/5 rounded-md bg-[#16342D]" />
+            <div className="h-10 w-4/5 rounded-md bg-muted" />
+            <div className="h-4 w-2/5 rounded-md bg-muted" />
           </div>
         </div>
-        <div className="flex-1 animate-pulse rounded-[1.5rem] border-[#29443C] bg-[#10231E]">
+        <div className="flex-1 animate-pulse rounded-[1.5rem] border-border bg-card">
           <div className="space-y-1.5 p-6">
-            <div className="h-6 w-1/2 rounded-md bg-[#16342D]" />
-            <div className="h-4 w-3/4 rounded-md bg-[#16342D]" />
+            <div className="h-6 w-1/2 rounded-md bg-muted" />
+            <div className="h-4 w-3/4 rounded-md bg-muted" />
           </div>
           <div className="p-6 pt-0">
             <div className="overflow-hidden">
@@ -323,13 +323,13 @@ const AnalyticsSkeleton = () => (
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between border-b border-[#29443C] py-4"
+                      className="flex items-center justify-between border-b border-border py-4"
                     >
                       <div className="space-y-2">
-                        <div className="h-4 w-20 rounded-md bg-[#16342D]" />
-                        <div className="h-3 w-24 rounded-md bg-[#16342D]" />
+                        <div className="h-4 w-20 rounded-md bg-muted" />
+                        <div className="h-3 w-24 rounded-md bg-muted" />
                       </div>
-                      <div className="h-4 w-16 rounded-md bg-[#16342D]" />
+                      <div className="h-4 w-16 rounded-md bg-muted" />
                     </div>
                   ))}
                 </div>

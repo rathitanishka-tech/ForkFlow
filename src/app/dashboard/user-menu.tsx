@@ -7,8 +7,8 @@ export function UserMenu() {
   const displayName = user?.firstName ?? user?.fullName ?? "Tanishka";
 
   return (
-    <div className="flex h-10 items-center gap-2 rounded-full border border-[#29443C] bg-[#10231E] px-2.5 backdrop-blur">
-      <span className="hidden max-w-24 truncate text-sm font-medium text-[#f8f5ef] sm:block">
+    <div className="flex h-10 items-center gap-2 rounded-full border border-border bg-card px-2.5 backdrop-blur">
+      <span className="hidden max-w-24 truncate text-sm font-medium text-foreground sm:block">
         {displayName}
       </span>
       <UserButton />

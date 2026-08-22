@@ -97,7 +97,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-40 border-b border-[#0f5b4c]/10 bg-[#f8f5ef]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0f5b4c] text-sm font-semibold text-[#f8f5ef]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-foreground">
               FF
             </span>
             <span className="text-lg font-semibold tracking-[0.24em] text-slate-900 uppercase">
@@ -143,7 +143,7 @@ export default function HomePage() {
                   <>
                     <Link
                       href="/sign-up"
-                      className="inline-flex items-center justify-center rounded-full bg-[#0f5b4c] px-6 py-3 text-sm font-semibold text-[#f8f5ef] shadow-[0_18px_40px_rgba(15,91,76,0.2)] transition hover:-translate-y-0.5 hover:bg-[#0b4a3d]"
+                      className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-foreground shadow-[0_18px_40px_rgba(15,91,76,0.2)] transition hover:-translate-y-0.5 hover:bg-[#0b4a3d]"
                     >
                       Get Started
                     </Link>
@@ -158,7 +158,7 @@ export default function HomePage() {
                   <>
                     <Link
                       href="/dashboard"
-                      className="inline-flex items-center justify-center rounded-full bg-[#0f5b4c] px-6 py-3 text-sm font-semibold text-[#f8f5ef] shadow-[0_18px_40px_rgba(15,91,76,0.2)] transition hover:-translate-y-0.5 hover:bg-[#0b4a3d]"
+                      className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-foreground shadow-[0_18px_40px_rgba(15,91,76,0.2)] transition hover:-translate-y-0.5 hover:bg-[#0b4a3d]"
                     >
                       Open Dashboard
                     </Link>
@@ -174,28 +174,28 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-[#0f5b4c]/10 bg-[#0f5b4c] p-6 text-[#f8f5ef] shadow-[0_30px_80px_rgba(15,91,76,0.18)]">
+            <div className="rounded-[2rem] border border-[#0f5b4c]/10 bg-primary p-6 text-foreground shadow-[0_30px_80px_rgba(15,91,76,0.18)]">
               <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.34em] text-[#d6b48c]">
+                    <p className="text-sm uppercase tracking-[0.34em] text-accent">
                       Service snapshot
                     </p>
                     <p className="mt-2 text-3xl font-semibold">
                       Tonight at a glance
                     </p>
                   </div>
-                  <div className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm text-[#f8f5ef]">
+                  <div className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm text-foreground">
                     Live
                   </div>
                 </div>
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-[#113b2e] p-4">
-                    <p className="text-sm text-[#d6b48c]">Reservations</p>
+                  <div className="rounded-2xl border border-white/10 bg-muted p-4">
+                    <p className="text-sm text-accent">Reservations</p>
                     <p className="mt-2 text-3xl font-semibold">24</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-[#113b2e] p-4">
-                    <p className="text-sm text-[#d6b48c]">Orders in flight</p>
+                  <div className="rounded-2xl border border-white/10 bg-muted p-4">
+                    <p className="text-sm text-accent">Orders in flight</p>
                     <p className="mt-2 text-3xl font-semibold">12</p>
                   </div>
                 </div>
@@ -206,7 +206,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <p className="font-semibold">Suggested pairings</p>
-                      <p className="text-sm text-[#f8f5ef]/75">
+                      <p className="text-sm text-foreground/75">
                         Truffle burger and house fries are trending this
                         evening.
                       </p>
@@ -255,11 +255,11 @@ export default function HomePage() {
 
         <section
           id="how-it-works"
-          className="bg-[#0f5b4c] px-4 py-20 text-[#f8f5ef] sm:px-6 lg:px-8"
+          className="bg-primary px-4 py-20 text-foreground sm:px-6 lg:px-8"
         >
           <div className="mx-auto max-w-7xl">
             <div className="max-w-2xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#d6b48c]">
+              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-accent">
                 How it works
               </p>
               <h2 className="mt-3 text-4xl font-semibold sm:text-5xl">
@@ -276,7 +276,7 @@ export default function HomePage() {
                     0{index + 1}
                   </div>
                   <h3 className="mt-5 text-2xl font-semibold">{step.title}</h3>
-                  <p className="mt-3 text-base leading-7 text-[#f8f5ef]/80">
+                  <p className="mt-3 text-base leading-7 text-foreground/80">
                     {step.description}
                   </p>
                 </div>
@@ -306,14 +306,14 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="grid gap-6 sm:grid-cols-2">
-              <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-[#0f5b4c] p-7 text-[#f8f5ef] shadow-[0_20px_50px_rgba(15,91,76,0.16)]">
-                <p className="text-sm uppercase tracking-[0.34em] text-[#d6b48c]">
+              <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-primary p-7 text-foreground shadow-[0_20px_50px_rgba(15,91,76,0.16)]">
+                <p className="text-sm uppercase tracking-[0.34em] text-accent">
                   QR Ordering
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold">
                   Fast table-side ordering
                 </h3>
-                <p className="mt-3 text-base leading-7 text-[#f8f5ef]/80">
+                <p className="mt-3 text-base leading-7 text-foreground/80">
                   Guests order in seconds, and your team stays in control.
                 </p>
               </div>
@@ -363,7 +363,7 @@ export default function HomePage() {
               </div>
               <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-[#f3eee6] p-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0f5b4c] text-[#f8f5ef]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-foreground">
                     <Lightbulb className="h-6 w-6" />
                   </div>
                   <div>
@@ -382,17 +382,17 @@ export default function HomePage() {
         </section>
 
         <section className="px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-[#0f5b4c]/10 bg-[#0f5b4c] p-8 text-[#f8f5ef] shadow-[0_20px_50px_rgba(15,91,76,0.16)] lg:p-12">
+          <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-[#0f5b4c]/10 bg-primary p-8 text-foreground shadow-[0_20px_50px_rgba(15,91,76,0.16)] lg:p-12">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#d6b48c]">
+                <p className="text-sm font-semibold uppercase tracking-[0.36em] text-accent">
                   Testimonials
                 </p>
                 <h2 className="mt-3 text-4xl font-semibold sm:text-5xl">
                   “The experience feels as refined as the restaurant itself.”
                 </h2>
               </div>
-              <div className="rounded-[1.4rem] border border-white/10 bg-white/10 px-6 py-5 text-sm leading-7 text-[#f8f5ef]/80">
+              <div className="rounded-[1.4rem] border border-white/10 bg-white/10 px-6 py-5 text-sm leading-7 text-foreground/80">
                 “ForkFlow made our front-of-house and kitchen feel connected for
                 the first time.”
               </div>

@@ -7,7 +7,7 @@ function Card({
 }>) {
   return (
     <section
-      className={`rounded-[1.5rem] border border-[#29443C] bg-[#10231E] ${className}`}
+      className={`rounded-[1.5rem] border border-border bg-card ${className}`}
     >
       {children}
     </section>
@@ -22,9 +22,9 @@ function SectionHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[#29443C] px-5 py-4">
+    <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
       <div>
-        <h2 className="text-sm font-semibold text-[#f8f5ef]">{title}</h2>
+        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>}
       </div>
     </div>
@@ -67,7 +67,7 @@ export function ReservationTable({
       />
       <div className="overflow-x-auto">
         <table className="w-full min-w-170 text-left text-sm">
-          <thead className="border-b border-[#29443C] bg-[#16342D] text-xs uppercase text-[#8ea79d]">
+          <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-semibold">Guest</th>
               <th className="px-5 py-3 font-semibold">Table</th>
@@ -80,9 +80,9 @@ export function ReservationTable({
             {reservations.map((reservation) => (
               <tr
                 key={`${reservation.guest}-${reservation.time}`}
-                className="hover:bg-[#16342D]"
+                className="hover:bg-muted"
               >
-                <td className="px-5 py-4 font-medium text-[#f8f5ef]">
+                <td className="px-5 py-4 font-medium text-foreground">
                   {reservation.guest}
                 </td>
                 <td className="px-5 py-4 text-slate-400">

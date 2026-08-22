@@ -33,17 +33,17 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-70 flex-col border-r border-[#29443C] bg-[#081E19] text-[#f8f5ef]">
-      <div className="flex h-20 items-center border-b border-[#29443C] px-6">
+    <aside className="flex h-full w-70 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      <div className="flex h-20 items-center border-b border-sidebar-border px-6">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0f5b4c] text-sm font-semibold text-[#f8f5ef]">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sidebar-primary text-sm font-semibold text-sidebar-primary-foreground">
             FF
           </span>
           <div>
-            <p className="text-base font-semibold tracking-[0.24em] uppercase text-[#f8f5ef]">
+            <p className="text-base font-semibold tracking-[0.24em] uppercase text-sidebar-foreground">
               ForkFlow
             </p>
-            <p className="text-xs text-[#d6b48c]">Operations</p>
+            <p className="text-xs text-accent">Operations</p>
           </div>
         </Link>
       </div>
@@ -63,8 +63,8 @@ export function Sidebar() {
               className={cx(
                 "flex h-11 items-center gap-3 rounded-2xl px-3 text-sm font-medium transition",
                 isActive
-                  ? "bg-[#0f5b4c] text-[#f8f5ef] shadow-[0_10px_25px_rgba(15,91,76,0.2)]"
-                  : "text-[#9fb4ab] hover:bg-[#10231E] hover:text-[#f8f5ef",
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
@@ -74,8 +74,8 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-[#29443C] p-4">
-        <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#29443C] bg-[#10231E] px-3 py-3 text-sm font-medium text-[#f8f5ef] transition hover:bg-[#16342D]">
+      <div className="border-t border-sidebar-border p-4">
+        <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-sidebar-border bg-sidebar px-3 py-3 text-sm font-medium text-sidebar-foreground transition hover:bg-sidebar-accent">
           <LogOut className="h-4 w-4" />
           Logout
         </button>

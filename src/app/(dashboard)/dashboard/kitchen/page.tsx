@@ -137,22 +137,22 @@ export default function KitchenPage() {
   };
 
   return (
-    <main className="flex min-h-0 w-full flex-col overflow-hidden rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-4 text-[#f8f5ef] shadow-[0_16px_45px_rgba(3,15,11,0.14)] md:p-6">
+    <main className="flex min-h-0 w-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-4 text-foreground shadow-lg md:p-6">
       <header className="mb-6 shrink-0">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#8ea79d]">
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
           Kitchen
         </p>
-        <h1 className="mt-2 text-3xl font-semibold text-[#f8f5ef]">
+        <h1 className="mt-2 text-3xl font-semibold text-foreground">
           Kitchen Dashboard
         </h1>
-        <p className="mt-2 text-sm text-[#8ea79d]">
+        <p className="mt-2 text-sm text-muted-foreground">
           Live orders for{" "}
-          <span className="font-semibold text-[#f8f5ef]">
+          <span className="font-semibold text-foreground">
             {restaurant?.name ?? "your restaurant"}
           </span>
         </p>
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto rounded-[1.25rem] border border-[#29443C] bg-[#081E19] p-3 text-[#f8f5ef] shadow-inner md:p-4">
+      <div className="min-h-0 flex-1 overflow-y-auto rounded-[1.25rem] border border-border bg-background p-3 text-foreground shadow-inner md:p-4">
         {renderContent()}
       </div>
     </main>

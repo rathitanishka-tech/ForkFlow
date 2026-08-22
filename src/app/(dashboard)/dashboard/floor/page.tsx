@@ -18,7 +18,7 @@ function LegendRow({
   count: number;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-[#1D362F] bg-[#0C1F1A] px-4 py-3 transition-colors duration-200 hover:border-[#29443C]">
+    <div className="flex items-center justify-between rounded-xl border border-border bg-secondary px-4 py-3 transition-colors duration-200 hover:border-border">
       <div className="flex items-center gap-3">
         <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
         <span className="text-sm text-[#8EA79D]">{label}</span>
@@ -78,12 +78,12 @@ export default function FloorPlanPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-[#29443C] bg-[#10231E] px-5 py-5 shadow-[0_18px_50px_rgba(3,15,11,0.22)] sm:flex-row sm:items-end sm:px-6">
+      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-[#f8f5ef]">
+          <h1 className="text-3xl font-semibold tracking-normal text-foreground">
             Floor Planner
           </h1>
-          <p className="mt-2 text-sm text-[#8ea79d]">
+          <p className="mt-2 text-sm text-muted-foreground">
             Manage your restaurant&apos;s tables and layout in real-time.
           </p>
         </div>
@@ -92,17 +92,17 @@ export default function FloorPlanPage() {
       <div className="space-y-6">
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <div className="flex h-[600px] items-center justify-center rounded-[1.5rem] border border-[#29443C] bg-[#10231E]">
-              <p className="text-[#8ea79d]">Loading floor plan...</p>
+            <div className="flex h-[600px] items-center justify-center rounded-[1.5rem] border border-border bg-card">
+              <p className="text-muted-foreground">Loading floor plan...</p>
             </div>
           ) : error ? (
-            <Card className="flex h-full items-center justify-center rounded-[1.5rem] border border-[#29443C] bg-[#10231E]">
+            <Card className="flex h-full items-center justify-center rounded-[1.5rem] border border-border bg-card">
               <div className="text-center">
                 <X className="mx-auto mb-4 h-10 w-10 text-rose-400" />
-                <h3 className="text-lg font-semibold text-[#f8f5ef]">
+                <h3 className="text-lg font-semibold text-foreground">
                   Failed to load floor plan
                 </h3>
-                <p className="mt-2 text-sm text-[#8ea79d]">{error}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{error}</p>
               </div>
             </Card>
           ) : (
@@ -127,9 +127,9 @@ export default function FloorPlanPage() {
                       table={selectedTable}
                     />
                   ) : (
-                    <Card className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E]">
+                    <Card className="rounded-[1.5rem] border border-border bg-card">
                       <div className="flex h-full min-h-[220px] flex-col items-center justify-center p-8 text-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#29443C] bg-[#0C1F1A]">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-secondary">
                           <Map className="h-7 w-7 text-[#D6B48C]" />
                         </div>
 
@@ -146,7 +146,7 @@ export default function FloorPlanPage() {
                   )}
                 </AnimatePresence>
 
-                <Card className="rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6">
+                <Card className="rounded-[1.5rem] border border-border bg-card p-6">
                   <h3 className="mb-6 text-lg font-semibold text-[#F8F5EF]">
                     Live Status
                   </h3>

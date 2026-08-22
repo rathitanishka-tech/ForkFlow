@@ -137,17 +137,17 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-[#29443C] bg-[#10231E] px-5 py-5 shadow-[0_18px_50px_rgba(3,15,11,0.22)] sm:flex-row sm:items-end sm:px-6">
+      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-[#f8f5ef]">
+          <h1 className="text-3xl font-semibold tracking-normal text-foreground">
             Good Morning 👋
           </h1>
-          <p className="mt-2 text-sm text-[#8ea79d]">
+          <p className="mt-2 text-sm text-muted-foreground">
             Here&apos;s what&apos;s happening across your restaurants today.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-[#29443C] bg-[#081E19] px-4 py-2.5 text-sm font-medium text-[#d6b48c] shadow-sm">
-          <Clock3 className="h-4 w-4 text-[#d6b48c]" aria-hidden="true" />
+        <div className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium text-accent shadow-sm">
+          <Clock3 className="h-4 w-4 text-accent" aria-hidden="true" />
           {currentDate}
         </div>
       </div>
@@ -184,10 +184,10 @@ export default async function DashboardPage() {
 
         <aside className="space-y-4">
           <div>
-            <h2 className="text-sm font-semibold text-[#f8f5ef]">
+            <h2 className="text-sm font-semibold text-foreground">
               Today&apos;s Insights
             </h2>
-            <p className="mt-1 text-sm text-[#8ea79d]">
+            <p className="mt-1 text-sm text-muted-foreground">
               Signals from the current service window.
             </p>
           </div>
