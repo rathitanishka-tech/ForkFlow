@@ -126,6 +126,7 @@ export default function KitchenPage() {
       return (
         <div className="flex h-full items-center justify-center text-red-400">
           <p>Error: {error}</p>
+        </div>
       );
     }
 

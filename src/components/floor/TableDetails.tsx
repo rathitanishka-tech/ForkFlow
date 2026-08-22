@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TableNodeData, TableStatus } from "./TableNode";
 import { cn } from "@/lib/utils";
+import {
   Users,
   Shapes,
   MousePointerSquareDashed,
