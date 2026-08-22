@@ -35,8 +35,8 @@ const columnConfig = [
 
 export function KitchenBoard({ board, onStatusChange }: KitchenBoardProps) {
   return (
-    <div className="h-full min-h-0 overflow-x-auto">
-      <div className="grid h-full min-w-[1280px] grid-cols-4 gap-4">
+    <div className="h-full min-h-0 overflow-y-auto lg:overflow-x-hidden">
+      <div className="flex flex-col gap-6 pb-6 lg:grid lg:h-full lg:grid-cols-4 lg:gap-4 lg:pb-0">
         {columnConfig.map((col) => (
           <KitchenColumn
             key={col.status}

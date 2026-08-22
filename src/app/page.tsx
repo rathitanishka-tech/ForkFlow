@@ -12,7 +12,10 @@ import {
   QrCode,
   Sparkles,
   UtensilsCrossed,
+  Menu,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 
 const featureList = [
   {
@@ -81,6 +84,7 @@ export default function HomePage() {
   const { isLoaded, isSignedIn } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -118,7 +122,87 @@ export default function HomePage() {
               Insights
             </Link>
           </nav>
+          
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-slate-700 hover:text-[#0f5b4c] focus:outline-none"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
+        
+        {/* Mobile menu dropdown */}
+        {isMobileMenuOpen && (
+          <div className="absolute left-0 top-full w-full border-b border-[#0f5b4c]/10 bg-[#f8f5ef] px-4 py-4 shadow-lg md:hidden">
+            <nav className="flex flex-col gap-4 text-sm font-medium text-slate-700">
+              <Link
+                href="#features"
+                className="block py-2 transition hover:text-[#0f5b4c]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                href="#how-it-works"
+                className="block py-2 transition hover:text-[#0f5b4c]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                How it works
+              </Link>
+              <Link
+                href="#insights"
+                className="block py-2 transition hover:text-[#0f5b4c]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Insights
+              </Link>
+              <div className="mt-4 flex flex-col gap-3 border-t border-[#0f5b4c]/10 pt-4">
+                {!isLoaded || !isSignedIn ? (
+                  <>
+                    <Link
+                      href="/sign-in"
+                      className="inline-flex w-full items-center justify-center rounded-full border border-[#0f5b4c]/20 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f5b4c]/35 hover:text-[#0f5b4c]"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/sign-up"
+                      className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-[#0b4a3d]"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-[#0b4a3d]"
+                    >
+                      Open Dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleSignOut();
+                      }}
+                      className="inline-flex w-full items-center justify-center rounded-full border border-[#0f5b4c]/20 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f5b4c]/35 hover:text-[#0f5b4c]"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                )}
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       <main>

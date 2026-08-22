@@ -190,8 +190,8 @@ export default function AnalyticsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="overflow-hidden rounded-[1.2rem] border border-border">
-                  <table className="w-full text-sm">
+                <div className="overflow-x-auto rounded-[1.2rem] border border-border">
+                  <table className="w-full min-w-[400px] text-sm">
                     <thead className="bg-muted">
                       <tr className="border-b border-border">
                         <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">

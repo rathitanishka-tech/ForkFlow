@@ -113,11 +113,16 @@ export default function FloorPlanPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <FloorCanvas
-                tables={tables}
-                selectedTableId={selectedTable?.id}
-                onSelectTable={handleSelectTable}
-              />
+              <div className="md:hidden mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+                The floor planner is highly interactive and best viewed on a desktop or tablet device. You can scroll horizontally to view the canvas on mobile.
+              </div>
+              <div className="overflow-auto pb-4">
+                <FloorCanvas
+                  tables={tables}
+                  selectedTableId={selectedTable?.id}
+                  onSelectTable={handleSelectTable}
+                />
+              </div>
 
               <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
                 <AnimatePresence mode="wait">

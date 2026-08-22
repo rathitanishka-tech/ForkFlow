@@ -65,8 +65,8 @@ export function ReservationTable({
         title="Recent Reservations"
         subtitle="Latest bookings and guest arrivals"
       />
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-170 text-left text-sm">
+      <div className="overflow-x-auto pb-2">
+        <table className="w-full min-w-[600px] text-left text-sm">
           <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-semibold">Guest</th>
