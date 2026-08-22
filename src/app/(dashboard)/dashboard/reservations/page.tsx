@@ -78,6 +78,7 @@ export default function ReservationsPage() {
     reservationId: null,
   });
   const [reservationsTodayCount, setReservationsTodayCount] = React.useState(0);
+  const [isLoadingReservations, setIsLoadingReservations] = React.useState(true);
 
   React.useEffect(() => {
     const fetchReservations = async () => {
@@ -125,6 +126,8 @@ export default function ReservationsPage() {
         setReservations(mappedReservations);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoadingReservations(false);
       }
     };
 
@@ -515,7 +518,20 @@ export default function ReservationsPage() {
               A list of the most recent bookings.
             </p>
             <div className="mt-6 space-y-4">
-              {reservations.length > 0 ? (
+              {isLoadingReservations ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex h-[76px] items-center justify-between rounded-2xl border border-[#29443C] bg-[#081E19]/50 p-4 animate-pulse"
+                  >
+                    <div className="space-y-3">
+                      <div className="h-4 w-32 rounded bg-[#153426]"></div>
+                      <div className="h-3 w-48 rounded bg-[#153426]"></div>
+                    </div>
+                    <div className="h-6 w-24 rounded-full bg-[#153426]"></div>
+                  </div>
+                ))
+              ) : reservations.length > 0 ? (
                 reservations.map((reservation) => {
                   const statusKey = reservation.status
                     .toUpperCase()
