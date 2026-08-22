@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Header } from "@/app/dashboard/header";
 import { Sidebar } from "@/app/dashboard/sidebar";
+import { getCurrentRestaurant, RestaurantNotFoundError } from "@/lib/server-restaurant";
 
 export default async function DashboardLayout({
   children,
@@ -11,6 +12,15 @@ export default async function DashboardLayout({
   const authState = await auth();
   if (!authState.userId) {
     redirect("/sign-in");
+  }
+
+  try {
+    await getCurrentRestaurant();
+  } catch (error) {
+    if (error instanceof RestaurantNotFoundError) {
+      redirect("/onboarding");
+    }
+    throw error;
   }
 
   return (

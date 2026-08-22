@@ -112,34 +112,5 @@ async function upsertUser(clerkUserId: string, data: Record<string, unknown>) {
     },
   });
 
-  // Link the user to the default business as an OWNER if not already linked.
-  // The default business is created by the seed script (slug: "forkflow-hospitality").
-  // This is NOT a fake fallback — it is the real business that already exists
-  // in the database and owns the seeded restaurant data.
-  const defaultBusiness = await prisma.business.findUnique({
-    where: { slug: "forkflow-hospitality" },
-    select: { id: true },
-  });
-
-  if (defaultBusiness) {
-    await prisma.businessMembership.upsert({
-      where: {
-        userId_businessId: {
-          userId: (await prisma.user.findUnique({
-            where: { clerkUserId },
-            select: { id: true },
-          }))!.id,
-          businessId: defaultBusiness.id,
-        },
-      },
-      update: {
-        role: BusinessRole.OWNER,
-      },
-      create: {
-        user: { connect: { clerkUserId } },
-        business: { connect: { id: defaultBusiness.id } },
-        role: BusinessRole.OWNER,
-      },
-    });
-  }
+  // Default business linking removed for multi-tenant onboarding
 }
