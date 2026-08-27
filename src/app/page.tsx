@@ -130,16 +130,17 @@ export default function HomePage() {
             <div className="md:hidden flex items-center gap-2">
               <ThemeToggle className="flex sm:hidden border-[#0f5b4c]/20 bg-white/50 text-[#0f5b4c] hover:bg-white" />
               <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-slate-700 hover:text-[#0f5b4c] focus:outline-none"
-              aria-label="Toggle mobile menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-slate-700 hover:text-[#0f5b4c] focus:outline-none"
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
         
