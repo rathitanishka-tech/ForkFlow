@@ -98,40 +98,40 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f5ef] text-[#0a1f18] dark:bg-[#0a1f18] dark:text-slate-50 transition-colors duration-300">
-      <header className="sticky top-0 z-40 border-b border-[#0f5b4c]/10 bg-[#f8f5ef]/90 backdrop-blur-xl dark:bg-[#0a1f18]/90 dark:border-white/10 transition-colors duration-300">
+    <div className="min-h-screen bg-[#EAEF9D]/30 text-[#336A29] dark:bg-[#0a1f18] dark:text-slate-50 transition-colors duration-300">
+      <header className="sticky top-0 z-40 border-b border-[#498428]/10 bg-[#EAEF9D]/30/90 backdrop-blur-xl dark:bg-[#0a1f18]/90 dark:border-white/10 transition-colors duration-300">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-foreground">
               FF
             </span>
-            <span className="text-lg font-semibold tracking-[0.24em] text-[#0a1f18] uppercase">
+            <span className="text-lg font-semibold tracking-[0.24em] text-[#336A29] uppercase">
               ForkFlow
             </span>
           </Link>
           <div className="flex items-center gap-4">
-            <nav className="hidden items-center gap-8 text-sm text-[#23453b] md:flex">
-              <Link href="#features" className="transition hover:text-[#0f5b4c]">
+            <nav className="hidden items-center gap-8 text-sm text-[#336A29] md:flex">
+              <Link href="#features" className="transition hover:text-[#498428]">
                 Features
               </Link>
               <Link
                 href="#how-it-works"
-                className="transition hover:text-[#0f5b4c]"
+                className="transition hover:text-[#498428]"
               >
                 How it works
               </Link>
-              <Link href="#insights" className="transition hover:text-[#0f5b4c]">
+              <Link href="#insights" className="transition hover:text-[#498428]">
                 Insights
               </Link>
             </nav>
             
-            <ThemeToggle className="hidden sm:flex border-[#0f5b4c]/20 bg-white/50 text-[#0f5b4c] hover:bg-white" />
+            <ThemeToggle className="hidden sm:flex border-[#498428]/20 bg-white/50 text-[#498428] hover:bg-white" />
             
             <div className="md:hidden flex items-center gap-2">
-              <ThemeToggle className="flex sm:hidden border-[#0f5b4c]/20 bg-white/50 text-[#0f5b4c] hover:bg-white" />
+              <ThemeToggle className="flex sm:hidden border-[#498428]/20 bg-white/50 text-[#498428] hover:bg-white" />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-[#23453b] hover:text-[#0f5b4c] focus:outline-none"
+                className="text-[#336A29] hover:text-[#498428] focus:outline-none"
                 aria-label="Toggle mobile menu"
               >
                 {isMobileMenuOpen ? (
@@ -146,35 +146,35 @@ export default function HomePage() {
         
         {/* Mobile menu dropdown */}
         {isMobileMenuOpen && (
-          <div className="absolute left-0 top-full w-full border-b border-[#0f5b4c]/10 bg-[#f8f5ef] px-4 py-4 shadow-lg md:hidden">
-            <nav className="flex flex-col gap-4 text-sm font-medium text-[#23453b]">
+          <div className="absolute left-0 top-full w-full border-b border-[#498428]/10 bg-[#EAEF9D]/30 px-4 py-4 shadow-lg md:hidden">
+            <nav className="flex flex-col gap-4 text-sm font-medium text-[#336A29]">
               <Link
                 href="#features"
-                className="block py-2 transition hover:text-[#0f5b4c]"
+                className="block py-2 transition hover:text-[#498428]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
               </Link>
               <Link
                 href="#how-it-works"
-                className="block py-2 transition hover:text-[#0f5b4c]"
+                className="block py-2 transition hover:text-[#498428]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 How it works
               </Link>
               <Link
                 href="#insights"
-                className="block py-2 transition hover:text-[#0f5b4c]"
+                className="block py-2 transition hover:text-[#498428]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Insights
               </Link>
-              <div className="mt-4 flex flex-col gap-3 border-t border-[#0f5b4c]/10 pt-4">
+              <div className="mt-4 flex flex-col gap-3 border-t border-[#498428]/10 pt-4">
                 {!isLoaded || !isSignedIn ? (
                   <>
                     <Link
                       href="/sign-in"
-                      className="inline-flex w-full items-center justify-center rounded-full border border-[#0f5b4c]/20 bg-white px-6 py-3 text-sm font-semibold text-[#23453b] transition hover:border-[#0f5b4c]/35 hover:text-[#0f5b4c]"
+                      className="inline-flex w-full items-center justify-center rounded-full border border-[#498428]/20 bg-white px-6 py-3 text-sm font-semibold text-[#336A29] transition hover:border-[#498428]/35 hover:text-[#498428]"
                     >
                       Sign In
                     </Link>
@@ -199,7 +199,7 @@ export default function HomePage() {
                         setIsMobileMenuOpen(false);
                         handleSignOut();
                       }}
-                      className="inline-flex w-full items-center justify-center rounded-full border border-[#0f5b4c]/20 bg-white px-6 py-3 text-sm font-semibold text-[#23453b] transition hover:border-[#0f5b4c]/35 hover:text-[#0f5b4c]"
+                      className="inline-flex w-full items-center justify-center rounded-full border border-[#498428]/20 bg-white px-6 py-3 text-sm font-semibold text-[#336A29] transition hover:border-[#498428]/35 hover:text-[#498428]"
                     >
                       Sign Out
                     </button>
@@ -216,14 +216,14 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(214,180,140,0.25),transparent_46%),radial-gradient(circle_at_90%_20%,rgba(15,91,76,0.12),transparent_32%)]" />
           <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#0f5b4c]/15 bg-white/70 px-3 py-1 text-sm font-medium text-[#0f5b4c]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#498428]/15 bg-white/70 px-3 py-1 text-sm font-medium text-[#498428]">
                 <Sparkles className="h-4 w-4" />
                 Hospitality, refined for modern restaurants
               </div>
-              <h1 className="mt-6 text-5xl font-semibold leading-[0.95] tracking-[-0.04em] text-[#0a1f18] sm:text-6xl lg:text-7xl">
+              <h1 className="mt-6 text-5xl font-semibold leading-[0.95] tracking-[-0.04em] text-[#336A29] sm:text-6xl lg:text-7xl">
                 Run your restaurant with calm precision.
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-[#406157]">
+              <p className="mt-6 max-w-xl text-lg leading-8 text-[#498428]">
                 From the dining room to the kitchen pass, ForkFlow brings
                 reservations, ordering, analytics and operations into one
                 elegant experience.
@@ -239,7 +239,7 @@ export default function HomePage() {
                     </Link>
                     <Link
                       href="/sign-in"
-                      className="inline-flex items-center justify-center rounded-full border border-[#0f5b4c]/20 bg-white px-6 py-3 text-sm font-semibold text-[#23453b] transition hover:border-[#0f5b4c]/35 hover:text-[#0f5b4c]"
+                      className="inline-flex items-center justify-center rounded-full border border-[#498428]/20 bg-white px-6 py-3 text-sm font-semibold text-[#336A29] transition hover:border-[#498428]/35 hover:text-[#498428]"
                     >
                       Sign In
                     </Link>
@@ -255,7 +255,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleSignOut}
-                      className="inline-flex items-center justify-center rounded-full border border-[#0f5b4c]/20 bg-white px-6 py-3 text-sm font-semibold text-[#23453b] transition hover:border-[#0f5b4c]/35 hover:text-[#0f5b4c]"
+                      className="inline-flex items-center justify-center rounded-full border border-[#498428]/20 bg-white px-6 py-3 text-sm font-semibold text-[#336A29] transition hover:border-[#498428]/35 hover:text-[#498428]"
                     >
                       Sign Out
                     </button>
@@ -264,11 +264,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-[#0f5b4c]/10 bg-[#1b604f] p-6 text-foreground shadow-[0_30px_80px_rgba(15,91,76,0.18)]">
+            <div className="rounded-[2rem] border border-[#498428]/10 bg-[#336A29] p-6 text-foreground shadow-[0_30px_80px_rgba(15,91,76,0.18)]">
               <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.34em] text-[#89baa6]">
+                    <p className="text-sm uppercase tracking-[0.34em] text-[#C1D95C]">
                       Service snapshot
                     </p>
                     <p className="mt-2 text-3xl font-semibold">
@@ -280,18 +280,18 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-[#13372f] p-4">
-                    <p className="text-sm text-[#89baa6]">Reservations</p>
+                  <div className="rounded-2xl border border-white/10 bg-[#498428] p-4">
+                    <p className="text-sm text-[#C1D95C]">Reservations</p>
                     <p className="mt-2 text-3xl font-semibold">24</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-[#13372f] p-4">
-                    <p className="text-sm text-[#89baa6]">Orders in flight</p>
+                  <div className="rounded-2xl border border-white/10 bg-[#498428] p-4">
+                    <p className="text-sm text-[#C1D95C]">Orders in flight</p>
                     <p className="mt-2 text-3xl font-semibold">12</p>
                   </div>
                 </div>
-                <div className="mt-6 rounded-[1.4rem] border border-white/10 bg-[#307865] p-5">
+                <div className="mt-6 rounded-[1.4rem] border border-white/10 bg-[#80B155] p-5">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#408a76] text-white">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#80B155] text-white">
                       <UtensilsCrossed className="h-5 w-5" />
                     </div>
                     <div>
@@ -311,13 +311,13 @@ export default function HomePage() {
         <section id="features" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="max-w-2xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#0f5b4c]">
+              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#498428]">
                 The foundations of service
               </p>
-              <h2 className="mt-3 text-4xl font-semibold text-[#0a1f18] sm:text-5xl">
+              <h2 className="mt-3 text-4xl font-semibold text-[#336A29] sm:text-5xl">
                 Built for the rhythm of hospitality.
               </h2>
-              <p className="mt-4 text-lg leading-8 text-[#406157]">
+              <p className="mt-4 text-lg leading-8 text-[#498428]">
                 Every module feels deliberate, polished and calm, so your team
                 can focus on guests instead of tooling.
               </p>
@@ -326,15 +326,15 @@ export default function HomePage() {
               {featureList.map((feature) => (
                 <div
                   key={feature.title}
-                  className="group rounded-[1.6rem] border border-[#0f5b4c]/10 bg-white p-7 shadow-[0_20px_50px_rgba(15,23,42,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,91,76,0.12)]"
+                  className="group rounded-[1.6rem] border border-[#498428]/10 bg-white p-7 shadow-[0_20px_50px_rgba(15,23,42,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,91,76,0.12)]"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f3eee6] text-[#0f5b4c]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAEF9D] text-[#498428]">
                     <feature.Icon className="h-6 w-6" />
                   </div>
-                  <h3 className="mt-5 text-2xl font-semibold text-[#0a1f18]">
+                  <h3 className="mt-5 text-2xl font-semibold text-[#336A29]">
                     {feature.title}
                   </h3>
-                  <p className="mt-3 text-base leading-7 text-[#406157]">
+                  <p className="mt-3 text-base leading-7 text-[#498428]">
                     {feature.description}
                   </p>
                 </div>
@@ -349,7 +349,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl">
             <div className="max-w-2xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#89baa6]">
+              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#C1D95C]">
                 How it works
               </p>
               <h2 className="mt-3 text-4xl font-semibold sm:text-5xl">
@@ -362,7 +362,7 @@ export default function HomePage() {
                   key={step.title}
                   className="rounded-[1.5rem] border border-white/10 bg-white/10 p-6 backdrop-blur"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d6b48c] text-sm font-semibold text-[#0f5b4c]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d6b48c] text-sm font-semibold text-[#498428]">
                     0{index + 1}
                   </div>
                   <h3 className="mt-5 text-2xl font-semibold">{step.title}</h3>
@@ -377,27 +377,27 @@ export default function HomePage() {
 
         <section id="insights" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="rounded-[2rem] border border-[#0f5b4c]/10 bg-white p-8 shadow-[0_20px_50px_rgba(15,23,42,0.05)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#0f5b4c]">
+            <div className="rounded-[2rem] border border-[#498428]/10 bg-white p-8 shadow-[0_20px_50px_rgba(15,23,42,0.05)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#498428]">
                 Restaurant management
               </p>
-              <h2 className="mt-3 text-4xl font-semibold text-[#0a1f18]">
+              <h2 className="mt-3 text-4xl font-semibold text-[#336A29]">
                 Elegant operations for every shift.
               </h2>
-              <p className="mt-4 text-lg leading-8 text-[#406157]">
+              <p className="mt-4 text-lg leading-8 text-[#498428]">
                 The dashboard keeps your team aligned without feeling noisy,
                 while every action remains focused on service.
               </p>
               <Link
                 href="/dashboard"
-                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#0f5b4c]"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#498428]"
               >
                 Explore the operator view <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
             <div className="grid gap-6 sm:grid-cols-2">
-              <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-primary p-7 text-foreground shadow-[0_20px_50px_rgba(15,91,76,0.16)]">
-                <p className="text-sm uppercase tracking-[0.34em] text-[#89baa6]">
+              <div className="rounded-[1.6rem] border border-[#498428]/10 bg-primary p-7 text-foreground shadow-[0_20px_50px_rgba(15,91,76,0.16)]">
+                <p className="text-sm uppercase tracking-[0.34em] text-[#C1D95C]">
                   QR Ordering
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold">
@@ -407,26 +407,26 @@ export default function HomePage() {
                   Guests order in seconds, and your team stays in control.
                 </p>
               </div>
-              <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-[#fffdf9] p-7 shadow-[0_20px_50px_rgba(15,23,42,0.05)]">
-                <p className="text-sm uppercase tracking-[0.34em] text-[#0f5b4c]">
+              <div className="rounded-[1.6rem] border border-[#498428]/10 bg-[#fffdf9] p-7 shadow-[0_20px_50px_rgba(15,23,42,0.05)]">
+                <p className="text-sm uppercase tracking-[0.34em] text-[#498428]">
                   Kitchen
                 </p>
-                <h3 className="mt-3 text-2xl font-semibold text-[#0a1f18]">
+                <h3 className="mt-3 text-2xl font-semibold text-[#336A29]">
                   Live status without clutter
                 </h3>
-                <p className="mt-3 text-base leading-7 text-[#406157]">
+                <p className="mt-3 text-base leading-7 text-[#498428]">
                   A focused workflow keeps prep, timing and service feeling
                   effortless.
                 </p>
               </div>
-              <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-[#fffdf9] p-7 shadow-[0_20px_50px_rgba(15,23,42,0.05)] sm:col-span-2">
-                <p className="text-sm uppercase tracking-[0.34em] text-[#0f5b4c]">
+              <div className="rounded-[1.6rem] border border-[#498428]/10 bg-[#fffdf9] p-7 shadow-[0_20px_50px_rgba(15,23,42,0.05)] sm:col-span-2">
+                <p className="text-sm uppercase tracking-[0.34em] text-[#498428]">
                   Analytics
                 </p>
-                <h3 className="mt-3 text-2xl font-semibold text-[#0a1f18]">
+                <h3 className="mt-3 text-2xl font-semibold text-[#336A29]">
                   Beautiful KPIs that guide growth
                 </h3>
-                <p className="mt-3 text-base leading-7 text-[#406157]">
+                <p className="mt-3 text-base leading-7 text-[#498428]">
                   From peak dinner windows to top-selling dishes, every insight
                   is presented clearly and elegantly.
                 </p>
@@ -436,31 +436,31 @@ export default function HomePage() {
         </section>
 
         <section className="px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-[#0f5b4c]/10 bg-[#fffdf9] p-8 shadow-[0_20px_50px_rgba(15,23,42,0.05)] lg:p-12">
+          <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-[#498428]/10 bg-[#fffdf9] p-8 shadow-[0_20px_50px_rgba(15,23,42,0.05)] lg:p-12">
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#0f5b4c]">
+                <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#498428]">
                   AI features
                 </p>
-                <h2 className="mt-3 text-4xl font-semibold text-[#0a1f18]">
+                <h2 className="mt-3 text-4xl font-semibold text-[#336A29]">
                   A thoughtful layer of intelligence.
                 </h2>
-                <p className="mt-4 text-lg leading-8 text-[#406157]">
+                <p className="mt-4 text-lg leading-8 text-[#498428]">
                   ForkFlow learns from patterns in your service and turns them
                   into practical recommendations that feel natural, not
                   intrusive.
                 </p>
               </div>
-              <div className="rounded-[1.6rem] border border-[#0f5b4c]/10 bg-[#f3eee6] p-6">
+              <div className="rounded-[1.6rem] border border-[#498428]/10 bg-[#EAEF9D] p-6">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-foreground">
                     <Lightbulb className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-[#0a1f18]">
+                    <p className="text-lg font-semibold text-[#336A29]">
                       Best pairing right now
                     </p>
-                    <p className="text-sm text-[#406157]">
+                    <p className="text-sm text-[#498428]">
                       High-volume dinner tables are trending toward premium
                       sides and dessert add-ons.
                     </p>
@@ -472,10 +472,10 @@ export default function HomePage() {
         </section>
 
         <section className="px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-[#0f5b4c]/10 bg-[#1b604f] p-8 text-foreground shadow-[0_20px_50px_rgba(15,91,76,0.16)] lg:p-12">
+          <div className="mx-auto max-w-7xl rounded-[2.2rem] border border-[#498428]/10 bg-[#336A29] p-8 text-foreground shadow-[0_20px_50px_rgba(15,91,76,0.16)] lg:p-12">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#89baa6]">
+                <p className="text-sm font-semibold uppercase tracking-[0.36em] text-[#C1D95C]">
                   Testimonials
                 </p>
                 <h2 className="mt-3 text-4xl font-semibold sm:text-5xl">
@@ -491,8 +491,8 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="border-t border-[#0f5b4c]/10 bg-[#f8f5ef] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-[#406157] sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-[#498428]/10 bg-[#EAEF9D]/30 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-[#498428] sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} ForkFlow. Crafted for modern
             hospitality.
@@ -501,7 +501,7 @@ export default function HomePage() {
             {techStack.map((tech) => (
               <span
                 key={tech.name}
-                className="rounded-full border border-[#0f5b4c]/10 bg-white px-3 py-1 text-[#23453b]"
+                className="rounded-full border border-[#498428]/10 bg-white px-3 py-1 text-[#336A29]"
               >
                 {tech.name}
               </span>
