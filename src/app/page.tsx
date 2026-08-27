@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const featureList = [
   {
@@ -97,8 +98,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f5ef] text-slate-900">
-      <header className="sticky top-0 z-40 border-b border-[#0f5b4c]/10 bg-[#f8f5ef]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-[#f8f5ef] text-slate-900 dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300">
+      <header className="sticky top-0 z-40 border-b border-[#0f5b4c]/10 bg-[#f8f5ef]/90 backdrop-blur-xl dark:bg-slate-950/90 dark:border-white/10 transition-colors duration-300">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-foreground">
@@ -108,23 +109,27 @@ export default function HomePage() {
               ForkFlow
             </span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm text-slate-700 md:flex">
-            <Link href="#features" className="transition hover:text-[#0f5b4c]">
-              Features
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="transition hover:text-[#0f5b4c]"
-            >
-              How it works
-            </Link>
-            <Link href="#insights" className="transition hover:text-[#0f5b4c]">
-              Insights
-            </Link>
-          </nav>
-          
-          <div className="md:hidden">
-            <button
+          <div className="flex items-center gap-4">
+            <nav className="hidden items-center gap-8 text-sm text-slate-700 md:flex">
+              <Link href="#features" className="transition hover:text-[#0f5b4c]">
+                Features
+              </Link>
+              <Link
+                href="#how-it-works"
+                className="transition hover:text-[#0f5b4c]"
+              >
+                How it works
+              </Link>
+              <Link href="#insights" className="transition hover:text-[#0f5b4c]">
+                Insights
+              </Link>
+            </nav>
+            
+            <ThemeToggle className="hidden sm:flex border-[#0f5b4c]/20 bg-white/50 text-[#0f5b4c] hover:bg-white" />
+            
+            <div className="md:hidden flex items-center gap-2">
+              <ThemeToggle className="flex sm:hidden border-[#0f5b4c]/20 bg-white/50 text-[#0f5b4c] hover:bg-white" />
+              <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-slate-700 hover:text-[#0f5b4c] focus:outline-none"
               aria-label="Toggle mobile menu"
