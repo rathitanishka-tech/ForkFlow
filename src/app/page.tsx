@@ -224,7 +224,7 @@ export default function HomePage() {
       </header>
 
       <main>
-        <section className="relative overflow-hidden px-4 py-16 sm:px-6 lg:px-8 lg:py-24 xl:py-32">
+        <section className="relative overflow-hidden px-4 pt-8 pb-16 sm:px-6 lg:px-8 lg:pt-12 lg:pb-24 xl:pt-16 xl:pb-32">
           <div className="relative mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#0F172A] shadow-sm">
