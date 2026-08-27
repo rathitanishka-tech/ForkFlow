@@ -5,7 +5,6 @@ import { Menu } from "lucide-react";
 
 import { Sidebar } from "./sidebar";
 import { UserMenu } from "./user-menu";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   const [restaurantName, setRestaurantName] = useState("ForkFlow");
@@ -69,7 +68,6 @@ export function Header() {
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <ThemeToggle />
         <UserMenu />
       </div>
     </header>
