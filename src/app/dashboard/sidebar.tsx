@@ -32,6 +32,8 @@ function cx(...classes: Array<string | false>) {
   return classes.filter(Boolean).join(" ");
 }
 
+import { SignOutButton } from "@clerk/nextjs";
+
 export function Sidebar() {
   const pathname = usePathname();
 
@@ -78,10 +80,12 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-sidebar-border p-4">
-        <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-sidebar-border bg-sidebar px-3 py-3 text-sm font-medium text-sidebar-foreground transition hover:bg-sidebar-accent">
-          <LogOut className="h-4 w-4" />
-          Logout
-        </button>
+        <SignOutButton>
+          <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-sidebar-border bg-sidebar px-3 py-3 text-sm font-medium text-sidebar-foreground transition hover:bg-sidebar-accent cursor-pointer">
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </SignOutButton>
       </div>
     </aside>
   );
