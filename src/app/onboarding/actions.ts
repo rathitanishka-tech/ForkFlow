@@ -25,6 +25,8 @@ export async function createRestaurantAction(formData: FormData) {
 
   const name = formData.get("name") as string;
   const propertyType = formData.get("propertyType") as PropertyType;
+  const tableCountStr = formData.get("tableCount") as string;
+  const tableCount = parseInt(tableCountStr || "10", 10);
 
   if (!name || !propertyType) {
     return { error: "Missing required fields" };
@@ -93,17 +95,25 @@ export async function createRestaurantAction(formData: FormData) {
         },
       });
 
-      // 5. Create a default table
-      await tx.table.create({
-        data: {
+      // 5. Create requested tables
+      const tableData = [];
+      const cols = 5;
+      for (let i = 0; i < tableCount; i++) {
+        const row = Math.floor(i / cols);
+        const col = i % cols;
+        tableData.push({
           floorId: floor.id,
-          number: "1",
+          number: (i + 1).toString(),
           capacity: 4,
           shape: TableShape.SQUARE,
-          xPosition: 100,
-          yPosition: 100,
+          xPosition: 100 + (col * 150),
+          yPosition: 100 + (row * 150),
           isActive: true,
-        },
+        });
+      }
+      
+      await tx.table.createMany({
+        data: tableData
       });
     });
   } catch (error) {

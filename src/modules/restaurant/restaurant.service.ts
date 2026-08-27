@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 
+import { defaultVegetarianMenu } from "../menu/menu.defaults";
 import {
   RestaurantFilters,
   RestaurantListResponse,
@@ -20,9 +21,28 @@ export class RestaurantService {
       await this.ensureBusinessExists(input.businessId, tx);
       await this.ensureSlugIsAvailable(input.businessId, input.slug, undefined, tx);
 
-      return tx.restaurant.create({
+      const restaurant = await tx.restaurant.create({
         data: input,
       });
+
+      for (const item of defaultVegetarianMenu) {
+        await tx.menuItem.upsert({
+          where: {
+            restaurantId_name: {
+              restaurantId: restaurant.id,
+              name: item.name,
+            },
+          },
+          update: {},
+          create: {
+            restaurantId: restaurant.id,
+            ...item,
+            isAvailable: true,
+          },
+        });
+      }
+
+      return restaurant;
     });
   }
 

@@ -75,6 +75,20 @@ export default function OnboardingPage() {
               </SelectContent>
             </Select>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="tableCount">Number of Tables</Label>
+            <Input
+              id="tableCount"
+              name="tableCount"
+              type="number"
+              min="1"
+              max="50"
+              defaultValue="10"
+              required
+              className="bg-background"
+            />
+          </div>
         </CardContent>
         <CardFooter>
           <Button

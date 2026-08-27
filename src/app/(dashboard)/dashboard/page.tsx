@@ -82,25 +82,25 @@ export default async function DashboardPage() {
   const reservations = data?.recentReservations ?? [];
   const kitchenActivity = data?.kitchenWorkload
     ? [
-        {
-          status: "Pending",
-          table: `${data.kitchenWorkload.pending} orders`,
-          detail: "Awaiting kitchen acknowledgement",
-          tone: "bg-amber-500",
-        },
-        {
-          status: "Preparing",
-          table: `${data.kitchenWorkload.preparing} orders`,
-          detail: "Currently being prepared",
-          tone: "bg-sky-500",
-        },
-        {
-          status: "Ready",
-          table: `${data.kitchenWorkload.ready} orders`,
-          detail: "Ready for pickup and delivery",
-          tone: "bg-emerald-500",
-        },
-      ]
+      {
+        status: "Pending",
+        table: `${data.kitchenWorkload.pending} orders`,
+        detail: "Awaiting kitchen acknowledgement",
+        tone: "bg-amber-500",
+      },
+      {
+        status: "Preparing",
+        table: `${data.kitchenWorkload.preparing} orders`,
+        detail: "Currently being prepared",
+        tone: "bg-sky-500",
+      },
+      {
+        status: "Ready",
+        table: `${data.kitchenWorkload.ready} orders`,
+        detail: "Ready for pickup and delivery",
+        tone: "bg-emerald-500",
+      },
+    ]
     : [];
 
   const insights = [
@@ -122,9 +122,9 @@ export default async function DashboardPage() {
       label: "Average order value",
       value: data
         ? new Intl.NumberFormat("en-IN", {
-            style: "currency",
-            currency: "INR",
-          }).format(data.averageOrderValue)
+          style: "currency",
+          currency: "INR",
+        }).format(data.averageOrderValue)
         : "N/A",
       detail: "Based on today's orders",
     },
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
         <div>
           <h1 className="text-3xl font-semibold tracking-normal text-foreground">
-            Good Morning 👋
+            Good Morning
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Here&apos;s what&apos;s happening across your restaurants today.

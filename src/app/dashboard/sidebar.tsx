@@ -10,6 +10,8 @@ import {
   LogOut,
   Store,
   Table2,
+  Utensils,
+  Settings,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -23,6 +25,7 @@ const sidebarItems = [
   { label: "QR Generator", href: "/dashboard/qr", icon: Table2 },
   { label: "Kitchen", href: "/dashboard/kitchen", icon: ChefHat },
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+  { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 function cx(...classes: Array<string | false>) {

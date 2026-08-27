@@ -1,59 +1,49 @@
-# ForkFlow
+# 🍽️ ForkFlow
 
-ForkFlow is a restaurant operations platform for staff dashboards, floor and table management, menu operations, reservations, kitchen order flow, analytics, QR ordering, customer menus, and customer order tracking.
+ForkFlow is a comprehensive restaurant operations platform built to handle the end-to-end lifecycle of restaurant management. It provides staff dashboards, floor and table management, reservations, kitchen order flows, analytics, QR code table ordering, and real-time customer order tracking.
 
-## Features
+*Note: For the current MVP, menu management has been streamlined so that every newly onboarded restaurant automatically receives a fixed, fully-configured vegetarian menu.*
 
-- Staff dashboard with revenue, order, reservation, kitchen, and table metrics
-- Restaurant-scoped operations resolved from Clerk authentication
-- Menu item management with categories, pricing, images, availability, vegetarian flags, and spice levels
-- Floor and table views with seating status and layout data
-- Reservation creation and status actions
-- Kitchen board for order preparation workflow
-- Public QR menu links for table ordering
-- Customer menu, cart, order submission, and order tracking
-- Prisma-backed PostgreSQL data model
+---
 
-## Architecture
+## ✨ Features
 
-ForkFlow uses Next.js App Router pages and route handlers, domain modules for controllers/services/validators, Prisma for persistence, Clerk for auth, and Tailwind-based UI components.
+- **📊 Staff Dashboard:** Real-time metrics tracking revenue, active orders, reservations, kitchen workload, and table occupancy.
+- **🔐 Secure Operations:** Multi-tenant restaurant data scoping secured by Clerk authentication.
+- **🥗 Fixed Menu (MVP):** A globally available, pre-configured vegetarian menu for all restaurants, complete with descriptions, pricing, preparation times, and real food images.
+- **🏪 Floor & Table Management:** Visual floor plans with live seating statuses and layout configurations.
+- **📅 Reservations System:** Create, manage, and update statuses for upcoming and active bookings.
+- **👨‍🍳 Kitchen Board:** Live kitchen workflow to track orders from `Pending` → `Preparing` → `Ready`.
+- **📱 QR Ordering:** Generate table-specific QR codes, allowing customers to view the public menu and place orders directly from their phones.
+- **🛒 Customer Experience:** Seamless public menu browsing, cart management, and order status tracking.
+- **💾 Robust Data Model:** Powered by a Prisma-backed PostgreSQL database.
 
-```text
-src/app              Pages, layouts, route handlers, and dashboard shell
-src/components       Reusable UI, customer, floor, kitchen, QR, and reservation components
-src/hooks            Customer-facing data hooks
-src/lib              Prisma client, restaurant resolution, base URL, and utilities
-src/modules          Domain controllers, services, validators, and types
-prisma               Schema, migrations, and seed script
-docs                 Current implementation documentation
-public/menu_items    Local customer menu images
-```
+---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- Next.js 16
-- React 19
-- TypeScript
-- Prisma 6
-- PostgreSQL
-- Clerk
-- Tailwind CSS
-- Base UI primitives
-- Recharts
-- Framer Motion
-- Zod
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **UI & Styling:** [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/), [Framer Motion](https://www.framer.com/motion/)
+- **Database & ORM:** [PostgreSQL](https://www.postgresql.org/), [Prisma 6](https://www.prisma.io/)
+- **Authentication:** [Clerk](https://clerk.com/)
+- **Language:** TypeScript
 
-## Installation
+---
 
+## 🚀 Quick Start
+
+### 1. Clone & Install
 ```bash
+# Install dependencies
 pnpm install
-cp .env.example .env.local
-pnpm prisma generate
-pnpm prisma migrate dev
 ```
 
-## Environment Variables
-
+### 2. Environment Variables
+Copy the `.env.example` file to create your local environment file:
+```bash
+cp .env.example .env.local
+```
+Ensure the following variables are populated in your `.env.local`:
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/forkflow?schema=public
@@ -61,55 +51,70 @@ CLERK_SECRET_KEY=your_clerk_secret_key
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 ```
 
-## Running Locally
+### 3. Database Setup
+Generate the Prisma client and push the schema to your local database:
+```bash
+pnpm prisma generate
+pnpm prisma migrate dev
+```
 
+### 4. Run the Application
+Start the development server:
 ```bash
 pnpm dev
 ```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Open `http://localhost:3000`.
+---
 
-## Production Build
+## 🏗️ Architecture & Structure
 
+ForkFlow is built with a modular domain-driven structure to keep business logic separated from routing:
+
+```text
+src/app              # Next.js App Router (Pages, layouts, API route handlers)
+src/components       # Reusable UI components (Customer, Kitchen, QR, Floor, etc.)
+src/hooks            # Custom React hooks (Customer-facing data fetching)
+src/lib              # Core utilities (Prisma client, Clerk integrations, etc.)
+src/modules          # Domain logic (Controllers, Services, Types, Validators)
+prisma               # Database schema, migrations, and seed scripts
+docs                 # API and architecture documentation
+public/menu          # Local static assets and customer menu images
+```
+
+---
+
+## 🌐 API Overview
+
+ForkFlow provides a robust RESTful API (documented further in `docs/api.md`). Key domain groups include:
+- **Management APIs:** `/api/restaurants`, `/api/floors`, `/api/tables`, `/api/orders`, `/api/kitchen`, `/api/reservations`
+- **Analytics:** `/api/dashboard/analytics`
+- **Public APIs (No Auth Required):** `/api/public/menu`, `/api/public/orders` (for QR ordering and tracking)
+
+---
+
+## 🚢 Deployment
+
+ForkFlow is optimized for Vercel or any Node.js compatible platform. 
+
+### Production Build
+To create an optimized production build:
 ```bash
 pnpm lint
 pnpm build
 ```
 
-For production database migrations:
-
+When deploying, ensure your production database is migrated:
 ```bash
-pnpm prisma migrate deploy
+npx prisma migrate deploy
 ```
 
-## Deployment
+---
 
-Deploy the Next.js app to a Node-compatible platform such as Vercel. Configure the environment variables above, connect a PostgreSQL database, and run Prisma migrations during release.
+## 🔮 Future Roadmap
 
-## API Overview
+- 🧪 Automated service and route-handler testing suites.
+- 🛡️ Granular role-based access control (Owner vs. Manager vs. Kitchen Staff).
+- 📈 Advanced analytics CSV/PDF exports.
+- 🎨 Drag-and-drop floor plan editing.
 
-The API is documented in `docs/api.md`. Main groups include restaurants, current restaurant, floors, tables, menu, orders, kitchen, reservations, dashboard analytics, public menu, and public order tracking.
-
-## Screenshots
-
-Add screenshots for:
-
-- Dashboard
-- Floor view
-- Reservations
-- Kitchen board
-- QR ordering
-- Customer menu
-- Order tracking
-
-## Future Improvements
-
-- Automated service and route-handler tests
-- Role-specific authorization policies
-- Richer analytics exports
-- More advanced table-layout editing
-- Production observability
-
-## License
-
-Private project. Add a license before distributing publicly.
