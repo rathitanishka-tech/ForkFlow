@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Clock, CheckCircle, ChefHat, BellRing, Utensils } from "lucide-react";
+import { CheckCircle, ChefHat, BellRing, Utensils } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type OrderStatus = "PENDING" | "PREPARING" | "READY" | "SERVED";
@@ -34,50 +34,18 @@ const formatCurrency = (amount: number) =>
     currency: "INR",
   }).format(amount);
 
-const timeSince = (date: string | Date): string => {
-  const orderDate = new Date(date);
-  const seconds = Math.floor(
-    (new Date().getTime() - orderDate.getTime()) / 1000,
-  );
-  if (seconds < 60) return `${Math.floor(seconds)} sec ago`;
-  const minutes = seconds / 60;
-  if (minutes < 60) return `${Math.floor(minutes)} min ago`;
-  const hours = minutes / 60;
-  return `${Math.floor(hours)} hr ago`;
-};
+
 
 const statusTimeline: {
   status: OrderStatus;
   label: string;
   icon: React.ElementType;
 }[] = [
-  { status: "PENDING", label: "Order Placed", icon: CheckCircle },
+  { status: "PENDING", label: "Received", icon: CheckCircle },
   { status: "PREPARING", label: "Preparing", icon: ChefHat },
   { status: "READY", label: "Ready", icon: BellRing },
   { status: "SERVED", label: "Served", icon: Utensils },
 ];
-
-const statusConfig: Record<
-  OrderStatus,
-  { badgeClass: string; progress: number }
-> = {
-  PENDING: {
-    badgeClass: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    progress: 25,
-  },
-  PREPARING: {
-    badgeClass: "bg-blue-100 text-blue-800 border-blue-200",
-    progress: 50,
-  },
-  READY: {
-    badgeClass: "bg-green-100 text-green-800 border-green-200",
-    progress: 75,
-  },
-  SERVED: {
-    badgeClass: "bg-slate-100 text-slate-600 border-slate-200",
-    progress: 100,
-  },
-};
 
 const TimelineItem = ({
   icon: Icon,
@@ -93,18 +61,18 @@ const TimelineItem = ({
   <div className="relative flex flex-col items-center">
     <div
       className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-full border-2",
+        "flex h-8 w-8 items-center justify-center rounded-none border border-[#E3DCD2]",
         isCompleted
-          ? "border-[#0f5b4c] bg-[#0f5b4c]/10 text-[#0f5b4c]"
-          : "border-slate-300 bg-slate-100 text-slate-400",
+          ? "bg-[#2A2421] text-[#FAF8F5] border-[#2A2421]"
+          : "bg-transparent text-[#E3DCD2]",
       )}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-4 w-4" />
     </div>
     <p
       className={cn(
-        "mt-2 text-center text-xs font-medium",
-        isCompleted ? "text-slate-700" : "text-slate-400",
+        "mt-3 text-center font-sans text-[10px] font-semibold uppercase tracking-widest",
+        isCompleted ? "text-[#2A2421]" : "text-[#5C544F]",
       )}
     >
       {label}
@@ -112,8 +80,8 @@ const TimelineItem = ({
     {!isLast && (
       <div
         className={cn(
-          "absolute left-1/2 top-5 h-0.5 w-full",
-          isCompleted ? "bg-[#0f5b4c]" : "bg-slate-200",
+          "absolute left-1/2 top-4 -z-10 h-px w-full",
+          isCompleted ? "bg-[#2A2421]" : "bg-[#E3DCD2]",
         )}
       />
     )}
@@ -124,29 +92,33 @@ const OrderItemsSection = ({ items }: { items: OrderItem[] }) => {
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="border-t border-slate-200 p-4">
-      <h3 className="mb-3 text-sm font-semibold text-slate-600">Order Items</h3>
-      <div className="space-y-3">
+    <div className="border-t border-b border-dashed border-[#E3DCD2] py-6 my-6">
+      <h3 className="mb-4 text-center font-heading text-sm font-semibold tracking-widest text-[#5C544F] uppercase">
+        Order Details
+      </h3>
+      <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id} className="flex items-center gap-3">
+          <div key={item.id} className="flex items-center gap-4">
             {item.menuItemImage ? (
               <img
                 src={item.menuItemImage}
                 alt={item.menuItemName}
-                className="h-12 w-12 rounded-lg object-cover"
+                className="h-10 w-10 shrink-0 border border-[#E3DCD2] object-cover"
               />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
-                <Utensils className="h-5 w-5 text-slate-500" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#E3DCD2] bg-transparent">
+                <Utensils className="h-4 w-4 text-[#E3DCD2]" />
               </div>
             )}
             <div className="grow">
-              <p className="font-medium text-slate-800">{item.menuItemName}</p>
-              <p className="text-sm text-slate-500">
-                ₹{item.price} × {item.quantity}
+              <p className="font-heading text-lg font-bold text-[#2A2421]">
+                {item.menuItemName}
+              </p>
+              <p className="font-sans text-xs text-[#5C544F]">
+                {formatCurrency(item.price)} × {item.quantity}
               </p>
             </div>
-            <p className="font-medium text-slate-800">
+            <p className="font-sans text-sm font-semibold text-[#2A2421]">
               {formatCurrency(item.price * item.quantity)}
             </p>
           </div>
@@ -159,21 +131,21 @@ const OrderItemsSection = ({ items }: { items: OrderItem[] }) => {
 export function OrderStatusCard({ order, loading }: OrderStatusCardProps) {
   if (loading) {
     return (
-      <div className="animate-pulse rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="w-full animate-pulse border border-[#E3DCD2] bg-[#FAF8F5] p-6 shadow-sm sm:p-10">
         <div className="mb-4 flex justify-between">
-          <div className="h-5 w-2/5 rounded-md bg-slate-200" />
-          <div className="h-5 w-1/4 rounded-md bg-slate-200" />
+          <div className="h-5 w-2/5 bg-[#E3DCD2]" />
+          <div className="h-5 w-1/4 bg-[#E3DCD2]" />
         </div>
         <div className="mb-6 flex justify-between">
-          <div className="h-8 w-1/3 rounded-md bg-slate-200" />
-          <div className="h-5 w-1/5 rounded-md bg-slate-200" />
+          <div className="h-8 w-1/3 bg-[#E3DCD2]" />
+          <div className="h-5 w-1/5 bg-[#E3DCD2]" />
         </div>
-        <div className="mb-6 h-2 w-full rounded-full bg-slate-200" />
+        <div className="mb-6 h-px w-full bg-[#E3DCD2]" />
         <div className="grid grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="flex flex-col items-center">
-              <div className="h-10 w-10 rounded-full bg-slate-200" />
-              <div className="mt-2 h-3 w-12 rounded-md bg-slate-200" />
+              <div className="h-8 w-8 bg-[#E3DCD2]" />
+              <div className="mt-2 h-2 w-12 bg-[#E3DCD2]" />
             </div>
           ))}
         </div>
@@ -184,44 +156,26 @@ export function OrderStatusCard({ order, loading }: OrderStatusCardProps) {
   const currentStatusIndex = statusTimeline.findIndex(
     (s) => s.status === order.status,
   );
-  const config = statusConfig[order.status];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
-      <div className="p-5 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
+    <div className="w-full border border-[#E3DCD2] bg-[#FAF8F5] shadow-sm">
+      <div className="p-6 sm:p-10">
+        <div className="text-center mb-8">
+          <p className="font-sans text-xs font-semibold uppercase tracking-widest text-[#5C544F]">
+            Table {order.tableNumber}
+          </p>
+          <h2 className="mt-2 font-heading text-2xl font-bold tracking-wider text-[#2A2421] sm:text-3xl">
             Order #{order.id.substring(0, 6).toUpperCase()}
           </h2>
-          <div
-            className={cn(
-              "select-none rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider",
-              config.badgeClass,
-            )}
-          >
-            {order.status}
-          </div>
-        </div>
-        <p className="text-sm text-slate-500">For Table {order.tableNumber}</p>
-
-        <div className="my-4 flex items-end justify-between">
-          <p className="text-2xl font-extrabold text-slate-900">
-            {formatCurrency(order.totalAmount)}
+          <p className="mt-2 font-sans text-xs text-[#5C544F]">
+            Placed {new Date(order.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </p>
-          <div className="flex items-center gap-1.5 text-sm text-slate-500">
-            <Clock className="h-4 w-4" />
-            <span>{timeSince(order.createdAt)}</span>
-          </div>
         </div>
 
-        <div className="mb-6 w-full rounded-full bg-slate-200">
-          <div
-            className="h-2 rounded-full bg-[#0f5b4c] transition-all duration-500"
-            style={{ width: `${config.progress}%` }}
-          />
-        </div>
-
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-4 mb-8 relative z-10">
           {statusTimeline.map((item, index) => (
             <TimelineItem
               key={item.status}
@@ -232,34 +186,45 @@ export function OrderStatusCard({ order, loading }: OrderStatusCardProps) {
             />
           ))}
         </div>
+
+        {order.items && order.items.length > 0 && (
+          <OrderItemsSection items={order.items} />
+        )}
+
+        <div className="mt-6 flex items-end justify-between">
+          <span className="font-heading text-lg font-bold tracking-widest text-[#5C544F] uppercase">
+            Total
+          </span>
+          <p className="font-sans text-2xl font-bold text-[#2A2421]">
+            {formatCurrency(order.totalAmount)}
+          </p>
+        </div>
       </div>
 
-      {order.items && order.items.length > 0 && (
-        <OrderItemsSection items={order.items} />
-      )}
-
       {order.status === "SERVED" ? (
-        <div className="border-t border-slate-200 bg-slate-50 p-4 text-center">
-          <p className="mb-2 text-sm text-slate-600">Rate your experience</p>
-          <div className="flex cursor-pointer justify-center gap-1 text-2xl text-slate-600 transition-colors hover:text-yellow-400">
-            <span>⭐</span>
-            <span>⭐</span>
-            <span>⭐</span>
-            <span>⭐</span>
-            <span>⭐</span>
+        <div className="border-t border-[#E3DCD2] bg-[#F2EFE9] p-6 text-center">
+          <p className="mb-3 font-heading text-lg font-semibold tracking-wide text-[#2A2421]">
+            How was your experience?
+          </p>
+          <div className="flex cursor-pointer justify-center gap-2 text-2xl text-[#E3DCD2] transition-colors hover:text-[#8B2E2E]">
+            <span>★</span>
+            <span>★</span>
+            <span>★</span>
+            <span>★</span>
+            <span>★</span>
           </div>
         </div>
       ) : order.status === "READY" ? (
-        <div className="border-t border-slate-200 bg-green-50 p-4 text-center">
-          <p className="animate-pulse text-lg font-bold text-green-700">
-            🎉 Your food is ready!
+        <div className="border-t border-[#E3DCD2] bg-[#F2EFE9] p-6 text-center">
+          <p className="font-heading text-xl font-bold tracking-wide text-[#8B2E2E]">
+            Your order is ready to be served.
           </p>
         </div>
       ) : order.estimatedCompletionTime ? (
-        <div className="border-t border-slate-200 bg-slate-50 p-4 text-center">
-          <p className="text-sm text-slate-600">
-            Estimated completion by{" "}
-            <span className="font-semibold text-slate-800">
+        <div className="border-t border-[#E3DCD2] bg-[#F2EFE9] p-4 text-center">
+          <p className="font-sans text-xs uppercase tracking-widest text-[#5C544F]">
+            Estimated completion around{" "}
+            <span className="font-bold text-[#2A2421]">
               {new Date(order.estimatedCompletionTime).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",

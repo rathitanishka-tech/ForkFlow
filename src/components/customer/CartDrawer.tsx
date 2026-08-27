@@ -36,36 +36,42 @@ const CartItemCard = ({
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
 }) => (
-  <div className="flex items-center gap-4 py-4">
-    <img
-      src={item.imageUrl}
-      alt={item.name}
-      className="h-16 w-16 rounded-lg object-cover"
-    />
+  <div className="flex items-start gap-4 py-6">
+    <div className="h-16 w-16 shrink-0 rounded-sm border border-[#E3DCD2] overflow-hidden shadow-sm">
+      <img
+        src={item.imageUrl}
+        alt={item.name}
+        className="h-full w-full object-cover"
+      />
+    </div>
     <div className="grow">
-      <p className="font-semibold text-slate-800">{item.name}</p>
-      <p className="text-sm text-slate-500">{formatCurrency(item.price)}</p>
-      <div className="mt-2 flex items-center gap-3">
+      <p className="font-heading text-lg font-bold text-[#2A2421]">
+        {item.name}
+      </p>
+      <p className="font-sans text-sm font-medium text-[#5C544F]">
+        {formatCurrency(item.price)}
+      </p>
+      <div className="mt-3 flex items-center gap-3">
         <button
           onClick={() => onDecrease(item.id)}
-          className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+          className="flex h-6 w-6 items-center justify-center rounded-none border border-[#2A2421] text-[#2A2421] transition hover:bg-[#2A2421] hover:text-[#FAF8F5]"
           aria-label={`Decrease quantity of ${item.name}`}
         >
-          <Minus className="h-4 w-4" />
+          <Minus className="h-3 w-3" />
         </button>
-        <span className="w-4 text-center font-medium text-slate-700">
+        <span className="w-4 text-center font-sans font-semibold text-[#2A2421]">
           {item.quantity}
         </span>
         <button
           onClick={() => onIncrease(item.id)}
-          className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+          className="flex h-6 w-6 items-center justify-center rounded-none border border-[#2A2421] text-[#2A2421] transition hover:bg-[#2A2421] hover:text-[#FAF8F5]"
           aria-label={`Increase quantity of ${item.name}`}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3 w-3" />
         </button>
       </div>
     </div>
-    <p className="font-semibold text-slate-800">
+    <p className="font-sans text-lg font-semibold text-[#2A2421]">
       {formatCurrency(item.price * item.quantity)}
     </p>
   </div>
@@ -73,12 +79,12 @@ const CartItemCard = ({
 
 const EmptyCart = () => (
   <div className="flex flex-1 flex-col items-center justify-center text-center">
-    <ShoppingCart className="h-16 w-16 text-slate-400" />
-    <h3 className="mt-4 text-xl font-semibold text-slate-700">
-      Your cart is empty
+    <ShoppingCart className="h-12 w-12 text-[#E3DCD2]" />
+    <h3 className="mt-6 font-heading text-xl font-semibold tracking-widest text-[#2A2421] uppercase">
+      Empty Order
     </h3>
-    <p className="mt-1 text-slate-500">
-      Add some delicious food to get started!
+    <p className="mt-2 font-sans text-sm text-[#5C544F]">
+      Select items from the menu to begin.
     </p>
   </div>
 );
@@ -121,38 +127,38 @@ export function CartDrawer({
       <div
         onClick={onClose}
         className={cn(
-          "absolute inset-0 bg-black/60 transition-opacity",
+          "absolute inset-0 bg-[#2A2421]/60 transition-opacity backdrop-blur-sm",
           isOpen ? "opacity-100" : "opacity-0",
         )}
       />
 
       <div
         className={cn(
-          "fixed right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out",
+          "fixed right-0 top-0 flex h-full w-full max-w-md flex-col bg-[#F2EFE9] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between border-b border-slate-200 p-4">
-          <h2 id="cart-heading" className="text-xl font-bold text-slate-900">
-            Your Cart{" "}
+        <div className="flex items-center justify-between border-b border-[#E3DCD2] p-6 pb-5">
+          <h2 id="cart-heading" className="font-heading text-2xl font-bold uppercase tracking-widest text-[#2A2421]">
+            Your Order
             {totalItemCount > 0 && (
-              <span className="ml-2 text-lg font-medium text-slate-500">
-                ({totalItemCount})
+              <span className="ml-3 font-sans text-lg font-medium text-[#8B2E2E]">
+                {totalItemCount}
               </span>
             )}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="text-[#2A2421] transition-transform hover:scale-110"
             aria-label="Close cart"
           >
-            <X className="h-6 w-6" />
+            <X className="h-6 w-6 stroke-[1.5]" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4">
+        <div className="flex-1 overflow-y-auto px-6">
           {items.length > 0 ? (
-            <div className="divide-y divide-slate-200">
+            <div className="divide-y divide-[#E3DCD2]">
               {items.map((item) => (
                 <CartItemCard
                   key={item.id}
@@ -168,25 +174,27 @@ export function CartDrawer({
         </div>
 
         {items.length > 0 && (
-          <div className="border-t border-slate-200 bg-white p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-            <div className="mb-4 flex justify-between text-lg">
-              <span className="font-medium text-slate-600">Grand Total</span>
-              <span className="font-bold text-slate-900">
+          <div className="border-t border-[#E3DCD2] bg-[#FAF8F5] p-6 pt-5 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.03)]">
+            <div className="mb-6 flex justify-between items-end">
+              <span className="font-heading text-lg font-bold tracking-widest text-[#5C544F] uppercase">
+                Total
+              </span>
+              <span className="font-sans text-2xl font-bold text-[#2A2421]">
                 {formatCurrency(total)}
               </span>
             </div>
             <button
               onClick={onCheckout}
-              className="flex w-full items-center justify-center rounded-lg bg-[#0f5b4c] py-3 text-lg font-bold text-white transition-colors hover:bg-[#0b4a3d] focus:outline-none focus:ring-2 focus:ring-[#0f5b4c] focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:bg-slate-200"
+              className="flex w-full items-center justify-center rounded-none bg-[#2A2421] py-4 font-sans text-sm font-semibold uppercase tracking-widest text-[#FAF8F5] transition-colors hover:bg-[#8B2E2E] focus:outline-none focus:ring-2 focus:ring-[#8B2E2E] focus:ring-offset-2 focus:ring-offset-[#FAF8F5] disabled:cursor-not-allowed disabled:bg-[#E3DCD2] disabled:text-[#5C544F]"
               disabled={items.length === 0 || checkoutLoading}
             >
               {checkoutLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                  Processing...
+                  <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                  Sending to Kitchen...
                 </>
               ) : (
-                "Proceed to Checkout"
+                "Send Order to Kitchen"
               )}
             </button>
           </div>

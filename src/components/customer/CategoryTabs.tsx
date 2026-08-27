@@ -12,8 +12,6 @@ export function CategoryTabs({
   selectedCategory,
   onSelectCategory,
 }: CategoryTabsProps) {
-  const [indicatorStyle, setIndicatorStyle] =
-    React.useState<React.CSSProperties>({});
   const tabsRef = React.useRef<Array<HTMLButtonElement | null>>([]);
 
   React.useEffect(() => {
@@ -23,11 +21,6 @@ export function CategoryTabs({
     const selectedTab = tabsRef.current[selectedIndex];
 
     if (selectedTab) {
-      setIndicatorStyle({
-        left: selectedTab.offsetLeft,
-        width: selectedTab.offsetWidth,
-      });
-
       selectedTab.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
@@ -37,9 +30,9 @@ export function CategoryTabs({
   }, [selectedCategory, categories]);
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden border-b border-[#E3DCD2]">
       <div
-        className="relative flex w-full items-center overflow-x-auto p-1"
+        className="relative flex w-full items-center justify-start gap-8 overflow-x-auto px-4 py-4 sm:justify-center"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <style>
@@ -50,33 +43,45 @@ export function CategoryTabs({
           `}
         </style>
 
-        {categories.length > 0 && (
-          <div
-            className="absolute h-10 rounded-full bg-[#0f5b4c] shadow-inner transition-all duration-300 ease-in-out"
-            style={indicatorStyle}
-          />
-        )}
-
-        {categories.map((category, index) => (
-          <button
-            key={category}
-            ref={(el) => {
-              tabsRef.current[index] = el;
-            }}
-            onClick={() => onSelectCategory(category)}
-            className={cn(
-              "relative z-10 shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 sm:px-6 sm:text-base",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
-              selectedCategory === category
-                ? "text-white"
-                : "text-slate-500 hover:text-slate-900",
-            )}
-            role="tab"
-            aria-selected={selectedCategory === category}
-          >
-            {category}
-          </button>
-        ))}
+        {categories.map((category, index) => {
+          const isSelected = selectedCategory === category;
+          return (
+            <button
+              key={category}
+              ref={(el) => {
+                tabsRef.current[index] = el;
+              }}
+              onClick={() => onSelectCategory(category)}
+              className={cn(
+                "group relative shrink-0 cursor-pointer pb-2 font-sans text-sm font-semibold uppercase tracking-[0.2em] transition-colors duration-300",
+                "focus:outline-none",
+                isSelected
+                  ? "text-[#2A2421]"
+                  : "text-[#5C544F] hover:text-[#2A2421]",
+              )}
+              role="tab"
+              aria-selected={isSelected}
+            >
+              {category}
+              
+              {/* Animated Underline Ornament */}
+              <div
+                className={cn(
+                  "absolute -bottom-[17px] left-1/2 h-[2px] w-8 -translate-x-1/2 bg-[#8B2E2E] transition-all duration-300 ease-out",
+                  isSelected ? "scale-100 opacity-100" : "scale-0 opacity-0",
+                )}
+              />
+              
+              {/* Optional: Add a subtle vintage ornament like a diamond for the active state */}
+              <div 
+                className={cn(
+                  "absolute -bottom-[20px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rotate-45 bg-[#8B2E2E] transition-all duration-300 ease-out",
+                  isSelected ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                )}
+              />
+            </button>
+          );
+        })}
       </div>
     </div>
   );

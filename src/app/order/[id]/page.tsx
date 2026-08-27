@@ -21,12 +21,12 @@ export default function OrderStatusPage() {
 
     if (error) {
       return (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-red-500/50 bg-red-50 p-8 text-red-700">
-          <AlertTriangle className="h-12 w-12" />
-          <p className="mt-4 text-lg font-semibold">
-            Oops! Something went wrong.
+        <div className="flex flex-col items-center justify-center border-y border-[#E3DCD2] py-16 text-[#8B2E2E]">
+          <AlertTriangle className="h-10 w-10 mb-4" />
+          <p className="font-heading text-xl font-semibold tracking-widest uppercase">
+            We&apos;re Sorry
           </p>
-          <p className="text-center text-red-600">{error}</p>
+          <p className="mt-2 text-center font-sans text-[#5C544F]">{error}</p>
         </div>
       );
     }
@@ -36,29 +36,30 @@ export default function OrderStatusPage() {
     }
 
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-8 text-slate-500">
-        <p className="text-center">Order data is unavailable.</p>
+      <div className="border-y border-[#E3DCD2] bg-[#FAF8F5] py-12 text-[#5C544F]">
+        <p className="text-center font-sans tracking-wide">Order data is unavailable.</p>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f8f5ef] text-slate-900">
-      <main className="container mx-auto flex flex-col items-center p-4 pt-10 sm:p-6 sm:pt-16">
+    <div className="min-h-screen w-full bg-[#FAF8F5] text-[#2A2421]">
+      <main className="container mx-auto flex flex-col items-center px-4 py-12 sm:px-6 sm:py-20">
         <div className="w-full max-w-2xl">
-          <header className="mb-6 flex flex-col gap-4">
+          <header className="mb-10 flex flex-col items-center gap-6">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#0f5b4c] transition-colors hover:text-[#0b4a3d]"
+              className="inline-flex items-center gap-2 font-sans text-xs font-semibold uppercase tracking-widest text-[#5C544F] transition-colors hover:text-[#2A2421]"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              Back to Home
+              Back to Menu
             </Link>
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-slate-950">
-                Your Order Status
+              <h1 className="font-heading text-3xl font-bold tracking-[0.2em] uppercase text-[#2A2421]">
+                Your Order
               </h1>
-              <p className="text-md text-slate-600">
+              <div className="mx-auto mt-4 h-px w-16 bg-[#8B2E2E]" />
+              <p className="mt-6 font-sans text-sm tracking-wide text-[#5C544F]">
                 We&apos;ll keep this page updated in real-time.
               </p>
             </div>

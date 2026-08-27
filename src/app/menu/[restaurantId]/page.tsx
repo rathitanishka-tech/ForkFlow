@@ -130,18 +130,18 @@ export default function MenuPage() {
 
     if (error) {
       return (
-        <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-red-500/50 bg-red-50 p-8 pt-20 text-red-700">
-          <AlertTriangle className="h-12 w-12" />
-          <p className="mt-4 text-lg font-semibold">
-            Oops! Something went wrong.
+        <div className="flex flex-1 flex-col items-center justify-center border-y border-[#E3DCD2] py-20 text-[#8B2E2E]">
+          <AlertTriangle className="h-10 w-10 mb-4" />
+          <p className="font-heading text-xl font-semibold tracking-widest uppercase">
+            We&apos;re Sorry
           </p>
-          <p className="text-red-600">{error}</p>
+          <p className="mt-2 font-sans text-[#5C544F]">{error}</p>
         </div>
       );
     }
 
     return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-16 gap-y-2 md:grid-cols-2">
         {filteredMenuItems.map((item: MenuItemData) => (
           <MenuCard key={item.id} menuItem={item} onAdd={handleAddToCart} />
         ))}
@@ -150,9 +150,12 @@ export default function MenuPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f5ef] text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-[#0f5b4c]/10 bg-[#f8f5ef]/90 p-4 backdrop-blur-xl">
-        <div className="container mx-auto">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#2A2421]">
+      <header className="sticky top-0 z-30 bg-[#FAF8F5]/95 backdrop-blur-md pt-8 sm:pt-12">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="mb-6 font-heading text-3xl font-bold tracking-[0.3em] uppercase text-[#2A2421] sm:text-4xl">
+            M e n u
+          </h1>
           <CategoryTabs
             categories={categories}
             selectedCategory={selectedCategory}
@@ -161,17 +164,19 @@ export default function MenuPage() {
         </div>
       </header>
 
-      <main className="container mx-auto p-4 sm:p-6">{renderContent()}</main>
+      <main className="container mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+        {renderContent()}
+      </main>
 
       {totalCartItemCount > 0 && (
-        <div className="fixed bottom-6 right-6 z-40">
+        <div className="fixed bottom-8 right-8 z-40">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-foreground shadow-lg transition-transform hover:scale-105 hover:bg-[#0b4a3d]"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2A2421] text-[#FAF8F5] shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform hover:scale-105 hover:bg-[#1A1614]"
             aria-label={`Open cart with ${totalCartItemCount} items`}
           >
-            <ShoppingBag className="h-8 w-8" />
-            <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold">
+            <ShoppingBag className="h-6 w-6" />
+            <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#FAF8F5] bg-[#8B2E2E] font-sans text-xs font-bold text-white shadow-sm">
               {totalCartItemCount}
             </span>
           </button>
