@@ -22,7 +22,7 @@ const sidebarItems = [
     href: "/dashboard/reservations",
     icon: ClipboardList,
   },
-  { label: "QR Generator", href: "/dashboard/qr", icon: Table2 },
+  { label: "QR ", href: "/dashboard/qr", icon: Table2 },
   { label: "Kitchen", href: "/dashboard/kitchen", icon: ChefHat },
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },

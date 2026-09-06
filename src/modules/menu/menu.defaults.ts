@@ -8,8 +8,7 @@ export const defaultVegetarianMenu = [
     preparationTime: 20,
     isVeg: true,
     spiceLevel: SpiceLevel.MILD,
-    category: "Main Course",
-    image: "/menu/paneer_butter_masala_1787421655976.jpg"
+    category: "Main Course"
   },
   {
     name: "Vegetable Biryani",
@@ -18,8 +17,7 @@ export const defaultVegetarianMenu = [
     preparationTime: 25,
     isVeg: true,
     spiceLevel: SpiceLevel.MEDIUM,
-    category: "Main Course",
-    image: "/menu/veg_biryani_1787421668704.jpg"
+    category: "Main Course"
   },
   {
     name: "Margherita Pizza",
@@ -28,8 +26,7 @@ export const defaultVegetarianMenu = [
     preparationTime: 15,
     isVeg: true,
     spiceLevel: SpiceLevel.NONE,
-    category: "Pizza",
-    image: "/menu/margherita_pizza_1787421680276.jpg"
+    category: "Pizza"
   },
   {
     name: "Dal Makhani",
@@ -38,8 +35,7 @@ export const defaultVegetarianMenu = [
     preparationTime: 20,
     isVeg: true,
     spiceLevel: SpiceLevel.MILD,
-    category: "Main Course",
-    image: "/menu/dal_makhani_1787421693424.jpg"
+    category: "Main Course"
   },
   {
     name: "Garlic Naan",
@@ -48,8 +44,7 @@ export const defaultVegetarianMenu = [
     preparationTime: 10,
     isVeg: true,
     spiceLevel: SpiceLevel.NONE,
-    category: "Breads",
-    image: "/menu/garlic_naan_1787421707528.jpg"
+    category: "Breads"
   },
   {
     name: "Mango Lassi",
@@ -58,7 +53,6 @@ export const defaultVegetarianMenu = [
     preparationTime: 5,
     isVeg: true,
     spiceLevel: SpiceLevel.NONE,
-    category: "Beverages",
-    image: "/menu/mango_lassi_1787421719291.jpg"
+    category: "Beverages"
   }
 ];

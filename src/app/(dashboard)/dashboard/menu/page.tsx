@@ -37,13 +37,13 @@ const CATEGORIES = [
 
 const SPICE_LEVELS = ["NONE", "MILD", "MEDIUM", "HOT", "VERY_HOT"];
 
-const PREDEFINED_ITEMS = [
-  { name: "Paneer Butter Masala", category: "Main Course", price: 12.99, preparationTime: 20, spiceLevel: "MEDIUM", isVeg: true, image: "/images/menu/paneer_butter_masala_1787421655976.jpg", description: "Rich and creamy curry made with paneer, spices, onions, tomatoes and cashews." },
-  { name: "Veg Biryani", category: "Rice & Biryani", price: 14.99, preparationTime: 25, spiceLevel: "MEDIUM", isVeg: true, image: "/images/menu/veg_biryani_1787421668704.jpg", description: "Aromatic basmati rice cooked with mixed vegetables and special biryani spices." },
-  { name: "Margherita Pizza", category: "Main Course", price: 11.99, preparationTime: 15, spiceLevel: "NONE", isVeg: true, image: "/images/menu/margherita_pizza_1787421680276.jpg", description: "Classic pizza with tomato sauce, fresh mozzarella, and basil." },
-  { name: "Dal Makhani", category: "Main Course", price: 9.99, preparationTime: 18, spiceLevel: "MILD", isVeg: true, image: "/images/menu/dal_makhani_1787421693424.jpg", description: "Slow-cooked black lentils and kidney beans with butter and cream." },
-  { name: "Garlic Naan", category: "Breads", price: 3.99, preparationTime: 10, spiceLevel: "NONE", isVeg: true, image: "/images/menu/garlic_naan_1787421707528.jpg", description: "Soft and fluffy Indian flatbread topped with minced garlic and cilantro." },
-  { name: "Mango Lassi", category: "Beverages", price: 4.99, preparationTime: 5, spiceLevel: "NONE", isVeg: true, image: "/images/menu/mango_lassi_1787421719291.jpg", description: "Refreshing yogurt-based drink blended with sweet mangoes." }
+const PREDEFINED_ITEMS: Omit<MenuItem, "id" | "isAvailable">[] = [
+  { name: "Paneer Butter Masala", category: "Main Course", price: 12.99, preparationTime: 20, spiceLevel: "MEDIUM", isVeg: true, description: "Rich and creamy curry made with paneer, spices, onions, tomatoes and cashews." },
+  { name: "Veg Biryani", category: "Rice & Biryani", price: 14.99, preparationTime: 25, spiceLevel: "MEDIUM", isVeg: true, description: "Aromatic basmati rice cooked with mixed vegetables and special biryani spices." },
+  { name: "Margherita Pizza", category: "Main Course", price: 11.99, preparationTime: 15, spiceLevel: "NONE", isVeg: true, description: "Classic pizza with tomato sauce, fresh mozzarella, and basil." },
+  { name: "Dal Makhani", category: "Main Course", price: 9.99, preparationTime: 18, spiceLevel: "MILD", isVeg: true, description: "Slow-cooked black lentils and kidney beans with butter and cream." },
+  { name: "Garlic Naan", category: "Breads", price: 3.99, preparationTime: 10, spiceLevel: "NONE", isVeg: true, description: "Soft and fluffy Indian flatbread topped with minced garlic and cilantro." },
+  { name: "Mango Lassi", category: "Beverages", price: 4.99, preparationTime: 5, spiceLevel: "NONE", isVeg: true, description: "Refreshing yogurt-based drink blended with sweet mangoes." }
 ];
 
 export default function MenuManagementPage() {
@@ -96,8 +96,8 @@ export default function MenuManagementPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.category || !formData.price || !formData.preparationTime || !formData.image) {
-      toast.error("Please fill in all required fields (including Image URL)");
+    if (!formData.name || !formData.category || !formData.price || !formData.preparationTime) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -113,7 +113,7 @@ export default function MenuManagementPage() {
           preparationTime: parseInt(formData.preparationTime, 10),
           spiceLevel: formData.spiceLevel,
           isVeg: formData.isVeg,
-          image: formData.image,
+          image: formData.image || undefined,
           description: formData.description || undefined,
         }),
       });
@@ -206,8 +206,14 @@ export default function MenuManagementPage() {
         <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
           {PREDEFINED_ITEMS.map((item) => (
             <div key={item.name} className="flex-none w-64 snap-start bg-card border border-border rounded-[1.5rem] overflow-hidden shadow-md flex flex-col group transition hover:shadow-xl hover:border-primary/50">
-              <div className="h-40 overflow-hidden relative">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <div className="h-40 overflow-hidden relative bg-muted">
+                {item.image ? (
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                    <ImageIcon className="h-12 w-12 text-muted-foreground/30" />
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <p className="absolute bottom-3 left-4 text-white font-bold text-lg">{item.name}</p>
               </div>
@@ -341,8 +347,8 @@ export default function MenuManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Image URL (Required)</Label>
-                <Input name="image" type="url" value={formData.image} onChange={handleInputChange} placeholder="https://example.com/image.jpg" required />
+                <Label>Image URL (Optional)</Label>
+                <Input name="image" type="url" value={formData.image} onChange={handleInputChange} placeholder="https://example.com/image.jpg" />
                 <p className="text-xs text-muted-foreground">Provide a direct link to the food image.</p>
               </div>
 
