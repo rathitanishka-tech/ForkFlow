@@ -164,6 +164,7 @@ export function TableNode({
             e.stopPropagation();
             onDelete?.(table.id);
           }}
+          onPointerDown={(e) => e.stopPropagation()}
           className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-white shadow-md hover:bg-rose-600 transition-colors z-20"
           aria-label="Delete table"
         >
