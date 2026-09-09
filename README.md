@@ -1,17 +1,15 @@
 # 🍽️ ForkFlow
 
-ForkFlow is a comprehensive restaurant operations platform built to handle the end-to-end lifecycle of restaurant management. It provides staff dashboards, floor and table management, reservations, kitchen order flows, analytics, QR code table ordering, and real-time customer order tracking.
-
-*Note: For the current MVP, menu management has been streamlined so that every newly onboarded restaurant automatically receives a fixed, fully-configured vegetarian menu.*
+ForkFlow is a comprehensive restaurant operations platform built to handle the end-to-end lifecycle of restaurant management. It provides staff dashboards, interactive floor and table management, reservations, kitchen order flows, analytics, QR code table ordering, and real-time customer order tracking.
 
 ---
 
 ## ✨ Features
 
 - **📊 Staff Dashboard:** Real-time metrics tracking revenue, active orders, reservations, kitchen workload, and table occupancy.
+- **🏪 Interactive Floor Planner:** Visual, Figma-style drag-and-drop floor plan editor with smart table placement, airtight collision boundaries, and live seating statuses.
 - **🔐 Secure Operations:** Multi-tenant restaurant data scoping secured by Clerk authentication.
-- **🥗 Fixed Menu (MVP):** A globally available, pre-configured vegetarian menu for all restaurants, complete with descriptions, pricing, preparation times, and real food images.
-- **🏪 Floor & Table Management:** Visual floor plans with live seating statuses and layout configurations.
+- **🥗 Customizable Menus:** A rich pre-configured vegetarian menu template that restaurants can select and customize during the onboarding process, complete with descriptions, pricing, and high-quality imagery.
 - **📅 Reservations System:** Create, manage, and update statuses for upcoming and active bookings.
 - **👨‍🍳 Kitchen Board:** Live kitchen workflow to track orders from `Pending` → `Preparing` → `Ready`.
 - **📱 QR Ordering:** Generate table-specific QR codes, allowing customers to view the public menu and place orders directly from their phones.
@@ -116,5 +114,5 @@ npx prisma migrate deploy
 - 🧪 Automated service and route-handler testing suites.
 - 🛡️ Granular role-based access control (Owner vs. Manager vs. Kitchen Staff).
 - 📈 Advanced analytics CSV/PDF exports.
-- 🎨 Drag-and-drop floor plan editing.
+- 💳 Online payment integrations for customer orders.
 
