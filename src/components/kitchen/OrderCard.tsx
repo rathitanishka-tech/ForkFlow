@@ -50,22 +50,22 @@ const statusConfig: Record<
   }
 > = {
   PENDING: {
-    badgeClass: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    badgeClass: "bg-yellow-500/20 text-yellow-700 border-yellow-500/30 dark:text-yellow-400",
     nextStatus: "PREPARING",
     actionText: "Accept",
   },
   PREPARING: {
-    badgeClass: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    badgeClass: "bg-blue-500/20 text-blue-700 border-blue-500/30 dark:text-blue-400",
     nextStatus: "READY",
     actionText: "Ready",
   },
   READY: {
-    badgeClass: "bg-green-500/20 text-green-400 border-green-500/30",
+    badgeClass: "bg-green-500/20 text-green-700 border-green-500/30 dark:text-green-400",
     nextStatus: "SERVED",
     actionText: "Served",
   },
   SERVED: {
-    badgeClass: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+    badgeClass: "bg-gray-500/20 text-gray-700 border-gray-500/30 dark:text-gray-400",
   },
 };
 
@@ -84,12 +84,12 @@ export function OrderCard({ order, onStatusChange }: OrderCardProps) {
   };
 
   return (
-    <Card className="flex flex-col rounded-[1.15rem] border-[#29443C] bg-[#16342D] text-[#f8f5ef] shadow-[0_12px_35px_rgba(3,15,11,0.14)] transition-all hover:border-[#0f5b4c]/40">
+    <Card className="flex flex-col rounded-[1.15rem] border-border bg-secondary text-secondary-foreground shadow-[0_12px_35px_rgba(3,15,11,0.05)] transition-all hover:border-primary/40 dark:shadow-[0_12px_35px_rgba(3,15,11,0.14)]">
       <CardHeader className="flex-row items-center justify-between p-4">
         <CardTitle className="text-xl font-semibold">
           Table {order.tableNumber}
         </CardTitle>
-        <span className="text-xs text-[#c7b89f]">
+        <span className="text-xs text-muted-foreground">
           {timeSince(order.createdAt)}
         </span>
       </CardHeader>
@@ -100,20 +100,20 @@ export function OrderCard({ order, onStatusChange }: OrderCardProps) {
             key={`${item.menuItemName}-${index}`}
             className="flex items-center justify-between"
           >
-            <p className="font-medium text-[#e8dfcf]">{item.menuItemName}</p>
-            <p className="text-sm font-semibold text-[#c7b89f]">
+            <p className="font-medium text-foreground">{item.menuItemName}</p>
+            <p className="text-sm font-semibold text-muted-foreground">
               x{item.quantity}
             </p>
           </div>
         ))}
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between rounded-b-[1.15rem] border-t border-[#29443C] bg-[#10231E]/80 p-4">
+      <CardFooter className="flex items-center justify-between rounded-b-[1.15rem] border-t border-border bg-card/80 p-4">
         <div className="flex flex-col">
           <Badge className={cn("select-none", config.badgeClass)}>
             {order.status}
           </Badge>
-          <p className="mt-1 text-lg font-semibold text-[#f8f5ef]">
+          <p className="mt-1 text-lg font-semibold text-foreground">
             ₹{order.totalAmount.toFixed(2)}
           </p>
         </div>
@@ -121,7 +121,7 @@ export function OrderCard({ order, onStatusChange }: OrderCardProps) {
           <Button
             onClick={handleActionClick}
             className={cn(
-              "bg-[#0f5b4c] text-[#f8f5ef] hover:bg-[#144433]",
+              "bg-primary text-primary-foreground hover:bg-primary/90",
               "transition-transform active:scale-95",
             )}
           >

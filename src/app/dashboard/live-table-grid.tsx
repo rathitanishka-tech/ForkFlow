@@ -34,17 +34,17 @@ function SectionHeader({
 }
 
 const statusStyles: Record<string, string> = {
-  AVAILABLE: "border-emerald-400/20 bg-emerald-500/10 text-emerald-300",
-  RESERVED: "border-amber-400/20 bg-amber-500/10 text-amber-300",
-  OCCUPIED: "border-rose-400/20 bg-rose-500/10 text-rose-300",
-  MAINTENANCE: "border-slate-500/20 bg-slate-500/10 text-slate-400",
+  AVAILABLE: "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/20 dark:text-emerald-300",
+  RESERVED: "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:border-amber-400/20 dark:text-amber-300",
+  OCCUPIED: "border-rose-500/20 bg-rose-500/10 text-rose-700 dark:border-rose-400/20 dark:text-rose-300",
+  MAINTENANCE: "border-slate-500/20 bg-slate-500/10 text-slate-700 dark:border-slate-500/20 dark:text-slate-400",
 };
 
 const statusDots: Record<string, string> = {
-  AVAILABLE: "bg-emerald-400",
-  RESERVED: "bg-amber-400",
-  OCCUPIED: "bg-rose-400",
-  MAINTENANCE: "bg-slate-400",
+  AVAILABLE: "bg-emerald-500 dark:bg-emerald-400",
+  RESERVED: "bg-amber-500 dark:bg-amber-400",
+  OCCUPIED: "bg-rose-500 dark:bg-rose-400",
+  MAINTENANCE: "bg-slate-500 dark:bg-slate-400",
 };
 
 const statusLabels: Record<string, string> = {
@@ -70,7 +70,7 @@ export function LiveTableGrid({
           {Object.keys(statusLabels).map((status) => (
             <div
               key={status}
-              className="flex items-center gap-2 text-xs font-medium text-slate-400"
+              className="flex items-center gap-2 text-xs font-medium text-muted-foreground"
             >
               <span
                 className={`h-2.5 w-2.5 rounded-full ${statusDots[status]}`}

@@ -9,27 +9,26 @@ interface KitchenBoardProps {
   board: KitchenBoardType;
   onStatusChange: (orderId: string, status: KitchenOrderStatus) => void;
 }
-
 const columnConfig = [
   {
     title: "Pending",
     status: "pending" as const,
-    color: "bg-yellow-500",
+    color: "bg-yellow-500 text-yellow-950",
   },
   {
     title: "Preparing",
     status: "preparing" as const,
-    color: "bg-blue-500",
+    color: "bg-blue-500 text-white",
   },
   {
     title: "Ready",
     status: "ready" as const,
-    color: "bg-green-500",
+    color: "bg-green-500 text-white",
   },
   {
     title: "Served",
     status: "served" as const,
-    color: "bg-gray-500",
+    color: "bg-gray-500 text-white",
   },
 ];
 

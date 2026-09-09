@@ -251,6 +251,35 @@ export class TableService {
       throw new Error("Table not found");
     }
 
+    // Check for active business data
+    const activeData = await this.prisma.table.findUnique({
+      where: { id },
+      select: {
+        _count: {
+          select: {
+            diningSessions: { where: { status: "ACTIVE" } },
+            reservations: {
+              where: { status: { in: ["PENDING", "CONFIRMED", "SEATED"] } },
+            },
+            orders: {
+              where: { status: { in: ["PENDING", "PREPARING", "READY", "SERVED"] } },
+            },
+          },
+        },
+      },
+    });
+
+    if (
+      activeData &&
+      (activeData._count.diningSessions > 0 ||
+        activeData._count.reservations > 0 ||
+        activeData._count.orders > 0)
+    ) {
+      throw new Error(
+        "This table currently has active activity and cannot be removed.",
+      );
+    }
+
     return this.prisma.table.update({
       where: { id },
       data: { isActive: false },

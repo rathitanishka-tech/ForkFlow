@@ -1,6 +1,7 @@
 "use client";
 
 import { UserButton, useUser } from "@clerk/nextjs";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function UserMenu() {
   const { user } = useUser();
@@ -11,6 +12,7 @@ export function UserMenu() {
       <span className="hidden max-w-24 truncate text-sm font-medium text-foreground sm:block">
         {displayName}
       </span>
+      <ThemeToggle className="h-8 w-8 border-none bg-transparent hover:bg-muted" />
       <UserButton />
     </div>
   );

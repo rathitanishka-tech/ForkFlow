@@ -21,11 +21,11 @@ export function KitchenColumn({
   onStatusChange,
 }: KitchenColumnProps) {
   return (
-    <div className="flex h-full min-h-[320px] w-full flex-col rounded-[1.2rem] border border-[#29443C] bg-[#10231E] p-4">
+    <div className="flex h-full min-h-[320px] w-full flex-col rounded-[1.2rem] border border-border bg-card p-4">
       <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className={cn("h-3 w-3 rounded-full", color)} />
-          <h2 className="text-lg font-semibold text-[#f8f5ef]">{title}</h2>
+          <h2 className="text-lg font-semibold text-card-foreground">{title}</h2>
         </div>
         <Badge
           className={cn(
@@ -46,9 +46,9 @@ export function KitchenColumn({
             />
           ))
         ) : (
-          <div className="flex h-full flex-col items-center justify-center text-center text-[#c7b89f]">
+          <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
             <span className="text-4xl">🍽️</span>
-            <p className="mt-4 font-semibold text-[#e8dfcf]">
+            <p className="mt-4 font-semibold text-foreground">
               No {title.toLowerCase()} orders
             </p>
             <p className="mt-1 text-sm">Kitchen is caught up!</p>

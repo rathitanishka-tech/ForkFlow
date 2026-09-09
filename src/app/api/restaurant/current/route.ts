@@ -61,7 +61,7 @@ export async function DELETE() {
       await tx.restaurant.delete({ where: { id: restaurant.id } });
       await tx.businessMembership.deleteMany({ where: { businessId: restaurant.businessId } });
       await tx.business.delete({ where: { id: restaurant.businessId } });
-    });
+    }, { timeout: 20000 });
 
     return NextResponse.json({ success: true });
   } catch (error) {

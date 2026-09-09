@@ -27,6 +27,15 @@ export async function createRestaurantAction(formData: FormData) {
   const propertyType = formData.get("propertyType") as PropertyType;
   const tableCountStr = formData.get("tableCount") as string;
   const tableCount = parseInt(tableCountStr || "10", 10);
+  const menuItemsStr = formData.get("menuItems") as string;
+  let menuItems: any[] = [];
+  if (menuItemsStr) {
+    try {
+      menuItems = JSON.parse(menuItemsStr);
+    } catch (e) {
+      console.error("Failed to parse menu items:", e);
+    }
+  }
 
   if (!name || !propertyType) {
     return { error: "Missing required fields" };
@@ -115,6 +124,25 @@ export async function createRestaurantAction(formData: FormData) {
       await tx.table.createMany({
         data: tableData
       });
+
+      // 6. Create initial menu items
+      if (menuItems.length > 0) {
+        const menuData = menuItems.map((item: any) => ({
+          restaurantId: restaurant.id,
+          name: item.name,
+          description: item.description,
+          price: typeof item.price === "number" ? item.price : parseFloat(item.price),
+          preparationTime: item.preparationTime || 15,
+          isVeg: item.isVeg ?? true,
+          spiceLevel: item.spiceLevel || "NONE",
+          category: item.category || "Other",
+          isAvailable: true
+        }));
+        
+        await tx.menuItem.createMany({
+          data: menuData
+        });
+      }
     });
   } catch (error) {
     console.error("Error creating restaurant:", error);

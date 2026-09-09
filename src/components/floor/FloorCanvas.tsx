@@ -5,6 +5,9 @@ interface FloorCanvasProps {
   tables: TableNodeData[];
   selectedTableId?: string | null;
   onSelectTable: (table: TableNodeData) => void;
+  isEditing?: boolean;
+  onTableMove?: (tableId: string, x: number, y: number) => void;
+  onDeleteTable?: (tableId: string) => void;
 }
 
 function ZoneLabel({
@@ -24,45 +27,180 @@ function ZoneLabel({
   );
 }
 
+interface DragState {
+  tableId: string;
+  originalLeft: number;
+  originalTop: number;
+  pointerOffsetX: number;
+  pointerOffsetY: number;
+  currentLeft: number;
+  currentTop: number;
+  isValid: boolean;
+}
+
 export function FloorCanvas({
   tables,
   selectedTableId,
+  isEditing,
   onSelectTable,
+  onTableMove,
+  onDeleteTable,
 }: FloorCanvasProps) {
-  const columns = Math.max(1, Math.min(4, tables.length));
-  const rows = Math.max(1, Math.ceil(tables.length / columns));
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = React.useState({ width: 0, height: 0 });
+  const [dragState, setDragState] = React.useState<DragState | null>(null);
 
-  const marginXStart = 16; // % — clears the Bar / Waiting Area labels
-  const marginXEnd = 16; // % — clears the Kitchen / VIP labels
-  const marginYStart = 26; // % — clears the Entrance label
-  const marginYEnd = 24; // % — clears the Waiting Area / VIP labels and the Buffet counter
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setContainerSize({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height,
+        });
+      }
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
-  const usableWidth = 100 - marginXStart - marginXEnd;
-  const usableHeight = 100 - marginYStart - marginYEnd;
-  const colGap = columns > 1 ? usableWidth / (columns - 1) : 0;
-  const rowGap = rows > 1 ? usableHeight / (rows - 1) : 0;
-
-  const gridTables = tables.map((table, index) => {
-    const col = index % columns;
-    const row = Math.floor(index / columns);
-
-    const stagger = row % 2 === 1 && columns > 1 ? colGap / 2 : 0;
-
-    const rawX = columns > 1 ? marginXStart + col * colGap + stagger : 50;
-    let xPosition = Math.min(rawX, 100 - marginXEnd);
-    let yPosition = rows > 1 ? marginYStart + row * rowGap : 50;
-
-    if (table.number === "T7") {
-      xPosition = 84;
-      yPosition = Math.min(84, 100 - marginYEnd);
+  const getTableSize = (shape: string) => {
+    switch (shape) {
+      case "ROUND": return { width: 112, height: 112 };
+      case "SQUARE": return { width: 112, height: 112 };
+      case "RECTANGLE": return { width: 144, height: 80 };
+      case "SOFA": return { width: 160, height: 80 };
+      case "BAR": return { width: 176, height: 64 };
+      case "OUTDOOR": return { width: 96, height: 96 };
+      default: return { width: 112, height: 112 };
     }
-    if (table.number === "T9") {
-      xPosition = 54;
-      yPosition = Math.min(84, 100 - marginYEnd);
+  };
+
+  const getTableGeometry = React.useCallback((
+    table: TableNodeData, 
+    canvasWidth: number, 
+    canvasHeight: number,
+    overrideLeft?: number,
+    overrideTop?: number
+  ) => {
+    const size = getTableSize(table.shape);
+    const safeWidth = Math.max(0, canvasWidth - size.width);
+    const safeHeight = Math.max(0, canvasHeight - size.height);
+    
+    const left = overrideLeft !== undefined ? overrideLeft : (table.xPosition / 100) * safeWidth;
+    const top = overrideTop !== undefined ? overrideTop : (table.yPosition / 100) * safeHeight;
+    
+    return {
+      left,
+      top,
+      width: size.width,
+      height: size.height,
+      right: left + size.width,
+      bottom: top + size.height,
+    };
+  }, []);
+
+  const checkCollision = React.useCallback((
+    proposedGeom: ReturnType<typeof getTableGeometry>,
+    currentTableId: string,
+    canvasWidth: number,
+    canvasHeight: number
+  ) => {
+    for (const table of tables) {
+      if (table.id === currentTableId) continue;
+      const otherGeom = getTableGeometry(table, canvasWidth, canvasHeight);
+      
+      const GAP = 8;
+      if (
+        proposedGeom.left < otherGeom.right + GAP &&
+        proposedGeom.right + GAP > otherGeom.left &&
+        proposedGeom.top < otherGeom.bottom + GAP &&
+        proposedGeom.bottom + GAP > otherGeom.top
+      ) {
+        return { collided: true };
+      }
+    }
+    return { collided: false };
+  }, [tables, getTableGeometry]);
+
+  const handlePointerDown = (tableId: string, e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isEditing || !containerRef.current) return;
+    
+    const table = tables.find(t => t.id === tableId);
+    if (!table) return;
+
+    // Use setPointerCapture to ensure we receive move/up events even if cursor leaves
+    e.currentTarget.setPointerCapture(e.pointerId);
+    e.stopPropagation();
+
+    const canvasRect = containerRef.current.getBoundingClientRect();
+    const geom = getTableGeometry(table, containerSize.width, containerSize.height);
+
+    const pointerX = e.clientX - canvasRect.left;
+    const pointerY = e.clientY - canvasRect.top;
+
+    setDragState({
+      tableId,
+      originalLeft: geom.left,
+      originalTop: geom.top,
+      pointerOffsetX: pointerX - geom.left,
+      pointerOffsetY: pointerY - geom.top,
+      currentLeft: geom.left,
+      currentTop: geom.top,
+      isValid: true,
+    });
+  };
+
+  const handlePointerMove = React.useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState || !containerRef.current) return;
+
+    const canvasRect = containerRef.current.getBoundingClientRect();
+    const table = tables.find(t => t.id === dragState.tableId);
+    if (!table) return;
+
+    const size = getTableSize(table.shape);
+    const pointerX = e.clientX - canvasRect.left;
+    const pointerY = e.clientY - canvasRect.top;
+
+    let newLeft = pointerX - dragState.pointerOffsetX;
+    let newTop = pointerY - dragState.pointerOffsetY;
+
+    // Clamp entirely inside the canvas
+    newLeft = Math.max(0, Math.min(newLeft, containerSize.width - size.width));
+    newTop = Math.max(0, Math.min(newTop, containerSize.height - size.height));
+
+    const proposedGeom = getTableGeometry(table, containerSize.width, containerSize.height, newLeft, newTop);
+    const collision = checkCollision(proposedGeom, table.id, containerSize.width, containerSize.height);
+
+    setDragState(prev => prev ? {
+      ...prev,
+      currentLeft: newLeft,
+      currentTop: newTop,
+      isValid: !collision.collided,
+    } : null);
+  }, [dragState, tables, containerSize, getTableGeometry, checkCollision]);
+
+  const handlePointerUp = React.useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState || !containerRef.current) return;
+    
+    e.currentTarget.releasePointerCapture(e.pointerId);
+
+    if (dragState.isValid && onTableMove) {
+      const table = tables.find(t => t.id === dragState.tableId);
+      if (table) {
+        const size = getTableSize(table.shape);
+        const safeWidth = Math.max(0, containerSize.width - size.width);
+        const safeHeight = Math.max(0, containerSize.height - size.height);
+        
+        const newX = safeWidth > 0 ? (dragState.currentLeft / safeWidth) * 100 : 50;
+        const newY = safeHeight > 0 ? (dragState.currentTop / safeHeight) * 100 : 50;
+        
+        onTableMove(dragState.tableId, newX, newY);
+      }
     }
 
-    return { ...table, xPosition, yPosition };
-  });
+    setDragState(null);
+  }, [dragState, tables, containerSize, onTableMove]);
 
   return (
     <div
@@ -77,11 +215,17 @@ export function FloorCanvas({
       <div className="pointer-events-none absolute inset-[30px] rounded-[1.4rem] border border-white/[0.03]" />
 
       <div
+        ref={containerRef}
         className="relative"
         style={{
           width: "100%",
           height: "700px",
+          touchAction: "none",
         }}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onPointerLeave={handlePointerUp}
       >
         <ZoneLabel
           style={{ left: "50%", top: 36, transform: "translateX(-50%)" }}
@@ -136,24 +280,32 @@ export function FloorCanvas({
           </div>
         </div>
 
-        {gridTables.map((table) => (
-          <div
-            key={table.id}
-            style={{
-              position: "absolute",
-              left: `calc(${table.xPosition}% - 30px)`,
-              top: `calc(${table.yPosition}% - 20px)`,
-              transform: "translate(-50%, -50%)",
-              zIndex: 10,
-            }}
-          >
+        {tables.map((table) => {
+          const isDragging = dragState?.tableId === table.id;
+          const geom = getTableGeometry(table, containerSize.width, containerSize.height);
+          
+          const renderedLeft = isDragging ? dragState.currentLeft : geom.left;
+          const renderedTop = isDragging ? dragState.currentTop : geom.top;
+
+          return (
             <TableNode
+              key={table.id}
               table={table}
               selected={table.id === selectedTableId}
               onClick={onSelectTable}
+              isEditing={isEditing}
+              onDelete={onDeleteTable}
+              isInvalid={isDragging && !dragState.isValid}
+              onPointerDown={handlePointerDown}
+              style={{
+                position: "absolute",
+                left: `${renderedLeft}px`,
+                top: `${renderedTop}px`,
+                zIndex: isDragging || table.id === selectedTableId ? 50 : 10,
+              }}
             />
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

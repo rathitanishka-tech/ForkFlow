@@ -25,7 +25,7 @@ function SectionHeader({
     <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
       <div>
         <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
     </div>
   );
@@ -33,9 +33,9 @@ function SectionHeader({
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    Confirmed: "bg-emerald-500/10 text-emerald-300 ring-emerald-400/20",
-    Seated: "bg-sky-500/10 text-sky-300 ring-sky-400/20",
-    Pending: "bg-amber-500/10 text-amber-300 ring-amber-400/20",
+    Confirmed: "bg-emerald-500/10 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300 dark:ring-emerald-400/20",
+    Seated: "bg-sky-500/10 text-sky-700 ring-sky-500/30 dark:text-sky-300 dark:ring-sky-400/20",
+    Pending: "bg-amber-500/10 text-amber-700 ring-amber-500/30 dark:text-amber-300 dark:ring-amber-400/20",
   };
   return (
     <span
@@ -76,7 +76,7 @@ export function ReservationTable({
               <th className="px-5 py-3 font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#29443C]">
+          <tbody className="divide-y divide-border">
             {reservations.map((reservation) => (
               <tr
                 key={`${reservation.guest}-${reservation.time}`}
@@ -85,11 +85,11 @@ export function ReservationTable({
                 <td className="px-5 py-4 font-medium text-foreground">
                   {reservation.guest}
                 </td>
-                <td className="px-5 py-4 text-slate-400">
+                <td className="px-5 py-4 text-muted-foreground">
                   {reservation.table}
                 </td>
-                <td className="px-5 py-4 text-slate-400">{reservation.time}</td>
-                <td className="px-5 py-4 text-slate-400">
+                <td className="px-5 py-4 text-muted-foreground">{reservation.time}</td>
+                <td className="px-5 py-4 text-muted-foreground">
                   {reservation.guests}
                 </td>
                 <td className="px-5 py-4">

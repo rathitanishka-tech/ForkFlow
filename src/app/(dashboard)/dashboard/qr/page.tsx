@@ -105,41 +105,41 @@ export default function QrCodePage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex h-[600px] flex-col rounded-[1.5rem] border border-border bg-card lg:col-span-1">
           <div className="border-b border-border p-4">
-            <h2 className="font-semibold text-[#F8F5EF]">
+            <h2 className="font-semibold text-foreground">
               Tables ({tables.length})
             </h2>
           </div>
           <div className="grow overflow-y-auto">
             {isLoading ? (
               <div className="flex h-full items-center justify-center">
-                <Loader className="h-6 w-6 animate-spin text-[#8EA79D]" />
+                <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : error ? (
-              <div className="p-4 text-center text-sm text-rose-400">
+              <div className="p-4 text-center text-sm text-rose-500">
                 {error}
               </div>
             ) : tables.length === 0 ? (
-              <div className="p-4 text-center text-sm text-[#8EA79D]">
+              <div className="p-4 text-center text-sm text-muted-foreground">
                 No tables found.
               </div>
             ) : (
-              <ul className="divide-y divide-[#29443C]">
+              <ul className="divide-y divide-border">
                 {tables.map((table) => (
                   <li key={table.id}>
                     <button
                       onClick={() => setSelectedTable(table)}
                       className={`w-full p-4 text-left transition-colors duration-200 ${
                         resolvedSelectedTable?.id === table.id
-                          ? "bg-[#D6B48C]/10"
-                          : "hover:bg-white/5"
+                          ? "bg-accent/10 text-accent-foreground"
+                          : "hover:bg-accent/5 hover:text-accent-foreground"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-[#F8F5EF]">
+                        <span className="font-medium text-foreground">
                           Table {table.number}
                         </span>
                         {resolvedSelectedTable?.id === table.id && (
-                          <div className="h-2 w-2 rounded-full bg-[#D6B48C]"></div>
+                          <div className="h-2 w-2 rounded-full bg-accent"></div>
                         )}
                       </div>
                     </button>

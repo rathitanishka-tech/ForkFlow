@@ -91,11 +91,11 @@ export default function AnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-[#8EA79D]">
+            <p className="text-sm text-muted-foreground">
               We could not load the analytics data. Please try refreshing the
               page.
             </p>
-            <p className="mt-2 text-sm text-[#7F948B]">{error}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -160,11 +160,14 @@ export default function AnalyticsPage() {
                   <Tooltip
                     cursor={{ fill: "hsl(var(--muted))" }}
                     contentStyle={{
-                      backgroundColor: "#10231E",
-                      borderColor: "#29443C",
+                      backgroundColor: "hsl(var(--card))",
+                      borderColor: "hsl(var(--border))",
+                      color: "hsl(var(--foreground))",
+                      borderRadius: "8px",
                     }}
+                    itemStyle={{ color: "hsl(var(--foreground))" }}
                   />
-                  <Bar dataKey="revenue" fill="#0f5b4c" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} maxBarSize={60} minPointSize={2} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -215,7 +218,7 @@ export default function AnalyticsPage() {
                             <div className="font-medium text-foreground">
                               Table {order.table.number}
                             </div>
-                            <div className="text-xs text-[#7f948b]">
+                            <div className="text-xs text-muted-foreground">
                               {formatDateTime(order.createdAt)}
                             </div>
                           </td>
@@ -227,7 +230,7 @@ export default function AnalyticsPage() {
                               {order.status}
                             </Badge>
                           </td>
-                          <td className="p-4 text-right align-middle text-[#F8F5EF]">
+                          <td className="p-4 text-right align-middle text-foreground font-semibold">
                             {formatCurrency(order.totalAmount)}
                           </td>
                         </tr>
@@ -267,7 +270,7 @@ const StatCard = ({
     </CardHeader>
     <CardContent>
       <div className="text-4xl font-extrabold text-foreground">{value}</div>
-      {description && <p className="text-sm text-[#7f948b]">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground">{description}</p>}
     </CardContent>
   </Card>
 );
