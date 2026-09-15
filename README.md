@@ -1,5 +1,7 @@
 # 🍽️ ForkFlow
 
+**🚀 Live Deployment:** [https://fork-flow-eight.vercel.app/](https://fork-flow-eight.vercel.app/)
+
 ForkFlow is a comprehensive restaurant operations platform built to handle the end-to-end lifecycle of restaurant management. It provides staff dashboards, interactive floor and table management, reservations, kitchen order flows, analytics, QR code table ordering, and real-time customer order tracking.
 
 ---
