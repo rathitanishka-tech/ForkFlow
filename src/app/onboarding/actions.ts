@@ -106,17 +106,24 @@ export async function createRestaurantAction(formData: FormData) {
 
       // 5. Create requested tables
       const tableData = [];
-      const cols = 5;
+      const cols = Math.max(3, Math.ceil(Math.sqrt(tableCount)));
+      const rows = Math.ceil(tableCount / cols);
+
       for (let i = 0; i < tableCount; i++) {
         const row = Math.floor(i / cols);
         const col = i % cols;
+        
+        // Distribute positions evenly between 5% and 95%
+        const xPosition = 5 + (col * (90 / Math.max(1, cols - 1))); 
+        const yPosition = 5 + (row * (90 / Math.max(1, rows - 1)));
+
         tableData.push({
           floorId: floor.id,
           number: (i + 1).toString(),
           capacity: 4,
           shape: TableShape.SQUARE,
-          xPosition: 100 + (col * 150),
-          yPosition: 100 + (row * 150),
+          xPosition: Math.min(xPosition, 95),
+          yPosition: Math.min(yPosition, 95),
           isActive: true,
         });
       }
