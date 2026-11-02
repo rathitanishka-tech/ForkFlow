@@ -21,10 +21,10 @@ import { getCurrentRestaurant } from "@/lib/server-restaurant";
 export const dynamic = "force-dynamic";
 
 const quickActions = [
+  { label: "Floor Planner", icon: Store, href: "/dashboard/floor" },
   { label: "Reservations", icon: Plus, href: "/dashboard/reservations" },
   { label: "Generate QR", icon: QrCode, href: "/dashboard/qr" },
   { label: "Open Kitchen", icon: ChefHat, href: "/dashboard/kitchen" },
-  { label: "View Analytics", icon: BarChart3, href: "/dashboard/analytics" },
 ];
 
 async function getDashboardData() {
@@ -135,19 +135,22 @@ export default async function DashboardPage() {
     },
   ];
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
+      <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-5 shadow-xs sm:flex-row sm:items-center sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-foreground">
-            Good Morning
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            {greeting}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Here&apos;s what&apos;s happening across your restaurants today.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Here&apos;s the live pulse across your restaurant floor today.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium text-accent shadow-sm">
-          <Clock3 className="h-4 w-4 text-accent" aria-hidden="true" />
+        <div className="flex items-center gap-2 rounded-full border border-border bg-muted/60 px-4 py-2 text-xs font-semibold text-foreground shadow-xs">
+          <Clock3 className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
           {currentDate}
         </div>
       </div>

@@ -25,94 +25,48 @@ interface MenuCardProps {
 
 const spiceLevelStyles: Record<
   SpiceLevel,
-  { icon: React.ReactNode; label: string; color: string }
+  { count: number; label: string }
 > = {
-  NONE: {
-    icon: null,
-    label: "Not Spicy",
-    color: "text-[#5C544F]",
-  },
-  MILD: {
-    icon: <Flame className="h-3 w-3" />,
-    label: "Mild",
-    color: "text-[#8B2E2E]",
-  },
-  MEDIUM: {
-    icon: (
-      <>
-        <Flame className="h-3 w-3" />
-        <Flame className="h-3 w-3" />
-      </>
-    ),
-    label: "Medium",
-    color: "text-[#8B2E2E]",
-  },
-  HOT: {
-    icon: (
-      <>
-        <Flame className="h-3 w-3" />
-        <Flame className="h-3 w-3" />
-        <Flame className="h-3 w-3" />
-      </>
-    ),
-    label: "Hot",
-    color: "text-[#8B2E2E]",
-  },
-  VERY_HOT: {
-    icon: (
-      <>
-        <Flame className="h-3 w-3" />
-        <Flame className="h-3 w-3" />
-        <Flame className="h-3 w-3" />
-        <Flame className="h-3 w-3" />
-      </>
-    ),
-    label: "Very Hot",
-    color: "text-[#8B2E2E]",
-  },
+  NONE: { count: 0, label: "Not Spicy" },
+  MILD: { count: 1, label: "Mild Spice" },
+  MEDIUM: { count: 2, label: "Medium Spice" },
+  HOT: { count: 3, label: "Hot & Spicy" },
+  VERY_HOT: { count: 4, label: "Extra Hot" },
 };
 
 const DietaryBadge = ({ type }: { type: DietaryType }) => (
   <div
     className={cn(
-      "flex h-4 w-4 items-center justify-center rounded-sm border",
+      "flex h-4 w-4 items-center justify-center rounded-xs border",
       type === "VEG"
-        ? "border-[#5C544F] bg-transparent"
-        : "border-[#8B2E2E] bg-transparent",
+        ? "border-[#216E46] dark:border-[#74A96B]"
+        : "border-[#E5483F]",
     )}
+    title={type === "VEG" ? "Pure Vegetarian" : "Non-Vegetarian"}
   >
-    {type === "VEG" ? (
-      <div className="h-2 w-2 rounded-full bg-[#5C544F]" />
-    ) : (
-      <div className="h-2 w-2 rounded-full bg-[#8B2E2E]" />
-    )}
+    <div
+      className={cn(
+        "h-2 w-2 rounded-full",
+        type === "VEG"
+          ? "bg-[#216E46] dark:bg-[#74A96B]"
+          : "bg-[#E5483F]",
+      )}
+    />
   </div>
 );
 
 const SpiceLevelBadge = ({ level }: { level: SpiceLevel }) => {
-  if (level === "NONE") return null;
-  const { icon, label, color } = spiceLevelStyles[level];
+  const config = spiceLevelStyles[level];
+  if (!config || config.count === 0) return null;
+
   return (
     <div
-      className={cn("flex items-center gap-0.5", color)}
-      title={label}
+      className="flex items-center gap-0.5 text-[#E5483F]"
+      title={config.label}
     >
-      {icon}
-    </div>
-  );
-};
-
-const AvailabilityBadge = ({
-  availability,
-}: {
-  availability: Availability;
-}) => {
-  if (availability === "AVAILABLE") return null;
-  return (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F5]/60 backdrop-blur-[1px]">
-      <span className="border border-[#2A2421] bg-[#FAF8F5] px-3 py-1 font-sans text-xs font-semibold tracking-widest text-[#2A2421] uppercase">
-        Sold Out
-      </span>
+      {Array.from({ length: config.count }).map((_, i) => (
+        <Flame key={i} className="h-3 w-3 fill-current" />
+      ))}
     </div>
   );
 };
@@ -124,39 +78,46 @@ export function MenuCard({ menuItem, onAdd }: MenuCardProps) {
   return (
     <div
       className={cn(
-        "group relative flex flex-row items-start gap-5 py-6 border-b border-[#E3DCD2] transition-opacity duration-300",
-        !isAvailable && "opacity-75 grayscale",
+        "group relative flex items-start gap-4 rounded-2xl border border-border bg-card p-4 transition-all duration-200 hover:border-primary/40 hover:shadow-xs",
+        !isAvailable && "opacity-60 grayscale",
       )}
     >
-      <div className="relative shrink-0 overflow-hidden rounded-sm border border-[#E3DCD2] h-24 w-24 sm:h-32 sm:w-32 shadow-sm">
+      {/* Thumbnail */}
+      <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-xl border border-border bg-muted">
         {menuItem.imageUrl ? (
           <img
             src={menuItem.imageUrl}
             alt={menuItem.name}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-[#F2EFE9]">
-            <UtensilsCrossed className="h-8 w-8 text-[#E3DCD2]" />
+          <div className="flex h-full w-full items-center justify-center text-muted-foreground/40">
+            <UtensilsCrossed className="h-7 w-7" />
           </div>
         )}
-        <AvailabilityBadge
-          availability={menuItem.isAvailable ? "AVAILABLE" : "UNAVAILABLE"}
-        />
+
+        {!isAvailable && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+            <span className="rounded-md bg-black/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+              Sold Out
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-1 flex-col justify-between h-full min-h-[6rem] sm:min-h-[8rem]">
+      {/* Info & Action */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between self-stretch">
         <div>
-          <div className="flex items-start justify-between gap-4">
-            <h3 className="font-heading text-xl font-bold text-[#2A2421] leading-tight sm:text-2xl">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-base font-bold text-foreground leading-snug">
               {menuItem.name}
             </h3>
-            <p className="shrink-0 font-sans text-lg font-medium text-[#2A2421]">
+            <span className="shrink-0 text-base font-bold text-foreground">
               {new Intl.NumberFormat("en-IN", {
                 style: "currency",
                 currency: "INR",
               }).format(menuItem.price)}
-            </p>
+            </span>
           </div>
 
           <div className="mt-1 flex items-center gap-2">
@@ -164,24 +125,25 @@ export function MenuCard({ menuItem, onAdd }: MenuCardProps) {
             <SpiceLevelBadge level={menuItem.spiceLevel} />
           </div>
 
-          <p className="mt-2 text-sm text-[#5C544F] font-sans line-clamp-2 leading-relaxed">
-            {menuItem.description}
-          </p>
+          {menuItem.description && (
+            <p className="mt-1.5 line-clamp-2 text-xs text-muted-foreground leading-relaxed">
+              {menuItem.description}
+            </p>
+          )}
         </div>
 
-        <div className="mt-4 flex items-center justify-end">
+        <div className="mt-3 flex items-center justify-end">
           <button
             onClick={() => onAdd(menuItem)}
             disabled={!isAvailable}
             className={cn(
-              "flex items-center gap-1.5 rounded-none border border-[#2A2421] bg-transparent px-4 py-1.5 font-sans text-xs font-semibold uppercase tracking-wider text-[#2A2421] transition-colors duration-300",
-              "hover:bg-[#2A2421] hover:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#2A2421] focus:ring-offset-1 focus:ring-offset-[#FAF8F5]",
-              "disabled:cursor-not-allowed disabled:border-[#E3DCD2] disabled:text-[#E3DCD2] disabled:hover:bg-transparent disabled:hover:text-[#E3DCD2]",
+              "flex items-center gap-1.5 rounded-xl bg-[#216E46] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#1b5838] active:scale-95 dark:bg-[#74A96B] dark:text-[#101712] cursor-pointer",
+              "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#216E46]",
             )}
             aria-label={`Add ${menuItem.name} to order`}
           >
+            <Plus className="h-3.5 w-3.5" />
             <span>Add</span>
-            <Plus className="h-3 w-3" />
           </button>
         </div>
       </div>

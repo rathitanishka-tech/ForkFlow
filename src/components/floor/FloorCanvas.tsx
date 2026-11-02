@@ -19,7 +19,7 @@ function ZoneLabel({
 }) {
   return (
     <div
-      className="pointer-events-none select-none whitespace-nowrap rounded-full border border-white/[0.06] bg-[#0C1F1A]/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6D8179] shadow-[0_4px_16px_rgba(3,15,11,0.4)] backdrop-blur-sm"
+      className="pointer-events-none select-none whitespace-nowrap rounded-full border border-[#C8D8CC] dark:border-[#344D3D] bg-[#F8FAF7]/90 dark:bg-[#101713]/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#718078] dark:text-[#A3B2A6] shadow-xs backdrop-blur-sm"
       style={{ position: "absolute", zIndex: 20, ...style }}
     >
       {children}
@@ -204,15 +204,18 @@ export function FloorCanvas({
 
   return (
     <div
-      className="relative overflow-hidden rounded-3xl border border-[#29443C] bg-gradient-to-br from-[#10231E] via-[#143128] to-[#0E221D] shadow-[0_24px_70px_rgba(3,15,11,0.35)]"
+      className="relative overflow-hidden rounded-3xl border border-[#C8D8CC] dark:border-[#344D3D] bg-[#F8FAF7] dark:bg-[#101713] shadow-[0_12px_40px_rgba(23,37,29,0.06)] dark:shadow-[0_24px_70px_rgba(3,15,11,0.35)]"
       style={{ height: 700, overflow: "hidden" }}
     >
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      {/* Grid lines: subtle pale sage #E6EEE7 in light, subtle green-grey #26382E in dark */}
+      <div className="absolute inset-0 bg-[linear-gradient(#E6EEE7_1px,transparent_1px),linear-gradient(90deg,#E6EEE7_1px,transparent_1px)] dark:bg-[linear-gradient(#26382E_1px,transparent_1px),linear-gradient(90deg,#26382E_1px,transparent_1px)] bg-[size:40px_40px]" />
 
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_0%,rgba(3,15,11,0.35)_100%)]" />
+      {/* Subtle depth vignette */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_0%,rgba(23,37,29,0.03)_100%)] dark:bg-[radial-gradient(circle_at_50%_40%,transparent_0%,rgba(3,15,11,0.35)_100%)]" />
 
-      <div className="absolute inset-6 rounded-3xl border border-[#35554A]" />
-      <div className="pointer-events-none absolute inset-[30px] rounded-[1.4rem] border border-white/[0.03]" />
+      {/* Floor boundary: muted sage #C8D8CC in light, muted forest green #344D3D in dark */}
+      <div className="absolute inset-6 rounded-3xl border border-[#C8D8CC] dark:border-[#344D3D]" />
+      <div className="pointer-events-none absolute inset-[30px] rounded-[1.4rem] border border-[#C8D8CC]/40 dark:border-white/[0.03]" />
 
       <div
         ref={containerRef}
@@ -242,7 +245,7 @@ export function FloorCanvas({
           style={{ position: "absolute", inset: 0 }}
         >
           <div
-            className="h-px w-3/4 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
+            className="h-px w-3/4 bg-gradient-to-r from-transparent via-[#C8D8CC] dark:via-[#344D3D] to-transparent"
             style={{
               position: "absolute",
               left: "50%",
@@ -251,7 +254,7 @@ export function FloorCanvas({
             }}
           />
           <div
-            className="h-px w-3/4 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
+            className="h-px w-3/4 bg-gradient-to-r from-transparent via-[#C8D8CC] dark:via-[#344D3D] to-transparent"
             style={{
               position: "absolute",
               left: "50%",
@@ -271,7 +274,7 @@ export function FloorCanvas({
             zIndex: 20,
           }}
         >
-          <div className="flex items-center gap-4 rounded-lg border border-white/10 bg-black/20 px-6 py-3 text-sm text-white/40 shadow-lg backdrop-blur-sm">
+          <div className="flex items-center gap-4 rounded-lg border border-[#C8D8CC] dark:border-[#344D3D] bg-[#F8FAF7]/80 dark:bg-[#101713]/80 px-6 py-3 text-sm text-[#718078] dark:text-[#A3B2A6] shadow-xs backdrop-blur-sm">
             <span>🍽</span>
             <span className="font-semibold uppercase tracking-[0.2em]">
               Buffet

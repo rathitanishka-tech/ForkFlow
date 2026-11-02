@@ -1,21 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 
-function Card({
-  children,
-  className = "",
-}: Readonly<{
-  children: React.ReactNode;
-  className?: string;
-}>) {
-  return (
-    <section
-      className={`rounded-[1.25rem] border border-border bg-card ${className}`}
-    >
-      {children}
-    </section>
-  );
-}
-
 interface StatCardProps {
   icon: LucideIcon;
   title: string;
@@ -30,19 +14,21 @@ export function StatCard({
   subtitle,
 }: StatCardProps) {
   return (
-    <Card className="p-5 shadow-[0_15px_40px_rgba(2,8,23,0.25)]">
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-xs transition duration-200 hover:border-primary/40 hover:shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="mt-3 text-3xl font-semibold tracking-normal text-foreground">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {title}
+          </p>
+          <p className="mt-2.5 text-3xl font-bold tracking-tight text-foreground">
             {value}
           </p>
-          <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
         </div>
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-foreground">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#216E46]/10 text-[#216E46] dark:bg-[#74A96B]/15 dark:text-[#74A96B]">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

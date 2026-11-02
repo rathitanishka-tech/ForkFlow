@@ -37,16 +37,16 @@ export function EditTablePanel({ table, onChange, onDelete }: EditTablePanelProp
     >
       <Card className="rounded-[1.5rem] border border-border bg-card p-6 h-full flex flex-col shadow-lg">
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-foreground">Edit Table</h3>
-          <div className="flex items-center gap-2 text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full">
+          <h3 className="text-xl font-semibold text-[#17251D] dark:text-[#F3F5F0]">Edit Table</h3>
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#226B4D] bg-[#226B4D]/10 dark:text-[#4A9167] dark:bg-[#4A9167]/15 px-2.5 py-1 rounded-full">
             <CheckCircle2 className="h-3.5 w-3.5" />
             Editing
           </div>
         </div>
 
-        <div className="space-y-5 flex-grow">
+        <div className="space-y-4 flex-grow">
           <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            <label className="block text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] uppercase tracking-wider mb-1.5">
               Table Number/Name
             </label>
             <input
@@ -54,13 +54,13 @@ export function EditTablePanel({ table, onChange, onDelete }: EditTablePanelProp
               name="number"
               value={table.number}
               onChange={handleChange}
-              className="w-full rounded-md border border-border bg-secondary px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full rounded-xl border border-border bg-background px-3.5 py-2 text-sm text-[#17251D] dark:text-[#F3F5F0] focus:outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
-              Capacity
+            <label className="block text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] uppercase tracking-wider mb-1.5">
+              Capacity (Guests)
             </label>
             <input
               type="number"
@@ -69,19 +69,19 @@ export function EditTablePanel({ table, onChange, onDelete }: EditTablePanelProp
               max="30"
               value={table.capacity}
               onChange={handleChange}
-              className="w-full rounded-md border border-border bg-secondary px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full rounded-xl border border-border bg-background px-3.5 py-2 text-sm text-[#17251D] dark:text-[#F3F5F0] focus:outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            <label className="block text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] uppercase tracking-wider mb-1.5">
               Shape
             </label>
             <select
               name="shape"
               value={table.shape}
               onChange={handleChange}
-              className="w-full rounded-md border border-border bg-secondary px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full rounded-xl border border-border bg-background px-3.5 py-2 text-sm text-[#17251D] dark:text-[#F3F5F0] focus:outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40"
             >
               <option value="SQUARE">Square</option>
               <option value="ROUND">Round</option>
@@ -92,25 +92,26 @@ export function EditTablePanel({ table, onChange, onDelete }: EditTablePanelProp
             </select>
           </div>
 
-          <div className="flex items-center gap-3 pt-2">
+          <div className="flex items-center gap-2.5 pt-2">
             <input
               type="checkbox"
               id="isActive"
               name="isActive"
               checked={table.isActive}
               onChange={handleChange}
-              className="h-4 w-4 rounded border-border text-primary focus:ring-primary bg-secondary"
+              className="h-4 w-4 rounded border-border text-[#226B4D] focus:ring-[#226B4D] bg-background accent-[#226B4D] dark:accent-[#4A9167]"
             />
-            <label htmlFor="isActive" className="text-sm font-medium text-foreground">
-              Table is Active
+            <label htmlFor="isActive" className="text-xs font-semibold text-[#17251D] dark:text-[#F3F5F0]">
+              Table is Active on Floor
             </label>
           </div>
         </div>
 
+        {/* Destructive action button: Tomato red #FF6258 */}
         <div className="mt-8 pt-6 border-t border-border">
           <button
             onClick={onDelete}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-500 hover:bg-rose-500/20 transition-colors"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#FF6258]/30 bg-[#FF6258]/10 px-4 py-2.5 text-xs font-semibold text-[#FF6258] hover:bg-[#FF6258]/20 transition-colors cursor-pointer"
           >
             <Trash2 className="h-4 w-4" />
             Delete Table

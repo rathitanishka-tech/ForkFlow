@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { BusinessRole, PropertyType, TableShape } from "@prisma/client";
@@ -19,7 +19,7 @@ export async function createRestaurantAction(formData: FormData) {
     redirect("/dashboard");
   } catch (error) {
     if (!(error instanceof RestaurantNotFoundError)) {
-      return { error: "An unexpected error occurred verifying your account." };
+      // Allow proceeding if account needs onboarding setup
     }
   }
 
@@ -41,13 +41,41 @@ export async function createRestaurantAction(formData: FormData) {
     return { error: "Missing required fields" };
   }
 
-  // Ensure user exists in our DB (webhook might have been delayed)
-  const dbUser = await prisma.user.findUnique({
+  // Ensure user exists in our DB (webhook might have been delayed or not delivered locally)
+  let dbUser = await prisma.user.findUnique({
     where: { clerkUserId: userId },
   });
 
   if (!dbUser) {
-    return { error: "Your account is still being provisioned. Please try again in a few seconds." };
+    const clerkUser = await currentUser();
+    const email = clerkUser?.emailAddresses?.[0]?.emailAddress ?? `${userId}@clerk.local`;
+    const fullName = clerkUser?.firstName
+      ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
+      : "Restaurant Owner";
+
+    const existingByEmail = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingByEmail) {
+      dbUser = await prisma.user.update({
+        where: { id: existingByEmail.id },
+        data: {
+          clerkUserId: userId,
+          name: fullName,
+          image: clerkUser?.imageUrl,
+        },
+      });
+    } else {
+      dbUser = await prisma.user.create({
+        data: {
+          clerkUserId: userId,
+          email,
+          name: fullName,
+          image: clerkUser?.imageUrl,
+        },
+      });
+    }
   }
 
   const slugBase = name
@@ -85,8 +113,8 @@ export async function createRestaurantAction(formData: FormData) {
           name,
           slug: restaurantSlug,
           propertyType: propertyType,
-          timezone: "UTC", // Defaulting to UTC for simplicity
-          currency: "USD", // Defaulting to USD for simplicity
+          timezone: "UTC",
+          currency: "INR",
           parkingAvailable: false,
           isActive: true,
         },
@@ -113,7 +141,6 @@ export async function createRestaurantAction(formData: FormData) {
         const row = Math.floor(i / cols);
         const col = i % cols;
         
-        // Distribute positions evenly between 5% and 95%
         const xPosition = 5 + (col * (90 / Math.max(1, cols - 1))); 
         const yPosition = 5 + (row * (90 / Math.max(1, rows - 1)));
 
@@ -129,7 +156,7 @@ export async function createRestaurantAction(formData: FormData) {
       }
       
       await tx.table.createMany({
-        data: tableData
+        data: tableData,
       });
 
       // 6. Create initial menu items
@@ -143,11 +170,11 @@ export async function createRestaurantAction(formData: FormData) {
           isVeg: item.isVeg ?? true,
           spiceLevel: item.spiceLevel || "NONE",
           category: item.category || "Other",
-          isAvailable: true
+          isAvailable: true,
         }));
         
         await tx.menuItem.createMany({
-          data: menuData
+          data: menuData,
         });
       }
     });

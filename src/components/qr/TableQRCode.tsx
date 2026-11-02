@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import QRCode from "react-qr-code";
-import { Download } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface TableQRCodeProps {
   restaurantName: string;
@@ -24,7 +25,6 @@ export function TableQRCode({
   restaurantId,
   tableNumber,
   tableId,
-  qrOptions,
   showUrl = false,
 }: TableQRCodeProps) {
   const qrCodeRef = React.useRef<HTMLDivElement>(null);
@@ -61,7 +61,7 @@ export function TableQRCode({
 
       const link = document.createElement("a");
       link.href = pngDataUrl;
-      link.download = `qr-code-table-${tableNumber}.png`;
+      link.download = `qr-table-${tableNumber}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -70,56 +70,63 @@ export function TableQRCode({
     img.src = svgDataUrl;
   };
 
-  const fgColor = qrOptions?.color?.dark ?? "#0F172A";
-  const bgColor = qrOptions?.color?.light ?? "#FFFFFF";
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="flex w-full max-w-sm flex-col items-center rounded-[1.5rem] border border-[#29443C] bg-[#10231E] p-6 text-center shadow-[0_18px_50px_rgba(3,15,11,0.28)] sm:p-8"
+      className="flex w-full max-w-sm flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-xs sm:p-8"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8EA79D]">
+      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
         {restaurantName}
       </p>
-      <h2 className="mt-1 text-2xl font-semibold tracking-tight text-[#F8F5EF]">
+      <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
         Table {tableNumber}
       </h2>
 
       <div
         ref={qrCodeRef}
-        style={{ backgroundColor: bgColor }}
-        className="my-7 rounded-2xl border border-white/10 p-5 shadow-[0_12px_32px_rgba(0,0,0,0.25)] transition-transform duration-300 hover:scale-[1.03]"
+        className="my-6 rounded-2xl border border-border bg-white p-5 shadow-xs transition-transform duration-300 hover:scale-[1.02]"
       >
         {qrUrl ? (
           <QRCode
             value={qrUrl}
-            size={220}
-            bgColor={bgColor}
-            fgColor={fgColor}
+            size={200}
+            bgColor="#FFFFFF"
+            fgColor="#17211A"
             level="H"
           />
         ) : (
-          <div className="h-[220px] w-[220px] animate-pulse rounded-md bg-[#e7e2d6]" />
+          <div className="h-[200px] w-[200px] animate-pulse rounded-md bg-muted" />
         )}
       </div>
 
+      <div className="flex w-full flex-col gap-2.5">
+        <button
+          onClick={handleDownload}
+          disabled={!qrUrl}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#E5483F] px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#d9382f] focus:outline-none focus:ring-2 focus:ring-[#E5483F]/50 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+        >
+          <Download className="h-4 w-4" />
+          <span>Download QR PNG</span>
+        </button>
+
+        <Link
+          href={qrUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-muted/50 px-4 py-2.5 text-xs font-semibold text-foreground transition hover:bg-muted"
+        >
+          <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+          <span>Test Menu Link</span>
+        </Link>
+      </div>
+
       {showUrl && (
-        <div className="w-full break-words">
-          <p className="text-xs text-[#8EA79D]">Scannable URL:</p>
-          <p className="mt-1 font-mono text-xs text-[#D6B48C]">{qrUrl}</p>
+        <div className="mt-4 w-full break-words">
+          <p className="font-mono text-[11px] text-muted-foreground">{qrUrl}</p>
         </div>
       )}
-
-      <button
-        onClick={handleDownload}
-        disabled={!qrUrl}
-        className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-[#D6B48C]/30 bg-[#D6B48C] px-4 py-3 font-semibold text-[#10231E] transition-colors duration-200 hover:bg-[#e2c39c] focus:outline-none focus:ring-2 focus:ring-[#D6B48C]/60 focus:ring-offset-2 focus:ring-offset-[#10231E] disabled:cursor-not-allowed disabled:border-[#29443C] disabled:bg-[#1B332C] disabled:text-[#6D8179]"
-      >
-        <Download className="h-5 w-5" />
-        <span>Download PNG</span>
-      </button>
     </motion.div>
   );
 }

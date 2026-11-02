@@ -19,13 +19,13 @@ function LegendRow({
   count: number;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border bg-secondary px-4 py-3 transition-colors duration-200 hover:border-border">
-      <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-2.5 transition-colors duration-200">
+      <div className="flex items-center gap-2.5">
         <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
-        <span className="text-sm text-[#8EA79D]">{label}</span>
+        <span className="text-xs font-medium text-[#718078] dark:text-[#A3B2A6]">{label}</span>
       </div>
 
-      <span className="font-mono text-sm font-semibold text-[#F8F5EF]">
+      <span className="font-mono text-xs font-semibold text-[#17251D] dark:text-[#F3F5F0]">
         {count}
       </span>
     </div>
@@ -336,13 +336,13 @@ export default function FloorPlanPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
+      <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-5 shadow-xs sm:flex-row sm:items-center sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-foreground flex items-center gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#17251D] dark:text-[#F3F5F0] flex flex-wrap items-center gap-3">
             Floor Planner
             {floors.length > 0 && (
               <select 
-                className="text-sm rounded-md border border-border bg-secondary px-3 py-1.5 outline-none focus:ring-2 focus:ring-primary/50"
+                className="text-xs font-semibold rounded-xl border border-border bg-muted/60 px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40 text-[#17251D] dark:text-[#F3F5F0]"
                 value={selectedFloorId}
                 onChange={(e) => {
                   setSelectedFloorId(e.target.value);
@@ -356,15 +356,15 @@ export default function FloorPlanPage() {
               </select>
             )}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Manage your restaurant&apos;s tables and layout in real-time.
+          <p className="mt-1 text-sm text-[#718078] dark:text-[#A3B2A6]">
+            Manage your restaurant&apos;s physical tables, seating capacity, and real-time layout.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {isEditing ? (
             <>
               {hasUnsavedChanges && (
-                <span className="text-sm text-amber-500 mr-2 flex items-center gap-2">
+                <span className="text-xs font-semibold text-amber-500 mr-1 flex items-center gap-1.5">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -374,21 +374,21 @@ export default function FloorPlanPage() {
               )}
               <button
                 onClick={() => setIsAddTableOpen(true)}
-                className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                className="rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-semibold text-[#17251D] dark:text-[#F3F5F0] hover:bg-muted transition-colors cursor-pointer"
               >
                 Add Table
               </button>
               <button
                 onClick={handleCancelEdit}
                 disabled={isSaving}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors"
+                className="rounded-xl px-3.5 py-2 text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] hover:bg-muted transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveLayout}
                 disabled={isSaving}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="rounded-xl bg-[#226B4D] hover:bg-[#1C553D] dark:bg-[#24583F] dark:hover:bg-[#2F7352] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs"
               >
                 {isSaving ? "Saving..." : "Save Layout"}
               </button>
@@ -397,7 +397,7 @@ export default function FloorPlanPage() {
             <button
               onClick={handleEditLayout}
               disabled={!selectedFloorId}
-              className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-xl bg-[#226B4D] hover:bg-[#1C553D] dark:bg-[#24583F] dark:hover:bg-[#2F7352] px-4 py-2 text-xs font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
             >
               Edit Layout
             </button>
@@ -460,33 +460,32 @@ export default function FloorPlanPage() {
                       />
                     )
                   ) : (
-                    <Card className="rounded-[1.5rem] border border-border bg-card">
+                    <Card className="rounded-2xl border border-border bg-card">
                       <div className="flex h-full min-h-[220px] flex-col items-center justify-center p-8 text-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-secondary">
-                          <Map className="h-7 w-7 text-[#D6B48C]" />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-muted/60 text-[#226B4D] dark:text-[#4A9167]">
+                          <Map className="h-6 w-6 text-[#226B4D] dark:text-[#4A9167]" />
                         </div>
 
-                        <h3 className="mt-5 text-xl font-semibold text-[#F8F5EF]">
+                        <h3 className="mt-4 text-lg font-bold text-[#17251D] dark:text-[#F3F5F0]">
                           Select a Table
                         </h3>
 
-                        <p className="mt-2 max-w-sm text-sm text-[#8EA79D]">
-                          Click any table on the floor to inspect its details
-                          and perform actions.
+                        <p className="mt-1.5 max-w-sm text-xs text-[#718078] dark:text-[#A3B2A6]">
+                          Click any table on the interactive floor map to inspect its details, party capacity, and status.
                         </p>
                       </div>
                     </Card>
                   )}
                 </AnimatePresence>
 
-                <Card className="rounded-[1.5rem] border border-border bg-card p-6">
-                  <h3 className="mb-6 text-lg font-semibold text-[#F8F5EF]">
-                    Live Status
+                <Card className="rounded-2xl border border-border bg-card p-5">
+                  <h3 className="mb-4 text-sm font-semibold text-[#17251D] dark:text-[#F3F5F0]">
+                    Live Floor Status
                   </h3>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     <LegendRow
-                      color="bg-emerald-400"
+                      color="bg-emerald-500"
                       label="Available"
                       count={
                         tables.filter((t) => t.status === "AVAILABLE").length
@@ -502,7 +501,7 @@ export default function FloorPlanPage() {
                     />
 
                     <LegendRow
-                      color="bg-rose-400"
+                      color="bg-[#FF6258]"
                       label="Occupied"
                       count={
                         tables.filter((t) => t.status === "OCCUPIED").length
@@ -534,24 +533,24 @@ export default function FloorPlanPage() {
               className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-foreground">Add New Table</h2>
-                <button onClick={() => setIsAddTableOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+                <h2 className="text-xl font-semibold text-[#17251D] dark:text-[#F3F5F0]">Add New Table</h2>
+                <button onClick={() => setIsAddTableOpen(false)} className="text-[#718078] dark:text-[#A3B2A6] hover:text-[#17251D] dark:hover:text-[#F3F5F0] transition-colors">
                   <X className="h-5 w-5" />
                 </button>
               </div>
               
               <form onSubmit={handleAddTable} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">Table Number/Name</label>
-                  <input name="number" required className="w-full rounded-md border border-border bg-secondary px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="e.g. 12 or Window-1" />
+                  <label className="block text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] uppercase tracking-wider mb-1.5">Table Number / Label</label>
+                  <input name="number" required className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-[#17251D] dark:text-[#F3F5F0] focus:outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40" placeholder="e.g. 12 or Window-1" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">Capacity</label>
-                  <input name="capacity" type="number" min="1" max="20" required defaultValue="4" className="w-full rounded-md border border-border bg-secondary px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                  <label className="block text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] uppercase tracking-wider mb-1.5">Capacity (Guests)</label>
+                  <input name="capacity" type="number" min="1" max="20" required defaultValue="4" className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-[#17251D] dark:text-[#F3F5F0] focus:outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">Shape</label>
-                  <select name="shape" required className="w-full rounded-md border border-border bg-secondary px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
+                  <label className="block text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] uppercase tracking-wider mb-1.5">Shape</label>
+                  <select name="shape" required className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-[#17251D] dark:text-[#F3F5F0] focus:outline-none focus:ring-2 focus:ring-[#226B4D]/40 dark:focus:ring-[#4A9167]/40">
                     <option value="SQUARE">Square</option>
                     <option value="ROUND">Round</option>
                     <option value="RECTANGLE">Rectangle</option>
@@ -562,10 +561,10 @@ export default function FloorPlanPage() {
                 </div>
                 
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={() => setIsAddTableOpen(false)} className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors">
+                  <button type="button" onClick={() => setIsAddTableOpen(false)} className="rounded-xl px-4 py-2 text-xs font-semibold text-[#718078] dark:text-[#A3B2A6] hover:bg-muted transition-colors cursor-pointer">
                     Cancel
                   </button>
-                  <button type="submit" disabled={isAddingTable} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                  <button type="submit" disabled={isAddingTable} className="rounded-xl bg-[#226B4D] hover:bg-[#1C553D] dark:bg-[#24583F] dark:hover:bg-[#2F7352] px-4 py-2 text-xs font-semibold text-white transition-colors cursor-pointer">
                     {isAddingTable ? "Adding..." : "Add Table"}
                   </button>
                 </div>
@@ -585,25 +584,25 @@ export default function FloorPlanPage() {
               className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-foreground">Delete Table?</h2>
-                <button onClick={() => setTableToDelete(null)} className="text-muted-foreground hover:text-foreground transition-colors">
+                <h2 className="text-xl font-semibold text-[#17251D] dark:text-[#F3F5F0]">Delete Table?</h2>
+                <button onClick={() => setTableToDelete(null)} className="text-[#718078] dark:text-[#A3B2A6] hover:text-[#17251D] dark:hover:text-[#F3F5F0] transition-colors">
                   <X className="h-5 w-5" />
                 </button>
               </div>
               
-              <p className="text-muted-foreground text-sm mb-6">
+              <p className="text-[#718078] dark:text-[#A3B2A6] text-sm mb-6">
                 Are you sure you want to delete this table? This will remove the table from this floor permanently.
               </p>
               
               <div className="flex justify-end gap-3 mt-6">
-                <button type="button" onClick={() => setTableToDelete(null)} className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors">
+                <button type="button" onClick={() => setTableToDelete(null)} className="rounded-lg px-4 py-2 text-sm font-medium text-[#718078] dark:text-[#A3B2A6] hover:bg-secondary transition-colors cursor-pointer">
                   Cancel
                 </button>
                 <button 
                   type="button" 
                   onClick={handleDeleteTable} 
                   disabled={isDeletingTable} 
-                  className="rounded-lg bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600 transition-colors"
+                  className="rounded-lg bg-[#FF6258] px-4 py-2 text-sm font-medium text-white hover:bg-[#E5483F] transition-colors cursor-pointer"
                 >
                   {isDeletingTable ? "Deleting..." : "Delete Table"}
                 </button>

@@ -50,6 +50,41 @@ export class AuthenticationError extends Error {
 }
 
 /**
+ * Retries a database operation when encountering transient serverless cold-start
+ * or connection handshake glitches.
+ */
+async function withDbRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  delayMs = 1500,
+): Promise<T> {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      return await fn();
+    } catch (err: unknown) {
+      attempt++;
+      const message = err instanceof Error ? err.message : String(err);
+      const isConnectionError =
+        message.includes("Can't reach database server") ||
+        message.includes("connection timeout") ||
+        message.includes("Connection lost") ||
+        message.includes("PrismaClientInitializationError") ||
+        message.includes("terminating connection due to administrator command");
+
+      if (!isConnectionError || attempt >= maxRetries) {
+        throw err;
+      }
+      console.warn(
+        `[Prisma] Serverless database cold-start detected (attempt ${attempt}/${maxRetries}). Retrying in ${delayMs}ms...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+  return fn();
+}
+
+/**
  * Resolves the current authenticated user's restaurant on the server.
  *
  * This helper MUST be called from a server context (API route, Server
@@ -57,7 +92,7 @@ export class AuthenticationError extends Error {
  * then walks the ownership chain step by step:
  *
  *   1. Read Clerk auth()             → throw AuthenticationError if missing
- *   2. Resolve User (clerkUserId)    → throw AuthenticationError if not found
+ *   2. Resolve User (clerkUserId)    → auto-provision or throw RestaurantNotFoundError if none
  *   3. Resolve BusinessMembership    → throw RestaurantNotFoundError if none
  *   4. Resolve Business              → (included in membership query)
  *   5. Resolve Restaurant            → throw RestaurantNotFoundError if none
@@ -67,7 +102,7 @@ export class AuthenticationError extends Error {
  * server-side from the Clerk session.
  *
  * @returns The resolved restaurant object.
- * @throws {AuthenticationError} If the user is not authenticated or not found.
+ * @throws {AuthenticationError} If the user is not authenticated in Clerk.
  * @throws {RestaurantNotFoundError} If no restaurant is found for the user.
  */
 export async function getCurrentRestaurant(): Promise<CurrentRestaurant> {
@@ -77,46 +112,86 @@ export async function getCurrentRestaurant(): Promise<CurrentRestaurant> {
     throw new AuthenticationError();
   }
 
-  const user = await prisma.user.findUnique({
-    where: { clerkUserId },
-    select: {
-      id: true,
-      memberships: {
-        select: {
-          business: {
-            select: {
-              id: true,
-              restaurants: {
-                where: { isActive: true },
-                take: 1,
-                select: {
-                  id: true,
-                  businessId: true,
-                  name: true,
-                  slug: true,
-                  description: true,
-                  phone: true,
-                  email: true,
-                  address: true,
-                  propertyType: true,
-                  timezone: true,
-                  currency: true,
-                  parkingAvailable: true,
-                  isActive: true,
-                  createdAt: true,
-                  updatedAt: true,
+  const user = await withDbRetry(() =>
+    prisma.user.findUnique({
+      where: { clerkUserId },
+      select: {
+        id: true,
+        memberships: {
+          select: {
+            business: {
+              select: {
+                id: true,
+                restaurants: {
+                  where: { isActive: true },
+                  take: 1,
+                  select: {
+                    id: true,
+                    businessId: true,
+                    name: true,
+                    slug: true,
+                    description: true,
+                    phone: true,
+                    email: true,
+                    address: true,
+                    propertyType: true,
+                    timezone: true,
+                    currency: true,
+                    parkingAvailable: true,
+                    isActive: true,
+                    createdAt: true,
+                    updatedAt: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  });
+    }),
+  );
 
   if (!user) {
-    throw new AuthenticationError(
-      "User not found in database for the given Clerk ID.",
+    try {
+      const { currentUser } = await import("@clerk/nextjs/server");
+      const clerkUser = await currentUser();
+      if (clerkUser) {
+        const email =
+          clerkUser.emailAddresses?.[0]?.emailAddress ?? `${clerkUserId}@clerk.local`;
+        const fullName = clerkUser.firstName
+          ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
+          : "Restaurant Owner";
+
+        const existingByEmail = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (existingByEmail) {
+          await prisma.user.update({
+            where: { id: existingByEmail.id },
+            data: {
+              clerkUserId,
+              name: fullName,
+              image: clerkUser.imageUrl,
+            },
+          });
+        } else {
+          await prisma.user.create({
+            data: {
+              clerkUserId,
+              email,
+              name: fullName,
+              image: clerkUser.imageUrl,
+            },
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("[Auth] Auto-provision user skipped:", e);
+    }
+
+    throw new RestaurantNotFoundError(
+      "No restaurant found for the current user. Please complete onboarding.",
     );
   }
 

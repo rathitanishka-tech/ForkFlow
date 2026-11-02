@@ -139,7 +139,7 @@ export default function AnalyticsPage() {
                 <BarChart data={data.last7DaysRevenue}>
                   <XAxis
                     dataKey="date"
-                    stroke="#8EA79D"
+                    stroke="var(--muted-foreground)"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
@@ -151,11 +151,11 @@ export default function AnalyticsPage() {
                     }
                   />
                   <YAxis
-                    stroke="#8EA79D"
+                    stroke="var(--muted-foreground)"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value: number) => `$${value}`}
+                    tickFormatter={(value: number) => `₹${value}`}
                   />
                   <Tooltip
                     cursor={{ fill: "hsl(var(--muted))" }}
@@ -261,7 +261,7 @@ const StatCard = ({
   icon: React.ReactNode;
   description?: string;
 }) => (
-  <Card className="rounded-[1.5rem] border-border bg-card shadow-[0_12px_35px_rgba(3,15,11,0.14)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0F5B4C]/40">
+  <Card className="rounded-2xl border-border bg-card shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium text-muted-foreground">
         {title}

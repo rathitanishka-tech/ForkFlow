@@ -11,18 +11,19 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   if (!mounted) {
     return (
       <button
+        type="button"
         className={cn(
-          "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-background text-foreground transition hover:bg-muted",
+          "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[#E5E9E3] dark:border-[#344337] bg-white dark:bg-[#18221A] text-[#17211A] dark:text-[#F5F6EF] transition hover:bg-[#F2F5F0] dark:hover:bg-[#202D22]",
           className
         )}
         aria-label="Toggle theme"
@@ -32,20 +33,23 @@ export function ThemeToggle({ className }: { className?: string }) {
     );
   }
 
+  const isDark = resolvedTheme === "dark" || theme === "dark";
+
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-background text-foreground transition hover:bg-muted",
+        "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[#E5E9E3] dark:border-[#344337] bg-white dark:bg-[#18221A] text-[#17211A] dark:text-[#F5F6EF] transition hover:bg-[#F2F5F0] dark:hover:bg-[#202D22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#216E46] dark:focus-visible:ring-[#74A96B]",
         className
       )}
       aria-label="Toggle theme"
-      title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      {theme === "dark" ? (
-        <Sun className="h-5 w-5" />
+      {isDark ? (
+        <Sun className="h-4 w-4 text-[#FF6558]" />
       ) : (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-4 w-4 text-[#216E46]" />
       )}
       <span className="sr-only">Toggle theme</span>
     </button>

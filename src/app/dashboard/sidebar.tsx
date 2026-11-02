@@ -10,9 +10,11 @@ import {
   LogOut,
   Store,
   Table2,
+  UtensilsCrossed,
   Utensils,
   Settings,
 } from "lucide-react";
+import { SignOutButton } from "@clerk/nextjs";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -22,38 +24,41 @@ const sidebarItems = [
     href: "/dashboard/reservations",
     icon: ClipboardList,
   },
-  { label: "QR ", href: "/dashboard/qr", icon: Table2 },
-  { label: "Kitchen", href: "/dashboard/kitchen", icon: ChefHat },
+  { label: "QR Ordering", href: "/dashboard/qr", icon: Table2 },
+  { label: "Kitchen Flow", href: "/dashboard/kitchen", icon: ChefHat },
+  { label: "Menu", href: "/dashboard/menu", icon: UtensilsCrossed },
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-function cx(...classes: Array<string | false>) {
+function cx(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
-
-import { SignOutButton } from "@clerk/nextjs";
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
     <aside className="flex h-full w-70 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      {/* Brand Header */}
       <div className="flex h-20 items-center border-b border-sidebar-border px-6">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sidebar-primary text-sm font-semibold text-sidebar-primary-foreground">
-            FF
+        <Link href="/dashboard" className="flex items-center gap-3 group">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E5483F] text-white shadow-sm transition-transform group-hover:scale-105">
+            <Utensils className="h-5 w-5" />
           </span>
-          <div>
-            <p className="text-base font-semibold tracking-[0.24em] uppercase text-sidebar-foreground">
+          <div className="flex flex-col">
+            <span className="font-bold text-base tracking-tight text-sidebar-foreground">
               ForkFlow
-            </p>
-            <p className="text-xs text-accent">Operations</p>
+            </span>
+            <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              Operations Suite
+            </span>
           </div>
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
+      {/* Navigation Items */}
+      <nav className="flex-1 space-y-1.5 overflow-y-auto px-3.5 py-5">
         {sidebarItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -66,24 +71,25 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cx(
-                "flex h-11 items-center gap-3 rounded-2xl px-3 text-sm font-medium transition",
+                "flex h-11 items-center gap-3 rounded-xl px-3.5 text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                  ? "bg-[#216E46] text-white shadow-sm dark:bg-[#74A96B] dark:text-[#101712]"
                   : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
             >
-              <Icon className="h-4 w-4" aria-hidden="true" />
-              {item.label}
+              <Icon className={cx("h-4 w-4", isActive ? "text-current" : "text-muted-foreground")} aria-hidden="true" />
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
+      {/* Footer / Logout */}
       <div className="border-t border-sidebar-border p-4">
         <SignOutButton>
-          <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-sidebar-border bg-sidebar px-3 py-3 text-sm font-medium text-sidebar-foreground transition hover:bg-sidebar-accent cursor-pointer">
-            <LogOut className="h-4 w-4" />
-            Logout
+          <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-sidebar-border bg-sidebar px-3.5 py-2.5 text-sm font-medium text-sidebar-foreground transition hover:bg-sidebar-accent cursor-pointer">
+            <LogOut className="h-4 w-4 text-muted-foreground" />
+            <span>Logout</span>
           </button>
         </SignOutButton>
       </div>

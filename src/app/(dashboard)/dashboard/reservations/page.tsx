@@ -20,7 +20,6 @@ import { toast } from "sonner";
 
 import { useCurrentRestaurant } from "@/lib/useCurrentRestaurant";
 import type {
-  DashboardAnalytics,
   ReservationSummary,
 } from "@/modules/analytics/analytics.types";
 
@@ -252,12 +251,12 @@ export default function ReservationsPage() {
     : null;
 
   const statusConfig = {
-    PENDING: { label: "Pending", className: "bg-amber-500 text-white" },
-    CONFIRMED: { label: "Confirmed", className: "bg-blue-500 text-white" },
-    SEATED: { label: "Seated", className: "bg-emerald-500 text-white" },
-    COMPLETED: { label: "Completed", className: "bg-gray-500 text-white" },
-    CANCELLED: { label: "Cancelled", className: "bg-red-500 text-white" },
-    NO_SHOW: { label: "No Show", className: "bg-neutral-400 text-white" },
+    PENDING: { label: "Pending", className: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30" },
+    CONFIRMED: { label: "Confirmed", className: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30" },
+    SEATED: { label: "Seated", className: "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30" },
+    COMPLETED: { label: "Completed", className: "bg-gray-500/15 text-gray-700 dark:text-gray-300 border-gray-500/30" },
+    CANCELLED: { label: "Cancelled", className: "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30" },
+    NO_SHOW: { label: "No Show", className: "bg-neutral-500/15 text-neutral-700 dark:text-neutral-300 border-neutral-500/30" },
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -300,7 +299,6 @@ export default function ReservationsPage() {
       if (!response.ok) {
         const errorData = await response.json();
         
-        // Zod validation errors return an array of issues
         if (errorData.errors && Array.isArray(errorData.errors)) {
           const firstError = errorData.errors[0];
           throw new Error(firstError.message || "Validation failed.");
@@ -329,62 +327,60 @@ export default function ReservationsPage() {
   return (
     <main className="min-h-screen w-full bg-background p-4 text-foreground md:p-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-6">
-        <div className="flex flex-col gap-4 rounded-[1.5rem] border border-[#d6b48c]/15 bg-[#fffdf9] p-5 shadow-[0_16px_45px_rgba(11,35,28,0.08)] sm:flex-row sm:items-end sm:justify-between">
+        {/* Header */}
+        <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-5 shadow-xs sm:flex-row sm:items-center sm:px-6">
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-[#0f5b4c]">
-              Reservations
-            </p>
-            <h1 className="text-3xl font-semibold text-[#0b2f24]">
-              Manage bookings
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              Reservations & Bookings
             </h1>
-            <p className="mt-2 text-sm text-[#4b5d53]">
-              Create new reservations and review recent bookings for your
-              current restaurant.
+            <p className="mt-1 text-sm text-muted-foreground">
+              Create and manage guest bookings, party sizes, and dining seatings.
             </p>
           </div>
           <Link
             href="/dashboard"
-            className="inline-flex items-center rounded-xl border border-[#d6b48c]/20 bg-[#10291f] px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+            className="inline-flex items-center rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground transition hover:bg-muted"
           >
             Back to Dashboard
           </Link>
         </div>
 
-        <div className="grid gap-6">
-          <section className="rounded-[1.5rem] border border-border bg-card p-6 shadow-lg">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="grid gap-6 lg:grid-cols-12">
+          {/* Reservation Booking Form */}
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-xs lg:col-span-7">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
               <div>
-                <p className="text-sm text-muted-foreground">Current restaurant</p>
-                <p className="text-lg font-semibold text-foreground">
-                  {restaurant?.name ?? "ForkFlow"}
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Current Restaurant</p>
+                <p className="text-base font-bold text-foreground">
+                  {restaurant?.name ?? "Govindas Restaurant"}
                 </p>
               </div>
-              <div className="rounded-2xl bg-background px-4 py-3 text-sm text-foreground">
-                {reservationsTodayCount} reservations today
+              <div className="rounded-full border border-border bg-muted/60 px-4 py-1.5 text-xs font-semibold text-foreground">
+                {reservationsTodayCount} bookings today
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Guest name</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Guest name</span>
                   <input
                     name="name"
                     value={form.name}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     placeholder="Guest full name"
                     required
                   />
                 </label>
 
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Phone number</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Phone number</span>
                   <input
                     name="phone"
                     value={form.phone}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     placeholder="+919XXXXXXXXX"
                     required
                   />
@@ -392,52 +388,52 @@ export default function ReservationsPage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Email address</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email address</span>
                   <input
                     name="email"
                     type="email"
                     value={form.email}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     placeholder="guest@example.com"
                   />
                 </label>
 
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Party size</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Party size (Guests)</span>
                   <input
                     name="guests"
                     type="number"
                     min={1}
                     value={form.guests}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     required
                   />
                 </label>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Reservation time</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Reservation time</span>
                   <input
                     name="reservationDate"
                     type="datetime-local"
                     value={form.reservationDate}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     required
                   />
                 </label>
 
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Table</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Assigned Table</span>
                   <select
                     name="tableId"
                     value={form.tableId}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     required
                   >
                     {tables.map((table) => (
@@ -450,51 +446,51 @@ export default function ReservationsPage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Occasion</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Occasion</span>
                   <input
                     name="occasion"
                     value={form.occasion}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     placeholder="Birthday, anniversary..."
                   />
                 </label>
 
-                <label className="block text-sm text-slate-300">
-                  <span className="text-muted-foreground">Seating preference</span>
+                <label className="block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Seating preference</span>
                   <input
                     name="seatingPreference"
                     value={form.seatingPreference}
                     onChange={handleInputChange}
-                    className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
                     placeholder="Window, quiet area"
                   />
                 </label>
               </div>
 
-              <label className="block text-sm text-slate-300">
-                <span className="text-muted-foreground">Notes</span>
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Special Requests / Notes</span>
                 <textarea
                   name="notes"
                   value={form.notes}
                   onChange={handleInputChange}
-                  rows={4}
-                  className="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-white outline-none transition focus:border-[#0f5b4c]"
-                  placeholder="Add any requests or preferences"
+                  rows={3}
+                  className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  placeholder="Add any special requests, allergy notes, or dietary preferences"
                 />
               </label>
 
               {submitError && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-xs font-medium text-destructive">
                   {submitError}
                 </div>
               )}
 
               {successMessage && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                     <p>{successMessage}</p>
                   </div>
                 </div>
@@ -503,28 +499,29 @@ export default function ReservationsPage() {
               <button
                 type="submit"
                 disabled={isSaving || !restaurant || tables.length === 0}
-                className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
+                className="inline-flex items-center justify-center rounded-xl bg-[#216E46] px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-[#1b5838] dark:bg-[#74A96B] dark:text-[#101712] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer shadow-xs"
               >
                 {isSaving ? "Saving reservation..." : "Create Reservation"}
               </button>
             </form>
           </section>
 
-          <section className="rounded-[1.5rem] border border-border bg-card p-6 shadow-lg">
-            <h2 className="text-lg font-semibold text-foreground">
-              Recent Reservations
+          {/* Recent Bookings List */}
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-xs lg:col-span-5 flex flex-col">
+            <h2 className="text-base font-bold text-foreground">
+              Recent Bookings
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              A list of the most recent bookings.
+            <p className="mt-1 text-xs text-muted-foreground">
+              A list of the latest restaurant bookings and guest arrivals.
             </p>
-            <div className="mt-6 space-y-4">
+            <div className="mt-5 space-y-3 flex-1 overflow-y-auto max-h-[640px]">
               {isLoadingReservations ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="flex h-[76px] items-center justify-between rounded-2xl border border-border bg-background/50 p-4 animate-pulse"
+                    className="flex h-16 items-center justify-between rounded-xl border border-border bg-muted/40 p-4 animate-pulse"
                   >
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <div className="h-4 w-32 rounded bg-muted"></div>
                       <div className="h-3 w-48 rounded bg-muted"></div>
                     </div>
@@ -536,7 +533,7 @@ export default function ReservationsPage() {
                   const statusKey = reservation.status
                     .toUpperCase()
                     .replace(" ", "_") as keyof typeof statusConfig;
-                  const config = statusConfig[statusKey];
+                  const config = statusConfig[statusKey] ?? statusConfig.PENDING;
 
                   const renderActionButton = () => {
                     switch (statusKey) {
@@ -544,6 +541,7 @@ export default function ReservationsPage() {
                         return (
                           <Button
                             size="sm"
+                            className="bg-[#216E46] text-white hover:bg-[#1b5838] dark:bg-[#74A96B] dark:text-[#101712] text-xs h-8"
                             onClick={() =>
                               handleReservationAction("confirm", reservation.id)
                             }
@@ -555,6 +553,7 @@ export default function ReservationsPage() {
                         return (
                           <Button
                             size="sm"
+                            className="bg-[#216E46] text-white hover:bg-[#1b5838] dark:bg-[#74A96B] dark:text-[#101712] text-xs h-8"
                             onClick={() =>
                               handleReservationAction("seat", reservation.id)
                             }
@@ -566,6 +565,8 @@ export default function ReservationsPage() {
                         return (
                           <Button
                             size="sm"
+                            variant="outline"
+                            className="text-xs h-8"
                             onClick={() =>
                               openConfirmationDialog("complete", reservation.id)
                             }
@@ -581,30 +582,28 @@ export default function ReservationsPage() {
                   return (
                     <div
                       key={reservation.id}
-                      className="flex items-center justify-between rounded-2xl border border-border bg-background p-4"
+                      className="flex items-center justify-between rounded-xl border border-border bg-muted/30 p-3.5 hover:border-primary/30 transition"
                     >
                       <div>
-                        <p className="font-semibold text-white">
+                        <p className="font-semibold text-foreground text-sm">
                           {reservation.guest}
                         </p>
-                        <p className="text-sm text-slate-400">
+                        <p className="text-xs text-muted-foreground mt-0.5">
                           Table {reservation.table} &bull; {reservation.guests}{" "}
                           guests &bull; {reservation.time}
                         </p>
                       </div>
-                      <div className="flex items-center gap-4">
-                        {config && (
-                          <Badge className={config.className}>
-                            {config.label}
-                          </Badge>
-                        )}
+                      <div className="flex items-center gap-2.5">
+                        <Badge variant="outline" className={config.className}>
+                          {config.label}
+                        </Badge>
                         {renderActionButton()}
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <p className="text-center text-slate-400">
+                <p className="text-center text-xs text-muted-foreground py-10">
                   No recent reservations.
                 </p>
               )}
@@ -625,16 +624,14 @@ export default function ReservationsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{currentDialog?.title}</AlertDialogTitle>
-
             <AlertDialogDescription>
               {currentDialog?.description}
             </AlertDialogDescription>
           </AlertDialogHeader>
-
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-
             <AlertDialogAction
+              className="bg-[#216E46] text-white hover:bg-[#1b5838] dark:bg-[#74A96B] dark:text-[#101712]"
               onClick={() => {
                 if (actionState.currentAction && actionState.reservationId) {
                   handleReservationAction(

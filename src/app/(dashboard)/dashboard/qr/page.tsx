@@ -63,21 +63,21 @@ export default function QrCodePage() {
 
   if (restaurantLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <Loader className="h-8 w-8 animate-spin text-[#8EA79D]" />
+      <div className="flex h-full items-center justify-center py-20">
+        <Loader className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (restaurantError || !restaurant) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-8 text-center">
-          <AlertTriangle className="mx-auto h-12 w-12 text-rose-400" />
-          <h1 className="mt-4 text-2xl font-bold text-[#F8F5EF]">
+      <div className="flex h-full items-center justify-center py-20">
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/10 p-8 text-center max-w-md">
+          <AlertTriangle className="mx-auto h-10 w-10 text-destructive" />
+          <h1 className="mt-4 text-xl font-bold text-foreground">
             Unable to load restaurant
           </h1>
-          <p className="mt-2 text-sm text-[#8EA79D]">
+          <p className="mt-2 text-xs text-muted-foreground">
             {restaurantError ?? "No active restaurant is configured."}
           </p>
         </div>
@@ -87,91 +87,88 @@ export default function QrCodePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-end sm:px-6">
+      {/* Header */}
+      <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-5 shadow-xs sm:flex-row sm:items-center sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-foreground">
-            QR Code Manager
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            QR Ordering Codes
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Generate, preview, and download QR codes for your tables.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Generate, preview, and download contactless digital menu QR codes for each table.
           </p>
         </div>
-        <div className="text-right text-sm">
-          <p className="text-[#8EA79D]">Restaurant</p>
-          <p className="font-semibold text-[#F8F5EF]">{restaurant.name}</p>
+        <div className="text-left sm:text-right">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Restaurant</p>
+          <p className="text-sm font-bold text-foreground">{restaurant.name}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="flex h-[600px] flex-col rounded-[1.5rem] border border-border bg-card lg:col-span-1">
-          <div className="border-b border-border p-4">
-            <h2 className="font-semibold text-foreground">
-              Tables ({tables.length})
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* Table Selector Column */}
+        <div className="flex h-[600px] flex-col rounded-2xl border border-border bg-card lg:col-span-5 shadow-xs">
+          <div className="border-b border-border p-4 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-foreground">
+              Tables Directory ({tables.length})
             </h2>
+            <span className="text-xs text-muted-foreground">Select to preview</span>
           </div>
-          <div className="grow overflow-y-auto">
+          <div className="grow overflow-y-auto p-2 space-y-1">
             {isLoading ? (
               <div className="flex h-full items-center justify-center">
                 <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : error ? (
-              <div className="p-4 text-center text-sm text-rose-500">
+              <div className="p-4 text-center text-xs text-destructive">
                 {error}
               </div>
             ) : tables.length === 0 ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">
-                No tables found.
+              <div className="p-4 text-center text-xs text-muted-foreground">
+                No tables found on this floor.
               </div>
             ) : (
-              <ul className="divide-y divide-border">
-                {tables.map((table) => (
-                  <li key={table.id}>
-                    <button
-                      onClick={() => setSelectedTable(table)}
-                      className={`w-full p-4 text-left transition-colors duration-200 ${
-                        resolvedSelectedTable?.id === table.id
-                          ? "bg-accent/10 text-accent-foreground"
-                          : "hover:bg-accent/5 hover:text-accent-foreground"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-foreground">
-                          Table {table.number}
-                        </span>
-                        {resolvedSelectedTable?.id === table.id && (
-                          <div className="h-2 w-2 rounded-full bg-accent"></div>
-                        )}
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              tables.map((table) => {
+                const isSelected = resolvedSelectedTable?.id === table.id;
+                return (
+                  <button
+                    key={table.id}
+                    onClick={() => setSelectedTable(table)}
+                    className={`w-full p-3.5 rounded-xl text-left transition-all duration-150 cursor-pointer flex items-center justify-between ${
+                      isSelected
+                        ? "bg-[#216E46] text-white shadow-xs dark:bg-[#74A96B] dark:text-[#101712]"
+                        : "hover:bg-muted text-foreground"
+                    }`}
+                  >
+                    <span className="font-semibold text-sm">
+                      Table {table.number}
+                    </span>
+                    <span className={`text-xs ${isSelected ? "text-white/80 dark:text-[#101712]/80" : "text-muted-foreground"}`}>
+                      View Code →
+                    </span>
+                  </button>
+                );
+              })
             )}
           </div>
         </div>
 
-        <div className="relative h-[600px] rounded-[1.5rem] border border-border bg-gradient-to-br from-[#16352D] via-[#10231E] to-[#10231E] p-6 lg:col-span-2">
+        {/* QR Preview Column */}
+        <div className="relative flex h-[600px] items-center justify-center rounded-2xl border border-border bg-muted/30 p-6 lg:col-span-7 shadow-xs">
           <AnimatePresence mode="wait">
             {resolvedSelectedTable && !isLoading ? (
               <motion.div
                 key={resolvedSelectedTable.id}
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="flex h-full flex-col items-center justify-center"
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="w-full flex justify-center"
               >
                 <TableQRCode
                   restaurantName={restaurant.name}
                   restaurantId={restaurant.id}
                   tableId={resolvedSelectedTable.id}
                   tableNumber={resolvedSelectedTable.number}
-                  qrOptions={{
-                    color: {
-                      dark: "#F8F5EF", // QR code dots
-                      light: "#10231E", // QR code background
-                    },
-                  }}
-                  showUrl={false}
+                  showUrl={true}
                 />
               </motion.div>
             ) : (
@@ -180,23 +177,15 @@ export default function QrCodePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex h-full flex-col items-center justify-center text-center"
+                className="flex flex-col items-center justify-center text-center p-6"
               >
-                {isLoading ? (
-                  <Loader className="h-8 w-8 animate-spin text-[#8EA79D]" />
-                ) : (
-                  <>
-                    <QrCode className="h-16 w-16 text-[#8EA79D]/50" />
-                    <h3 className="mt-6 text-xl font-semibold text-[#F8F5EF]">
-                      {error ? "Error Loading Tables" : "No Table Selected"}
-                    </h3>
-                    <p className="mt-2 text-sm text-[#8EA79D]">
-                      {error
-                        ? error
-                        : "Select a table from the list to view its QR code."}
-                    </p>
-                  </>
-                )}
+                <QrCode className="h-14 w-14 text-muted-foreground/40" />
+                <h3 className="mt-4 text-base font-bold text-foreground">
+                  {error ? "Error Loading Tables" : "No Table Selected"}
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Select a table from the list on the left to preview and download its QR code.
+                </p>
               </motion.div>
             )}
           </AnimatePresence>

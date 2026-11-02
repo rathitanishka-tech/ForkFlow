@@ -1,6 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getCurrentRestaurant, RestaurantNotFoundError } from "@/lib/server-restaurant";
+import {
+  getCurrentRestaurant,
+  RestaurantNotFoundError,
+  AuthenticationError,
+} from "@/lib/server-restaurant";
 
 export default async function OnboardingLayout({
   children,
@@ -17,7 +21,10 @@ export default async function OnboardingLayout({
     await getCurrentRestaurant();
     redirect("/dashboard");
   } catch (error) {
-    if (error instanceof RestaurantNotFoundError) {
+    if (
+      error instanceof RestaurantNotFoundError ||
+      error instanceof AuthenticationError
+    ) {
       // Good, they need to onboard
     } else {
       throw error;

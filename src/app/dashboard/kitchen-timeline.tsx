@@ -1,36 +1,3 @@
-function Card({
-  children,
-  className = "",
-}: Readonly<{
-  children: React.ReactNode;
-  className?: string;
-}>) {
-  return (
-    <section
-      className={`rounded-[1.5rem] border border-border bg-card ${className}`}
-    >
-      {children}
-    </section>
-  );
-}
-
-function SectionHeader({
-  title,
-  subtitle,
-}: {
-  title: string;
-  subtitle?: string;
-}) {
-  return (
-    <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
-      <div>
-        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-[#7f948b]">{subtitle}</p>}
-      </div>
-    </div>
-  );
-}
-
 interface KitchenActivity {
   status: string;
   table: string;
@@ -44,19 +11,21 @@ export function KitchenTimeline({
   kitchenActivity: KitchenActivity[];
 }) {
   return (
-    <Card>
-      <SectionHeader
-        title="Kitchen Activity"
-        subtitle="Live operational movement by order stage"
-      />
-      <div className="grid gap-4 p-5 md:grid-cols-2">
+    <div className="rounded-2xl border border-border bg-card shadow-xs">
+      <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Kitchen Activity</h2>
+          <p className="mt-1 text-xs text-muted-foreground">Live operational movement by order stage</p>
+        </div>
+      </div>
+      <div className="grid gap-3.5 p-5 md:grid-cols-3">
         {kitchenActivity.map((activity) => (
           <div
             key={activity.status}
-            className="flex gap-4 rounded-[1.2rem] border border-border bg-muted p-4"
+            className="flex gap-3.5 rounded-xl border border-border bg-muted/60 p-4 transition hover:border-primary/40"
           >
             <span
-              className={`mt-1 h-3 w-3 shrink-0 rounded-full ${activity.tone}`}
+              className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${activity.tone}`}
             />
             <div>
               <div className="flex flex-wrap items-center gap-2">
@@ -67,11 +36,11 @@ export function KitchenTimeline({
                   {activity.table}
                 </span>
               </div>
-              <p className="mt-2 text-sm text-[#7f948b]">{activity.detail}</p>
+              <p className="mt-1.5 text-xs text-muted-foreground">{activity.detail}</p>
             </div>
           </div>
         ))}
       </div>
-    </Card>
+    </div>
   );
 }

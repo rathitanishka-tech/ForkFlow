@@ -191,42 +191,42 @@ export default function MenuManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 rounded-[1.6rem] border border-border bg-card px-5 py-5 shadow-xl sm:flex-row sm:items-center sm:px-6">
+      <div className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-5 shadow-xs sm:flex-row sm:items-center sm:px-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-normal text-foreground">Menu Management</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Add, edit, and organize your restaurant&apos;s menu items.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Menu Catalog</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Manage dishes, pricing, dietary indicators, and real-time item availability.</p>
         </div>
-        <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
+        <Button onClick={() => setIsAddModalOpen(true)} className="gap-2 bg-[#216E46] text-white hover:bg-[#1b5838] dark:bg-[#74A96B] dark:text-[#101712] font-semibold rounded-xl">
           <Plus className="h-4 w-4" /> Add Item
         </Button>
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-foreground px-1">Quick Add Popular Items</h2>
+        <h2 className="text-base font-bold text-foreground px-1">Quick Add Popular Items</h2>
         <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
           {PREDEFINED_ITEMS.map((item) => (
-            <div key={item.name} className="flex-none w-64 snap-start bg-card border border-border rounded-[1.5rem] overflow-hidden shadow-md flex flex-col group transition hover:shadow-xl hover:border-primary/50">
-              <div className="h-40 overflow-hidden relative bg-muted">
+            <div key={item.name} className="flex-none w-64 snap-start bg-card border border-border rounded-2xl overflow-hidden shadow-xs flex flex-col group transition hover:shadow-md hover:border-primary/50">
+              <div className="h-36 overflow-hidden relative bg-muted">
                 {item.image ? (
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <ImageIcon className="h-12 w-12 text-muted-foreground/30" />
+                    <ImageIcon className="h-10 w-10 text-muted-foreground/30" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <p className="absolute bottom-3 left-4 text-white font-bold text-lg">{item.name}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <p className="absolute bottom-2.5 left-3.5 text-white font-bold text-base leading-tight">{item.name}</p>
               </div>
               <div className="p-4 flex flex-col flex-1 justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
                   <div className="flex justify-between items-center mt-3">
-                    <span className="font-semibold">${item.price}</span>
-                    <Badge variant="secondary" className="text-xs bg-secondary/50">{item.category}</Badge>
+                    <span className="font-bold text-foreground text-sm">₹{item.price.toFixed(2)}</span>
+                    <Badge variant="outline" className="text-[11px] bg-muted/60">{item.category}</Badge>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full mt-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors" onClick={() => handleQuickAdd(item)}>
-                  <Plus className="h-4 w-4 mr-2" /> Quick Add
+                <Button variant="outline" className="w-full mt-3.5 rounded-xl text-xs font-semibold group-hover:bg-[#216E46] group-hover:text-white dark:group-hover:bg-[#74A96B] dark:group-hover:text-[#101712] transition-colors" onClick={() => handleQuickAdd(item)}>
+                  <Plus className="h-3.5 w-3.5 mr-1.5" /> Quick Add
                 </Button>
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function MenuManagementPage() {
         </div>
       </div>
 
-      <div className="rounded-[1.5rem] border border-border bg-card shadow-lg p-6 overflow-x-auto">
+      <div className="rounded-2xl border border-border bg-card shadow-xs p-5 overflow-x-auto">
         {isLoading ? (
           <div className="flex justify-center py-12 text-muted-foreground">
             <Loader2 className="h-8 w-8 animate-spin" />
@@ -273,7 +273,7 @@ export default function MenuManagementPage() {
                     </div>
                   </td>
                   <td className="py-4 px-4 text-muted-foreground">{item.category}</td>
-                  <td className="py-4 px-4 font-medium">${item.price.toFixed(2)}</td>
+                  <td className="py-4 px-4 font-semibold text-foreground">₹{item.price.toFixed(2)}</td>
                   <td className="py-4 px-4">
                     <Badge variant="outline" className={item.isAvailable ? "border-emerald-500/50 text-emerald-500" : "border-red-500/50 text-red-500"}>
                       {item.isAvailable ? "Available" : "Unavailable"}
@@ -358,8 +358,8 @@ export default function MenuManagementPage() {
               </div>
 
               <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-border">
-                <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="button" variant="outline" className="rounded-xl" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#216E46] text-white hover:bg-[#1b5838] dark:bg-[#74A96B] dark:text-[#101712]">
                   {isSubmitting ? "Adding..." : "Add Item"}
                 </Button>
               </div>

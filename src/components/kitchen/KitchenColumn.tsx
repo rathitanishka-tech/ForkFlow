@@ -9,34 +9,37 @@ import { cn } from "@/lib/utils";
 
 interface KitchenColumnProps {
   title: string;
-  color: string;
+  dotColor: string;
+  badgeClass: string;
   orders: KitchenOrder[];
   onStatusChange: (orderId: string, status: KitchenOrderStatus) => void;
 }
 
 export function KitchenColumn({
   title,
-  color,
+  dotColor,
+  badgeClass,
   orders,
   onStatusChange,
 }: KitchenColumnProps) {
   return (
-    <div className="flex h-full min-h-[320px] w-full flex-col rounded-[1.2rem] border border-border bg-card p-4">
-      <div className="mb-4 flex items-center justify-between gap-2">
+    <div className="flex h-full min-h-[400px] w-full flex-col rounded-2xl border border-border bg-card p-4 shadow-xs">
+      <div className="mb-4 flex items-center justify-between gap-2 border-b border-border pb-3">
         <div className="flex items-center gap-2">
-          <span className={cn("h-3 w-3 rounded-full", color)} />
-          <h2 className="text-lg font-semibold text-card-foreground">{title}</h2>
+          <span className={cn("h-2.5 w-2.5 rounded-full", dotColor)} />
+          <h2 className="text-sm font-bold text-foreground">{title}</h2>
         </div>
         <Badge
+          variant="outline"
           className={cn(
-            "select-none border-transparent text-sm font-bold",
-            color,
+            "select-none px-2 py-0.5 text-xs font-bold rounded-full",
+            badgeClass,
           )}
         >
           {orders.length}
         </Badge>
       </div>
-      <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+      <div className="flex-1 space-y-3.5 overflow-y-auto pr-1">
         {orders.length > 0 ? (
           orders.map((order) => (
             <OrderCard
@@ -46,12 +49,12 @@ export function KitchenColumn({
             />
           ))
         ) : (
-          <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
-            <span className="text-4xl">🍽️</span>
-            <p className="mt-4 font-semibold text-foreground">
+          <div className="flex h-48 flex-col items-center justify-center text-center text-muted-foreground">
+            <span className="text-2xl opacity-60">✓</span>
+            <p className="mt-2 text-xs font-semibold text-foreground">
               No {title.toLowerCase()} orders
             </p>
-            <p className="mt-1 text-sm">Kitchen is caught up!</p>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">Station is clear</p>
           </div>
         )}
       </div>

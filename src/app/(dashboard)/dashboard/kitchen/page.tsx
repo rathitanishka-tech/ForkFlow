@@ -137,24 +137,27 @@ export default function KitchenPage() {
   };
 
   return (
-    <main className="flex min-h-0 w-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-4 text-foreground shadow-lg md:p-6">
-      <header className="mb-6 shrink-0">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-          Kitchen
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-foreground">
-          Kitchen Dashboard
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Live orders for{" "}
-          <span className="font-semibold text-foreground">
-            {restaurant?.name ?? "your restaurant"}
-          </span>
-        </p>
-      </header>
-      <div className="min-h-0 flex-1 overflow-y-auto rounded-[1.25rem] border border-border bg-background p-3 text-foreground shadow-inner md:p-4">
+    <div className="flex h-[calc(100vh-6rem)] w-full flex-col gap-6">
+      <div className="flex shrink-0 flex-col justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-5 shadow-xs sm:flex-row sm:items-center sm:px-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Kitchen Operations
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Live orders and ticket status for{" "}
+            <span className="font-semibold text-foreground">
+              {restaurant?.name ?? "your restaurant"}
+            </span>
+          </p>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border border-border bg-muted/60 px-4 py-1.5 text-xs font-semibold text-foreground">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          Live KDS Feed
+        </div>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-border bg-background/50 p-2 text-foreground">
         {renderContent()}
       </div>
-    </main>
+    </div>
   );
 }
