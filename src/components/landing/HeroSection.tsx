@@ -122,11 +122,11 @@ export function HeroSection() {
             className="lg:col-span-6 relative flex justify-center lg:justify-end"
           >
             <div className="relative w-full max-w-[480px]">
-              {/* Circular Frame showing real staff managing service & orders */}
+              {/* Circular Frame showing hero image */}
               <div className="relative aspect-square w-full overflow-hidden rounded-full border-4 border-white dark:border-[#2D633F]/70 shadow-2xl bg-[#E8F2E8]/40 dark:bg-[#18221A]">
                 <Image
-                  src="/images/landing/waitstaff-service-pos.jpg"
-                  alt="Restaurant manager and service staff coordinating dining operations and orders"
+                  src="/images/hero.png"
+                  alt="Restaurant operations and dining service"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
